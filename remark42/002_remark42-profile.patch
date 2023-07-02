@@ -1,0 +1,21 @@
+diff --git a/frontend/apps/remark42/app/components/profile/profile.tsx b/frontend/apps/remark42/app/components/profile/profile.tsx
+index d6b15a66..dbf0ab3a 100644
+--- a/frontend/apps/remark42/app/components/profile/profile.tsx
++++ b/frontend/apps/remark42/app/components/profile/profile.tsx
+@@ -195,16 +195,6 @@ export function Profile() {
+             <div className={clsx('profile-title', styles.name)}>{user.name}</div>
+             <div className={clsx('profile-id', styles.id)}>{user.id}</div>
+           </div>
+-          {isCurrent && (
+-            <button
+-              className={clsx('profile-signout', styles.signout)}
+-              title={intl.formatMessage(authMessages.signout)}
+-              onClick={handleClickLogout}
+-              disabled={isSigningOut}
+-            >
+-              {isSigningOut ? <Spinner /> : <SignOutIcon />}
+-            </button>
+-          )}
+         </header>
+         <section className={clsx('profile-content', styles.content)}>
+           {error && (

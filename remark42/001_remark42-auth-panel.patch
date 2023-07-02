@@ -1,0 +1,16 @@
+diff --git a/frontend/apps/remark42/app/components/auth-panel/auth-panel.tsx b/frontend/apps/remark42/app/components/auth-panel/auth-panel.tsx
+index 1e9ea931..330c85b4 100644
+--- a/frontend/apps/remark42/app/components/auth-panel/auth-panel.tsx
++++ b/frontend/apps/remark42/app/components/auth-panel/auth-panel.tsx
+@@ -71,11 +71,6 @@ class AuthPanelComponent extends Component<Props, State> {
+           </div>
+           {user.name}
+         </button>{' '}
+-        <div className={clsx('user-logout-button', styles.userLogoutButton)}>
+-          <IconButton title={this.props.intl.formatMessage(messages.signout)} onClick={this.props.signout}>
+-            <SignOutIcon size="14" />
+-          </IconButton>
+-        </div>
+       </div>
+     );
+   };
