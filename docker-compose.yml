@@ -1,0 +1,43 @@
+services:
+  remark:
+    build:
+      context: ./remark42/remark42
+      args:
+        SKIP_FRONTEND_TEST: "true"
+        SKIP_BACKEND_TEST: "true"
+    image: atlasview/remark42:latest
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    expose:
+      - "8080"
+    environment:
+      - REMARK_URL=https://127.0.0.1:2015/remark
+      - SECRET=12345
+      - DEBUG=true
+      - AUTH_ANON=true
+      - SITE=atlasview
+      - ANON_VOTE=true
+      - VOTES_IP=true
+    volumes:
+      - ./var:/srv/var
+  shiny:
+    build: ./shiny-app
+    image: atlasview/shiny:latest
+    restart: unless-stopped
+    expose:
+      - "3838"
+  caddy:
+    image: caddy:2.6.4-alpine
+    restart: unless-stopped
+    ports:
+      - "2015:2015"
+    volumes:
+      - ./caddyserver/Caddyfile:/etc/caddy/Caddyfile 
+    depends_on:
+      - shiny
+      - remark
+
