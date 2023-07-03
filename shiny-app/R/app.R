@@ -1,3 +1,15 @@
+library(dplyr)
+library(readr)
+
+library(shiny)
+library(shinydashboard)
+library(shinybusy)
+
+library(svgPanZoom)
+
+library(recogito)
+
+
 atlasviewApp <- function(...) {
   server <-  function(input, output) {
     
@@ -25,6 +37,21 @@ atlasviewApp <- function(...) {
                              options=list(placeholder=''))
         
       }
+    })
+    
+    output$pageHeader <- renderUI({
+      title <- "AtlasView"
+      if (input$select_speciality != "") {
+        speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
+        title <- paste0(title, " > ", speciality_label)
+        
+        if (!is.null(input$select_index_disease) & input$select_index_disease != "") {
+          index_disease_label <- index_diseases[index_diseases$phecode_index_dis == input$select_index_disease, "phenotype_index_dis"]
+          title <- paste0(title, " > ", index_disease_label)
+        }
+      }
+      
+      h1(title)
     })
     
     output$indexDiseaseName <- renderText({

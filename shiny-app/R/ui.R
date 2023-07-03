@@ -16,7 +16,7 @@ index_diseases <- read_csv(fpath3) %>%
 atlasview_ui <- fluidPage(
   title = "Shiny Application",
   h1(
-    "AtlasView"
+    uiOutput('pageHeader')
   ),
   wellPanel(
     selectizeInput('select_speciality', 
