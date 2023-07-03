@@ -7,6 +7,8 @@ RUN fc-cache -f -v
 
 # littler helper script provided by rocker image to install R packages (some binary)
 RUN install2.r circlize readr stringr svglite dplyr shiny shinydashboard shinybusy svgPanZoom recogito devtools
+RUN install2.r tibble data.table ggplot2 survival rms Hmisc scales RColorBrewer gridExtra hablar gridExtra png grid dplyr tidyr ggiraph Rcpp patchwork
+RUN install2.r shinyjs
 
 # atlasview shiny app
 RUN mkdir /build_zone
@@ -24,4 +26,5 @@ CMD R -e "options('shiny.port' = 3838,shiny.host='0.0.0.0'); devtools::load_all(
 
 # to build: docker build -t atlasview .
 # to run:   docker run -p 3838:3838 atlasview
+
 

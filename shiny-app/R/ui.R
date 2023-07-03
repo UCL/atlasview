@@ -13,7 +13,39 @@ index_diseases <- read_csv(fpath3) %>%
   arrange(phenotype_index_dis) %>%
   mutate(speciality_code="GAST")  # TODO: this data only has GAST diseases
 
+jsCode <- "shinyjs.updateRemark = function(params) {
+  if (typeof window.REMARK42.destroy == 'function') {
+    window.REMARK42.destroy();
+  }
+  
+  if (params[0] != '') {
+    remark_config['url'] = params[0]; 
+    reload_js('/remark/web/embed.js'); 
+    console.log(remark_config);
+  }
+}"
+
 atlasview_ui <- fluidPage(
+  shinyjs::useShinyjs(),
+  tags$head(tags$script(HTML("
+      function reload_js(src) {
+        $('script[src=\"' + src + '\"]').remove();
+        $('<script>').attr('src', src).appendTo('head');
+      }
+    
+  var remark_config = {
+          host: location.protocol + '//' + location.host + '/remark',
+          site_id: 'atlasview',
+          url: 'testing',
+          simple_view: false,
+          show_email_subscription: false,
+          show_rss_subscription: false,
+  }
+  
+                             "
+  ))),
+  tags$head(tags$script(src = "/remark/web/embed.js")),
+  extendShinyjs(text = jsCode, functions = c("updateRemark")),
   title = "Shiny Application",
   h1(
     uiOutput('pageHeader')
@@ -32,15 +64,11 @@ atlasview_ui <- fluidPage(
     tabPanel(
       title = "caterpillar",
       value = "caterpillar",
-      inputPanel(
-        selectInput(
-          inputId = "input_keyq86ilc1",
-          label = "Filtering",
-          choices = NULL
-        )
+      wellPanel(
+        selectInput('filter', 'Filter', choices = c(), multiple=TRUE),
       ),
       plotOutput(
-        outputId = "output_4y6g0lmyjb"
+        outputId = "outputCaterpillar"
       )
     ),
     tabPanel(
@@ -51,41 +79,13 @@ atlasview_ui <- fluidPage(
           add_busy_spinner(spin = "fading-circle"),
           svgPanZoomOutput(outputId = "circosPlot", width="1000px", height="1000px")
       )
+    ),
+    tabPanel(
+      title = "discussion",
+      value = "discussion",
+  mainPanel(
+    fluidRow(column(12,  HTML('<div id="remark42"></div>')))
+    ) 
     )
   ),
-  mainPanel(
-    fluidRow(column(12, 
-                    HTML('
-             <script>
-  var remark_config = {
-    host: location.protocol + "//" + location.host + "/remark",
-    site_id: "atlasview",
-    simple_view: false,
-    show_email_subscription: false,
-    show_rss_subscription: false,
-  }
-</script>
-             <script>!function(e,n){for(var o=0;o<e.length;o++){var r=n.createElement("script"),c=".js",d=n.head||n.body;"noModule"in r?(r.type="module",c=".mjs"):r.async=!0,r.defer=!0,r.src=remark_config.host+"/web/"+e[o]+c,d.appendChild(r)}}(remark_config.components||["embed"],document);</script>
-            <script>$.get(location.protocol + "//" + location.host + "/remark/login") </script> 
-             <div id="remark42"></div>
-             <!-- hide the logout box -->
-             <script>
-             var iframe = $("iframe", $("#remark42")[0])[0];
-             
-             $(document).ready(function() { 
-    $(iframe).load(function() { 
-        $(".user-logout-button", $(iframe).contents()).remove();
-    });
-});
-            
-             
-             
-             
-             </script>
-             '
-                    )
-    ))
-    
-  )
-  
 )
