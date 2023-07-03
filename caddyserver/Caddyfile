@@ -2,8 +2,10 @@
     debug
 }
 
-:2015 {
+localhost {
 
+    # see certs/README.md for command to create this
+    tls /etc/caddy/certs/localhost.crt /etc/caddy/certs/localhost.key
 
     handle_path /remark/* {
         abort /auth/logout

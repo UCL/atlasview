@@ -44,7 +44,7 @@ atlasview_ui <- fluidPage(
                     HTML('
              <script>
   var remark_config = {
-    host: "http://localhost:2015/remark",
+    host: location.protocol + "//" + location.host + "/remark",
     site_id: "atlasview",
     simple_view: false,
     show_email_subscription: false,
@@ -52,7 +52,7 @@ atlasview_ui <- fluidPage(
   }
 </script>
              <script>!function(e,n){for(var o=0;o<e.length;o++){var r=n.createElement("script"),c=".js",d=n.head||n.body;"noModule"in r?(r.type="module",c=".mjs"):r.async=!0,r.defer=!0,r.src=remark_config.host+"/web/"+e[o]+c,d.appendChild(r)}}(remark_config.components||["embed"],document);</script>
-            <script>$.get("http://localhost:2015/remark/login") </script> 
+            <script>$.get(location.protocol + "//" + location.host + "/remark/login") </script> 
              <div id="remark42"></div>
              <!-- hide the logout box -->
              <script>
