@@ -12,9 +12,11 @@ RUN mkdir /build_zone
 ADD . /build_zone
 WORKDIR /build_zone
 
+
 # we don't want to use renv for the docker container (packages already install above)
 # otherwise, we image build takes long time every time shiny app changes
-RUN R -e 'renv::deactivate()'
+RUN rm .Rprofile
+# RUN R -e 'renv::deactivate()'
 
 EXPOSE 3838
 
