@@ -4,9 +4,6 @@
 
 :2015 {
 
-    tls internal {
-        on_demand
-    }
 
     handle_path /remark/* {
         abort /auth/logout

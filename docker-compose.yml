@@ -15,7 +15,7 @@ services:
     expose:
       - "8080"
     environment:
-      - REMARK_URL=https://127.0.0.1:2015/remark
+      - REMARK_URL=http://localhost:2015/remark
       - SECRET=12345
       - DEBUG=true
       - AUTH_ANON=true
