@@ -1,14 +1,21 @@
+# list of all specialties
+fpath1 <- system.file("extdata", "lkp_unique_spec_circo_plot.csv", package="atlasview")
+fpath2 <- system.file("extdata", "lkp_unique_spec_circo_plot_codes.csv", package="atlasview")
+
+specialties <- cbind(read_csv(fpath1), read_csv(fpath2))
+
 atlasview_ui <- fluidPage(
   title = "Shiny Application",
   h1(
     "AtlasView"
   ),
   inputPanel(
-    selectInput(
-      inputId = "input_ahit0meg1y",
-      label = "Speciality",
-      choices = NULL
-    ),
+    selectizeInput('select_speciality', 
+                   'Speciality', 
+                   choices = split(specialties$code, specialties$speciality), 
+                   options = list(placeholder = 'Please select a speciality', 
+                                  onInitialize = I('function() { this.setValue(""); }'))
+    ), 
     selectInput(
       inputId = "input_unhzahtfhg",
       label = "Index disease",
