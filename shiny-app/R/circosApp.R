@@ -29,7 +29,7 @@ index_diseases <- read_csv(fpath3) %>%
 
 txt <- "Josh went to the bakery in Brussels.\nWhat an adventure!"
 
-myApp <- function(...) {
+circosApp <- function(...) {
 
 
 ui <- fluidPage(

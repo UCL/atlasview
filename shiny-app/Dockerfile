@@ -19,7 +19,7 @@ RUN R -e 'renv::deactivate()'
 EXPOSE 3838
 
 # TODO: create an atlasview R package, and install properly into environment
-CMD R -e "options('shiny.port' = 3838,shiny.host='0.0.0.0'); devtools::load_all(); myApp()"
+CMD R -e "options('shiny.port' = 3838,shiny.host='0.0.0.0'); devtools::load_all(); atlasviewApp()"
 
 # to build: docker build -t atlasview .
 # to run:   docker run -p 3838:3838 atlasview
