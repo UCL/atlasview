@@ -11,3 +11,13 @@
 Notes: 
 
 - Update latest version of devtools: https://www.r-project.org/nosvn/pandoc/devtools.html
+
+Docker (example?): https://github.com/DavidASmith/r-shiny-docker-renv/blob/main/Dockerfile
+
+https://grahamgilbert.com/blog/2017/04/04/using-caddy-to-https-all-the-things/
+https://nip.io/
+https://caddyserver.com/docs/automatic-https
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dynamic-dns.html
+
+
