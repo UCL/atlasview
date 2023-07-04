@@ -9,6 +9,8 @@ RUN fc-cache -f -v
 RUN install2.r circlize readr stringr svglite dplyr shiny shinydashboard shinybusy svgPanZoom recogito devtools
 RUN install2.r tibble data.table ggplot2 survival rms Hmisc scales RColorBrewer gridExtra hablar gridExtra png grid dplyr tidyr ggiraph Rcpp patchwork
 RUN install2.r shinyjs
+RUN install2.r jose
+RUN install2.r cookies
 
 # atlasview shiny app
 RUN mkdir /build_zone
