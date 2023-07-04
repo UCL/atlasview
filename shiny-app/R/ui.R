@@ -32,16 +32,18 @@ now_utc <- function() {
   now
 }
 
+id <- stringr::str_remove_all(uuid::UUIDgenerate(), "-")
+
 authentication <- jose::jwt_claim(
   aud="atlasview",
   exp=as.numeric(now_utc() + lubridate::minutes(10)),
-  jti="7072e49efd38332c91efdeffd582cd214278fbb0",
+  jti=id,
   iat=as.numeric(now_utc() - lubridate::minutes(10)),
   iss="remark42",
   user=list(
-    name="david_perez",
-    id="anonymous_348058893e04c7e439153a2a281bb701e7208880",
-    picture="https://ui-avatars.com/api/?name=D+P",
+    name="asif_tamuri",
+    id="atlasview_348058893e04c7e439153a2a281bb701e7208880",
+    picture="https://ui-avatars.com/api/?name=A+T",
     attrs=list(
       admin=FALSE,
       blocked=FALSE
@@ -58,7 +60,7 @@ atlasview_ui <- cookies::add_cookie_handlers(fluidPage(
         $('script[src=\"' + src + '\"]').remove();
         $('<script>').attr('src', src).appendTo('head');
       }
-    
+
   var remark_config = {
           host: location.protocol + '//' + location.host + '/remark',
           site_id: 'atlasview',
@@ -69,7 +71,7 @@ atlasview_ui <- cookies::add_cookie_handlers(fluidPage(
   }"
   ))),
   cookies::set_cookie_on_load("JWT", authentication), 
-  cookies::set_cookie_on_load("XSRF-TOKEN", "7072e49efd38332c91efdeffd582cd214278fbb0"),
+  cookies::set_cookie_on_load("XSRF-TOKEN", id),
   tags$head(tags$script(src = "/remark/web/embed.js")),
   htmlOutput("testingcookie"),
   # tags$head(tags$script(HTML('$.get(location.protocol + "//" + location.host + "/remark/login")'))),
