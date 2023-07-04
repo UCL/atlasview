@@ -70,14 +70,14 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
     theme_minimal() +
     theme(legend.position = c(.7, .5),
           legend.title=element_blank(),
-          legend.text = element_text(size=5),
-          axis.text.y = element_text(size=10),
+          legend.text = element_text(size=10),
+          axis.text.y = element_text(size=15),
           axis.title.y = element_blank(),
           plot.margin=unit(c(t,r,b,l),"lines"),
           axis.line.x = element_line(colour = "grey"),
-          axis.text.x = element_text(size=10),
-          axis.title.x = element_text(size=10),
-          plot.title = element_text(size= 14, hjust = 1))+
+          axis.text.x = element_text(size=15),
+          axis.title.x = element_text(size=15),
+          plot.title = element_text(size= 20, hjust = 1))+
     ylab("Prevalence (%)") +
     scale_x_discrete(labels=df_prev$phenotype_cooccurring_dis[nrow(df_prev):1]) +
     scale_fill_manual(values=my_cols) +
@@ -96,20 +96,20 @@ p3 <-  ggplot(df_prev,
   theme_minimal() +
   theme(legend.position="none",
         legend.title=element_blank(),
-        legend.text = element_text(size=5),
+        legend.text = element_text(size=10),
         axis.text.y = element_blank(),
-        axis.text.x = element_text(size=10),
-        axis.title.x = element_text(size=10),
+        axis.text.x = element_text(size=15),
+        axis.title.x = element_text(size=15),
         axis.title.y = element_blank(),
         plot.margin=unit(c(t,2,b,l),"lines"),
         axis.line.x = element_line(colour = "grey"),
-        plot.title = element_text(size= 14, hjust = 1)) +
+        plot.title = element_text(size= 20, hjust = 1)) +
   xlab("Prevalence ratio")+
   colScale
 
 
   ###combine:
-  pl <- p1 + p3 + plot_annotation(plot_title_str,theme=theme(plot.title=element_text(size = 14, hjust=0.5)))
+  pl <- p1 + p3 + plot_annotation(plot_title_str,theme=theme(plot.title=element_text(size = 20, hjust=0.5)))
 
   #output file name
   ffplot_output <- paste("MMcaterpillar_", gsub("/", "", spe_index_dis), "_", phe,"_", gsub("/", "", phenotype), ".png", sep = '')
