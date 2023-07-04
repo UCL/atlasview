@@ -20,12 +20,38 @@ jsCode <- "shinyjs.updateRemark = function(params) {
   
   if (params[0] != '') {
     remark_config['url'] = params[0]; 
+    document.title = params[0];
     reload_js('/remark/web/embed.js'); 
     console.log(remark_config);
   }
 }"
 
-atlasview_ui <- fluidPage(
+now_utc <- function() {
+  now <- Sys.time()
+  attr(now, "tzone") <- "UTC"
+  now
+}
+
+authentication <- jose::jwt_claim(
+  aud="atlasview",
+  exp=as.numeric(now_utc() + lubridate::minutes(10)),
+  jti="7072e49efd38332c91efdeffd582cd214278fbb0",
+  iat=as.numeric(now_utc() - lubridate::minutes(10)),
+  iss="remark42",
+  user=list(
+    name="david_perez",
+    id="anonymous_348058893e04c7e439153a2a281bb701e7208880",
+    picture="https://ui-avatars.com/api/?name=D+P",
+    attrs=list(
+      admin=FALSE,
+      blocked=FALSE
+    )
+  )
+)
+
+authentication <- jose::jwt_encode_hmac(authentication, secret=charToRaw("12345"))
+
+atlasview_ui <- cookies::add_cookie_handlers(fluidPage(
   shinyjs::useShinyjs(),
   tags$head(tags$script(HTML("
       function reload_js(src) {
@@ -40,13 +66,14 @@ atlasview_ui <- fluidPage(
           simple_view: false,
           show_email_subscription: false,
           show_rss_subscription: false,
-  }
-  
-                             "
+  }"
   ))),
+  cookies::set_cookie_on_load("JWT", authentication), 
+  cookies::set_cookie_on_load("XSRF-TOKEN", "7072e49efd38332c91efdeffd582cd214278fbb0"),
   tags$head(tags$script(src = "/remark/web/embed.js")),
+  # tags$head(tags$script(HTML('$.get(location.protocol + "//" + location.host + "/remark/login")'))),
   extendShinyjs(text = jsCode, functions = c("updateRemark")),
-  title = "Shiny Application",
+  title = "AtlasView",
   h1(
     uiOutput('pageHeader')
   ),
@@ -88,4 +115,4 @@ atlasview_ui <- fluidPage(
     ) 
     )
   ),
-)
+))

@@ -71,6 +71,9 @@ n_dis_spe <- fread(file = path_file_M2)
 atlasviewApp <- function(...) {
   server <-  function(input, output, session) {
     
+    # authentication
+    
+      
     # update that index disease selection drop-down
     observe({
       # get the index diseases for the speciality
@@ -156,6 +159,8 @@ atlasviewApp <- function(...) {
     
     observeEvent(toListen(), {
       if (input$select_speciality != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
+        speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
+        index_disease_label <- index_diseases[index_diseases$phecode_index_dis == input$select_index_disease, "phenotype_index_dis"]
           page_url <- paste0(input$select_speciality, input$select_index_disease)
       } else  {
         page_url <- ""
@@ -175,8 +180,7 @@ atlasviewApp <- function(...) {
         }
       }
     },
-    width=1000,
-    height=1000)
+    width=1000, height=900)
     
   }
   
