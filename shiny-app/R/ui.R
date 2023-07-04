@@ -71,6 +71,7 @@ atlasview_ui <- cookies::add_cookie_handlers(fluidPage(
   cookies::set_cookie_on_load("JWT", authentication), 
   cookies::set_cookie_on_load("XSRF-TOKEN", "7072e49efd38332c91efdeffd582cd214278fbb0"),
   tags$head(tags$script(src = "/remark/web/embed.js")),
+  htmlOutput("testingcookie"),
   # tags$head(tags$script(HTML('$.get(location.protocol + "//" + location.host + "/remark/login")'))),
   extendShinyjs(text = jsCode, functions = c("updateRemark")),
   title = "AtlasView",

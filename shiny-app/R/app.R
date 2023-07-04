@@ -71,7 +71,9 @@ n_dis_spe <- fread(file = path_file_M2)
 atlasviewApp <- function(...) {
   server <-  function(input, output, session) {
     
-    # authentication
+    output$testingcookie <- renderUI({
+      cookies::set_cookie_on_load("testing", Sys.time())
+    })
     
       
     # update that index disease selection drop-down
