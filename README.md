@@ -21,3 +21,17 @@ https://caddyserver.com/docs/automatic-https
 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dynamic-dns.html
 
 
+https://caddyserver.com/docs/automatic-https
+
+https://cran.r-project.org/web/packages/jose/vignettes/jwt.html
+
+# setting new URL and refreshing remark
+remark_config["url"] = "testing"; window.REMARK42.destroy(); reload_js("/remark/web/embed.js")
+
+
+digest::digest(jwt, algo="sha1")
+stringr::str_c("atlasview_", digest::sha1("asif_tamuri"))
+
+get("ATLASVIEW_USER", envir=session$request)
+
+
