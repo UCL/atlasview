@@ -35,7 +35,7 @@ services:
     environment:
       - ATLASVIEW_DATA_PATH=/etc/shiny-app/data
     volumes:
-      - "/Users/tamuri/University College London/Torralbo, Ana - atlasview:/etc/shiny-app/data"
+      - /Users/tamuri/Documents/2023/disease_atlas/atlasview-data:/etc/shiny-app/data
     expose:
       - "3838"
     networks:

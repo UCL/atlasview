@@ -30,17 +30,11 @@ library(patchwork)
 
 library(shinyjs)
 
-home_res <- '/Users/tamuri/University College London/Torralbo, Ana - atlasview'
-
-data_path <- Sys.getenv("ATLASVIEW_DATA_PATH")
-if (data_path != "") {
-  home_res <- data_path
-}
-
+home_res <- Sys.getenv("ATLASVIEW_DATA_PATH")
 ###############################################################################
 
 #speciality colors from lkp
-fpath1 <- system.file("extdata", "lkp_spe_col.csv", package="atlasview")
+fpath1 <- paste(home_res, "/lkp_spe_col.csv", sep='')
 my_colors <- read.csv(file = fpath1, header = TRUE)
 my_colors <- my_colors%>% filter(speciality != 'GMC')
 
@@ -145,7 +139,6 @@ atlasviewApp <- function(...) {
 
     observe({
       if (input$select_speciality != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
-      print("here 1")
       speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
       cooccurring_diseases <- MM_res %>%
         filter(speciality_index_dis == speciality_label, phecode_index_dis == input$select_index_disease) %>%
@@ -172,7 +165,6 @@ atlasviewApp <- function(...) {
     
     output$outputCaterpillar <- renderPlot({
       if (input$select_speciality != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
-        print("here 2")
         speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
         MM_res_spe <- MM_res  %>% filter(speciality_index_dis == speciality_label)
         MM_res_spe_phe <- MM_res_spe %>% filter(phecode_index_dis == input$select_index_disease)

@@ -196,9 +196,11 @@ make_plot <- function(selected_disease, to_svg=FALSE) {
 
 # ---- DATA ----
 # (From Ana)
-fpath1 <- system.file("extdata", "MM_for_circo_network_vis_29112022.csv", package="atlasview")
-fpath2 <- system.file("extdata", "lkp_unique_spec_circo_plot.csv", package="atlasview")
-fpath3 <- system.file("extdata", "lkp_unique_spec_circo_plot_codes.csv", package="atlasview")
+home_res <- Sys.getenv("ATLASVIEW_DATA_PATH")
+
+fpath1 <- paste0(home_res, "/MM_for_circo_network_vis_29112022.csv")
+fpath2 <- paste0(home_res, "/lkp_unique_spec_circo_plot.csv")
+fpath3 <- paste0(home_res, "/lkp_unique_spec_circo_plot_codes.csv")
 
 MM_for_circo_network_vis_29112022 <- read_csv(fpath1)
 lkp_unique_spec_circo_plot <- read_csv(fpath2)

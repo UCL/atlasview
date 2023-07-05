@@ -1,11 +1,13 @@
+home_res <- Sys.getenv("ATLASVIEW_DATA_PATH")
+
 # list of all specialties
-fpath1 <- system.file("extdata", "lkp_unique_spec_circo_plot.csv", package="atlasview")
-fpath2 <- system.file("extdata", "lkp_unique_spec_circo_plot_codes.csv", package="atlasview")
+fpath1 <- paste0(home_res, "/lkp_unique_spec_circo_plot.csv")
+fpath2 <- paste0(home_res, "/lkp_unique_spec_circo_plot_codes.csv")
 
 specialties <- cbind(read_csv(fpath1), read_csv(fpath2))
 
 # information about index and coocurring diseases
-fpath3 <-  system.file("extdata", "MM_for_circo_network_vis_29112022.csv", package="atlasview")
+fpath3 <-  paste0(home_res, "/MM_for_circo_network_vis_29112022.csv")
 
 index_diseases <- read_csv(fpath3) %>% 
   select(phecode_index_dis, phenotype_index_dis) %>% 
