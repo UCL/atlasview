@@ -1,7 +1,3 @@
-{
-    debug
-}
-
 localhost {
 
     # see certs/README.md for command to create this
@@ -21,7 +17,7 @@ localhost {
     }
 
     basicauth /* {
-        asif_tamuri $2a$14$2xXlPfilONS6SFQJgGi9nugta.I44nELo9nJrFVgknsxsW8t8Erti
+        import ./users
     }
 
 }
