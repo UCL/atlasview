@@ -15,10 +15,6 @@ localhost {
             header_up ATLASVIEW_USER "{http.auth.user.id}"
         }
     }
-
-    basicauth /* {
-        import ./users
-    }
-
+    
 }
 

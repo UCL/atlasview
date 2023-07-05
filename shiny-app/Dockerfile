@@ -11,6 +11,7 @@ RUN install2.r tibble data.table ggplot2 survival rms Hmisc scales RColorBrewer 
 RUN install2.r shinyjs
 RUN install2.r jose
 RUN install2.r cookies
+RUN install2.r shinymanager
 
 # atlasview shiny app
 RUN mkdir /build_zone

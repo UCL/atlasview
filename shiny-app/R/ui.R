@@ -11,6 +11,12 @@ jsCode <- "shinyjs.updateRemark = function(params) {
   }
 }"
 
+now_utc <- function() {
+  now <- Sys.time()
+  attr(now, "tzone") <- "UTC"
+  now
+}
+
 id <- stringr::str_remove_all(uuid::UUIDgenerate(), "-")
 
 authentication <- jose::jwt_claim(

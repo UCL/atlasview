@@ -1,7 +1,7 @@
 #' Get the path to data files
 #' NoRd
 get_data_root <- function() {
-  Sys.getenv("ATLAS_DATA_PATH")
+  Sys.getenv("ATLASVIEW_DATA_PATH")
 }
 
 #' Get the full path to a AtlasView data file 

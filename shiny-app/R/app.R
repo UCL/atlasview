@@ -1,5 +1,14 @@
 atlasviewApp <- function(...) {
   
+  # define some credentials
+  credentials <- data.frame(
+    user = c("user1", "admin"), # mandatory
+    password = c("azerty", "12345"), # mandatory
+    admin = c(FALSE, TRUE),
+    comment = "Simple and secure authentification mechanism for single ‘Shiny’ applications.",
+    stringsAsFactors = FALSE
+  )
+  
   #read full MM res in vis format
   path_file_MM_res <-  get_data_filepath("MM_for_circo_network_vis_25052023.csv")
   MM_res <- data.table::fread(file=path_file_MM_res)
@@ -55,16 +64,34 @@ atlasviewApp <- function(...) {
   
   
   server <-  function(input, output, session) {
+    # call the server part
+    # check_credentials returns a function to authenticate users
+    res_auth <- shinymanager::secure_server(
+      check_credentials = shinymanager::check_credentials(credentials)
+    )
+    
+    not_logged_in <- function() {
+      return(!length(reactiveValuesToList(res_auth)))
+    }
     
     specialties <- get_specialties()
+    
+    observe({
+      user <- reactiveValuesToList(res_auth)
+      if (length(user)) {
+        cookies::set_cookie("hello", user$user)
+      }
+    })
     
     output$testingcookie <- renderUI({
       cookies::set_cookie_on_load("testing", Sys.time())
     })
-    
+      
       
     # update that index disease selection drop-down
     observe({
+      if (not_logged_in()) { return() }
+      
       # get the index diseases for the speciality
       index_diseases <- index_diseases %>% dplyr::filter(speciality_code == input$select_speciality) %>% dplyr::select(phecode_index_dis, phenotype_index_dis)
       
@@ -105,6 +132,7 @@ atlasviewApp <- function(...) {
     })
     
     output$indexDiseaseName <- renderText({
+      
       if (!is.null(input$select_index_disease) & input$select_index_disease != "") {
         return((index_diseases %>% dplyr::filter(phecode_index_dis == input$select_index_disease) %>% dplyr::select(phenotype_index_dis))[[1,1]])
       } else {
@@ -131,6 +159,7 @@ atlasviewApp <- function(...) {
     # CATERPILLAR TAB ##########################################################
 
     observe({
+      if (not_logged_in()) { return() }
       if (input$select_speciality != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
       speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
       cooccurring_diseases <- MM_res %>%
@@ -146,6 +175,7 @@ atlasviewApp <- function(...) {
     })
     
     observeEvent(toListen(), {
+      if (not_logged_in()) { return() }
       if (input$select_speciality != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
         speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
         index_disease_label <- index_diseases[index_diseases$phecode_index_dis == input$select_index_disease, "phenotype_index_dis"]
@@ -157,6 +187,7 @@ atlasviewApp <- function(...) {
     })
     
     output$outputCaterpillar <- renderPlot({
+      if (not_logged_in()) { return() } 
       if (input$select_speciality != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
         speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
         MM_res_spe <- MM_res  %>% dplyr::filter(speciality_index_dis == speciality_label)
@@ -171,6 +202,6 @@ atlasviewApp <- function(...) {
     
   }
   
-  shinyApp(ui = get_atlasview_ui(), server = server)
+  shinyApp(ui = shinymanager::secure_app(get_atlasview_ui()), server = server)
 }
 
