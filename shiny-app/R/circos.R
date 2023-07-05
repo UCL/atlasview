@@ -1,10 +1,3 @@
-# ---- LIBRARIES ----
-library(circlize)
-library(readr)
-library(stringr)
-library(svglite)
-
-
 # ---- GLOBALS ----
 speciality_colours <- c(
   '#a9a9a9', '#2f4f4f', '#556b2f', '#a0522d', '#7f0000', '#006400', '#808000', 
@@ -31,6 +24,40 @@ get_cooccurring_diseases <- function(all_diseases, phecode_index_dis) {
 
 # plot figure for a given disease
 make_plot <- function(selected_disease, to_svg=FALSE) {
+  
+  
+  # ---- DATA ----
+  # (From Ana)
+  fpath1 <- get_data_filepath("MM_for_circo_network_vis_29112022.csv")
+  fpath2 <- get_data_filepath("lkp_unique_spec_circo_plot.csv")
+  fpath3 <- get_data_filepath("lkp_unique_spec_circo_plot_codes.csv")
+  
+  MM_for_circo_network_vis_29112022 <- readr::read_csv(fpath1, show_col_types = FALSE)
+  lkp_unique_spec_circo_plot <- readr::read_csv(fpath2, show_col_types = FALSE)
+  lkp_unique_spec_circo_plot_codes <- readr::read_csv(fpath3, show_col_types = FALSE)
+  
+  # lookup for speciality codes
+  spec_codes_merged <- cbind(lkp_unique_spec_circo_plot, lkp_unique_spec_circo_plot_codes)
+  spec_codes_merged <- spec_codes_merged[order(spec_codes_merged$code), ]
+  
+  # ---- add placeholder N ----
+  # dummy df with placeholder of N cases in index disease (nphecode)
+  df_dummy_N <- data.frame(index_dis = unique(MM_for_circo_network_vis_29112022$phecode_index_dis),
+                           nphecode = ' ')
+  
+  df_dummy_N$nphecode <- sample(100:1000, length(df_dummy_N$nphecode))
+  
+  
+  # ---- PLOT ----
+  # add four-letter abbreviations for specialities
+  MM_processed <- merge(MM_for_circo_network_vis_29112022, spec_codes_merged, by.x='speciality_cooccurring_dis', by.y='speciality')
+  
+  # merge placeholder N in index disease
+  MM_processed <- merge(MM_processed, df_dummy_N, 
+                        by.x='phecode_index_dis', 
+                        by.y='index_dis')
+  
+  
   # prepare the sectors
   spec_codes_merged_sectors <- spec_codes_merged
   spec_codes_merged_sectors$xlim1 <- 0
@@ -38,7 +65,7 @@ make_plot <- function(selected_disease, to_svg=FALSE) {
   spec_codes_merged_sectors <- rbind(spec_codes_merged_sectors, c('_LABELS_', ' ', 0, 5))
   
   if (to_svg) {
-    svglite(paste0('plot_', selected_disease$phecode_index_dis[1], '.svg'), width = 15, height = 15)
+    svglite::svglite(paste0('plot_', selected_disease$phecode_index_dis[1], '.svg'), width = 15, height = 15)
   }
   
   circos.clear()
@@ -193,39 +220,6 @@ make_plot <- function(selected_disease, to_svg=FALSE) {
 
 } 
 
-
-# ---- DATA ----
-# (From Ana)
-home_res <- Sys.getenv("ATLASVIEW_DATA_PATH")
-
-fpath1 <- paste0(home_res, "/MM_for_circo_network_vis_29112022.csv")
-fpath2 <- paste0(home_res, "/lkp_unique_spec_circo_plot.csv")
-fpath3 <- paste0(home_res, "/lkp_unique_spec_circo_plot_codes.csv")
-
-MM_for_circo_network_vis_29112022 <- read_csv(fpath1)
-lkp_unique_spec_circo_plot <- read_csv(fpath2)
-lkp_unique_spec_circo_plot_codes <- read_csv(fpath3)
-
-# lookup for speciality codes
-spec_codes_merged <- cbind(lkp_unique_spec_circo_plot, lkp_unique_spec_circo_plot_codes)
-spec_codes_merged <- spec_codes_merged[order(spec_codes_merged$code), ]
-
-# ---- add placeholder N ----
-# dummy df with placeholder of N cases in index disease (nphecode)
-df_dummy_N <- data.frame(index_dis = unique(MM_for_circo_network_vis_29112022$phecode_index_dis),
-                         nphecode = ' ')
-
-df_dummy_N$nphecode <- sample(100:1000, length(df_dummy_N$nphecode))
-
-
-# ---- PLOT ----
-# add four-letter abbreviations for specialities
-MM_processed <- merge(MM_for_circo_network_vis_29112022, spec_codes_merged, by.x='speciality_cooccurring_dis', by.y='speciality')
-
-# merge placeholder N in index disease
-MM_processed <- merge(MM_processed, df_dummy_N, 
-                      by.x='phecode_index_dis', 
-                      by.y='index_dis')
 
 
 # # create plot for each disease code

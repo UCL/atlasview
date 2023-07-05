@@ -1,10 +1,4 @@
 
-#params plots margins 
-t <- 1.5
-r <- 1
-b <- 0.1
-l <- 0.2 
-
 
 #df_prev: df with prev and prev_ratio for one index_disease 
 #df_n: df_results median n diseases 
@@ -13,15 +7,32 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
                                       df_n, 
                                       spe_index_dis, 
                                       blank_plot= FALSE){
+  
+  #speciality colors from lkp
+  fpath1 <- get_data_filepath("lkp_spe_col.csv")
+  my_colors <- read.csv(file = fpath1, header = TRUE)
+  my_colors <- my_colors%>% dplyr::filter(speciality != 'GMC')
+  
+  my_colors$speciality
+  my_cols <- my_colors$color
+  names(my_cols) <- my_colors$speciality
+  colScale <- scale_color_manual(values=my_cols)
+  
+  #params plots margins 
+  t <- 1.5
+  r <- 1
+  b <- 0.1
+  l <- 0.2 
+  
   #sort
-  df_prev <- df_prev %>% arrange(desc(prev_ratio))
+  df_prev <- df_prev %>% dplyr::arrange(desc(prev_ratio))
   
   #phenotype and phecode of index disease (after sorting)
   phenotype <- df_prev$phenotype_index_dis[1]
   phe <- df_prev$phecode_index_dis[1]
   
   #not in plots
-  df_prev <- filter(df_prev, phecode_index_dis != cooc_dis)
+  df_prev <- dplyr::filter(df_prev, phecode_index_dis != cooc_dis)
   
   # subset if there is long list
   if (nrow(df_prev)>50){
@@ -109,7 +120,7 @@ p3 <-  ggplot(df_prev,
 
 
   ###combine:
-  pl <- p1 + p3 + plot_annotation(plot_title_str,theme=theme(plot.title=element_text(size = 20, hjust=0.5)))
+  pl <- p1 + p3 + patchwork::plot_annotation(plot_title_str,theme=theme(plot.title=element_text(size = 20, hjust=0.5)))
 
   #output file name
   ffplot_output <- paste("MMcaterpillar_", gsub("/", "", spe_index_dis), "_", phe,"_", gsub("/", "", phenotype), ".png", sep = '')

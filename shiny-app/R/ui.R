@@ -1,20 +1,3 @@
-home_res <- Sys.getenv("ATLASVIEW_DATA_PATH")
-
-# list of all specialties
-fpath1 <- paste0(home_res, "/lkp_unique_spec_circo_plot.csv")
-fpath2 <- paste0(home_res, "/lkp_unique_spec_circo_plot_codes.csv")
-
-specialties <- cbind(read_csv(fpath1), read_csv(fpath2))
-
-# information about index and coocurring diseases
-fpath3 <-  paste0(home_res, "/MM_for_circo_network_vis_29112022.csv")
-
-index_diseases <- read_csv(fpath3) %>% 
-  select(phecode_index_dis, phenotype_index_dis) %>% 
-  distinct() %>% 
-  arrange(phenotype_index_dis) %>%
-  mutate(speciality_code="GAST")  # TODO: this data only has GAST diseases
-
 jsCode <- "shinyjs.updateRemark = function(params) {
   if (typeof window.REMARK42.destroy == 'function') {
     window.REMARK42.destroy();
@@ -55,7 +38,8 @@ authentication <- jose::jwt_claim(
 
 authentication <- jose::jwt_encode_hmac(authentication, secret=charToRaw("12345"))
 
-atlasview_ui <- cookies::add_cookie_handlers(fluidPage(
+get_atlasview_ui <- function() {
+  cookies::add_cookie_handlers(fluidPage(
   shinyjs::useShinyjs(),
   tags$head(tags$script(HTML("
       function reload_js(src) {
@@ -77,7 +61,7 @@ atlasview_ui <- cookies::add_cookie_handlers(fluidPage(
   tags$head(tags$script(src = "/remark/web/embed.js")),
   htmlOutput("testingcookie"),
   # tags$head(tags$script(HTML('$.get(location.protocol + "//" + location.host + "/remark/login")'))),
-  extendShinyjs(text = jsCode, functions = c("updateRemark")),
+  shinyjs::extendShinyjs(text = jsCode, functions = c("updateRemark")),
   title = "AtlasView",
   h1(
     uiOutput('pageHeader')
@@ -85,7 +69,7 @@ atlasview_ui <- cookies::add_cookie_handlers(fluidPage(
   wellPanel(
     selectizeInput('select_speciality', 
                    'Speciality', 
-                   choices = split(specialties$code, specialties$speciality), 
+                   choices = split(get_specialties()$code, get_specialties()$speciality), 
                    options = list(placeholder = 'Please select a speciality', 
                                   onInitialize = I('function() { this.setValue(""); }'))
     ), 
@@ -106,10 +90,10 @@ atlasview_ui <- cookies::add_cookie_handlers(fluidPage(
     tabPanel(
       title = "circos",
       value = "circos",
-      box(width=12,
+      shinydashboard::box(width=12,
           title=textOutput(outputId="indexDiseaseName"),
-          add_busy_spinner(spin = "fading-circle"),
-          svgPanZoomOutput(outputId = "circosPlot", width="1000px", height="1000px")
+          shinybusy::add_busy_spinner(spin = "fading-circle"),
+          svgPanZoom::svgPanZoomOutput(outputId = "circosPlot", width="1000px", height="1000px")
       )
     ),
     tabPanel(
@@ -121,3 +105,5 @@ atlasview_ui <- cookies::add_cookie_handlers(fluidPage(
     )
   ),
 ))
+}
+

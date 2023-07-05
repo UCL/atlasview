@@ -1,69 +1,62 @@
-library(dplyr)
-library(readr)
-
-library(shiny)
-library(shinydashboard)
-library(shinybusy)
-
-library(svgPanZoom)
-
-library(recogito)
-
-library(tibble)
-library(data.table)
-library(ggplot2)
-library(survival)
-library(rms)
-library(Hmisc)
-library(scales)
-library(RColorBrewer)
-library(gridExtra)
-library(hablar)
-library(gridExtra)
-library(png)
-library(grid)
-library(dplyr)
-library(tidyr)
-library(ggiraph)
-library(Rcpp)
-library(patchwork)
-
-library(shinyjs)
-
-home_res <- Sys.getenv("ATLASVIEW_DATA_PATH")
-###############################################################################
-
-#speciality colors from lkp
-fpath1 <- paste(home_res, "/lkp_spe_col.csv", sep='')
-my_colors <- read.csv(file = fpath1, header = TRUE)
-my_colors <- my_colors%>% filter(speciality != 'GMC')
-
-my_colors$speciality
-my_cols <- my_colors$color
-names(my_cols) <- my_colors$speciality
-colScale <- scale_color_manual(values=my_cols)
-
-###############################################################################
-
-#read full MM res in vis format
-path_file_MM_res <- paste(home_res, "/MM_for_circo_network_vis_25052023.csv", sep = '')
-
-MM_res <- fread(file=path_file_MM_res)
-MM_res <- MM_res %>% filter(speciality_index_dis != 'GMC')
-
-###############################################################################
-
-#N of diseases and specialities 
-path_file_M2 <- paste(home_res, "/MM_2_n_Feb03_25052023.csv", sep = '')
-
-n_dis_spe <- fread(file = path_file_M2)
-
-###############################################################################
-
-
-
 atlasviewApp <- function(...) {
+  
+  #read full MM res in vis format
+  path_file_MM_res <-  get_data_filepath("MM_for_circo_network_vis_25052023.csv")
+  MM_res <- data.table::fread(file=path_file_MM_res)
+  MM_res <- MM_res %>% dplyr::filter(speciality_index_dis != 'GMC')
+
+  #N of diseases and specialities 
+  path_file_M2 <- get_data_filepath("MM_2_n_Feb03_25052023.csv")
+  
+  n_dis_spe <- data.table::fread(file = path_file_M2)
+  
+  # information about index and coocurring diseases
+  fpath3 <- get_data_filepath("MM_for_circo_network_vis_29112022.csv")
+  
+  index_diseases <- readr::read_csv(fpath3, show_col_types = FALSE) %>% 
+    dplyr::select(phecode_index_dis, phenotype_index_dis) %>% 
+    dplyr::distinct() %>% 
+    dplyr::arrange(phenotype_index_dis) %>%
+    dplyr::mutate(speciality_code="GAST")  # TODO: this data only has GAST diseases
+
+  
+  # ---- DATA ----
+  # (From Ana)
+  home_res <- Sys.getenv("ATLASVIEW_DATA_PATH")
+  
+  fpath1 <- get_data_filepath("MM_for_circo_network_vis_29112022.csv")
+  fpath2 <- get_data_filepath("lkp_unique_spec_circo_plot.csv")
+  fpath3 <- get_data_filepath("lkp_unique_spec_circo_plot_codes.csv")
+  
+  MM_for_circo_network_vis_29112022 <- readr::read_csv(fpath1,show_col_types = FALSE  )
+  lkp_unique_spec_circo_plot <- readr::read_csv(fpath2,show_col_types = FALSE )
+  lkp_unique_spec_circo_plot_codes <- readr::read_csv(fpath3, show_col_types = FALSE)
+  
+  # lookup for speciality codes
+  spec_codes_merged <- cbind(lkp_unique_spec_circo_plot, lkp_unique_spec_circo_plot_codes)
+  spec_codes_merged <- spec_codes_merged[order(spec_codes_merged$code), ]
+  
+  # ---- add placeholder N ----
+  # dummy df with placeholder of N cases in index disease (nphecode)
+  df_dummy_N <- data.frame(index_dis = unique(MM_for_circo_network_vis_29112022$phecode_index_dis),
+                           nphecode = ' ')
+  
+  df_dummy_N$nphecode <- sample(100:1000, length(df_dummy_N$nphecode))
+  
+  
+  # ---- PLOT ----
+  # add four-letter abbreviations for specialities
+  MM_processed <- merge(MM_for_circo_network_vis_29112022, spec_codes_merged, by.x='speciality_cooccurring_dis', by.y='speciality')
+  
+  # merge placeholder N in index disease
+  MM_processed <- merge(MM_processed, df_dummy_N, 
+                        by.x='phecode_index_dis', 
+                        by.y='index_dis')
+  
+  
   server <-  function(input, output, session) {
+    
+    specialties <- get_specialties()
     
     output$testingcookie <- renderUI({
       cookies::set_cookie_on_load("testing", Sys.time())
@@ -73,7 +66,7 @@ atlasviewApp <- function(...) {
     # update that index disease selection drop-down
     observe({
       # get the index diseases for the speciality
-      index_diseases <- index_diseases %>% filter(speciality_code == input$select_speciality) %>% select(phecode_index_dis, phenotype_index_dis)
+      index_diseases <- index_diseases %>% dplyr::filter(speciality_code == input$select_speciality) %>% dplyr::select(phecode_index_dis, phenotype_index_dis)
       
       # if any were found
       if (nrow(index_diseases) > 0) {
@@ -113,14 +106,14 @@ atlasviewApp <- function(...) {
     
     output$indexDiseaseName <- renderText({
       if (!is.null(input$select_index_disease) & input$select_index_disease != "") {
-        return((index_diseases %>% filter(phecode_index_dis == input$select_index_disease) %>% select(phenotype_index_dis))[[1,1]])
+        return((index_diseases %>% dplyr::filter(phecode_index_dis == input$select_index_disease) %>% dplyr::select(phenotype_index_dis))[[1,1]])
       } else {
         return('')
       }
     })
     
     # show circos plot for the chosen disease
-    output$circosPlot <- renderSvgPanZoom({
+    output$circosPlot <- svgPanZoom::renderSvgPanZoom({
       # if an index disease has been selected
       if (!is.null(input$select_index_disease) & input$select_index_disease != "") {
         plot_filename = paste0("plot_", input$select_index_disease, ".svg")
@@ -130,7 +123,7 @@ atlasviewApp <- function(...) {
           make_plot(get_cooccurring_diseases(MM_processed, input$select_index_disease), to_svg=TRUE)
         }
         
-        svgPanZoom(read_file(plot_filename), zoomScaleSensitivity=0.5)
+        svgPanZoom::svgPanZoom(readr::read_file(plot_filename), zoomScaleSensitivity=0.5)
         
       }
     })
@@ -141,8 +134,8 @@ atlasviewApp <- function(...) {
       if (input$select_speciality != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
       speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
       cooccurring_diseases <- MM_res %>%
-        filter(speciality_index_dis == speciality_label, phecode_index_dis == input$select_index_disease) %>%
-        select(speciality_cooccurring_dis) %>% distinct() %>% arrange(speciality_cooccurring_dis) %>% pull()
+        dplyr::filter(speciality_index_dis == speciality_label, phecode_index_dis == input$select_index_disease) %>%
+        dplyr::select(speciality_cooccurring_dis) %>% dplyr::distinct() %>% dplyr::arrange(speciality_cooccurring_dis) %>% dplyr::pull()
       
       updateSelectInput(session, 'filter', choices = cooccurring_diseases, selected = cooccurring_diseases)
       }
@@ -166,9 +159,9 @@ atlasviewApp <- function(...) {
     output$outputCaterpillar <- renderPlot({
       if (input$select_speciality != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
         speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
-        MM_res_spe <- MM_res  %>% filter(speciality_index_dis == speciality_label)
-        MM_res_spe_phe <- MM_res_spe %>% filter(phecode_index_dis == input$select_index_disease)
-        MM_res_spe_phe_selected <- MM_res_spe_phe %>% filter(speciality_cooccurring_dis %in% input$filter)
+        MM_res_spe <- MM_res  %>% dplyr::filter(speciality_index_dis == speciality_label)
+        MM_res_spe_phe <- MM_res_spe %>% dplyr::filter(phecode_index_dis == input$select_index_disease)
+        MM_res_spe_phe_selected <- MM_res_spe_phe %>% dplyr::filter(speciality_cooccurring_dis %in% input$filter)
         if (nrow(MM_res_spe_phe_selected) > 0) {
           caterpillar_prev_ratio_v5_view(MM_res_spe_phe_selected,  n_dis_spe,  spe_index_dis=input$specialty)
         }
@@ -178,6 +171,6 @@ atlasviewApp <- function(...) {
     
   }
   
-  shinyApp(ui = atlasview_ui, server = server)
+  shinyApp(ui = get_atlasview_ui(), server = server)
 }
 
