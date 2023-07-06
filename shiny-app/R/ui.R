@@ -11,33 +11,6 @@ jsCode <- "shinyjs.updateRemark = function(params) {
   }
 }"
 
-now_utc <- function() {
-  now <- Sys.time()
-  attr(now, "tzone") <- "UTC"
-  now
-}
-
-id <- stringr::str_remove_all(uuid::UUIDgenerate(), "-")
-
-authentication <- jose::jwt_claim(
-  aud="atlasview",
-  exp=as.numeric(now_utc() + lubridate::minutes(10)),
-  jti=id,
-  iat=as.numeric(now_utc() - lubridate::minutes(10)),
-  iss="remark42",
-  user=list(
-    name="asif_tamuri",
-    id="atlasview_348058893e04c7e439153a2a281bb701e7208880",
-    picture="https://ui-avatars.com/api/?name=A+T",
-    attrs=list(
-      admin=FALSE,
-      blocked=FALSE
-    )
-  )
-)
-
-authentication <- jose::jwt_encode_hmac(authentication, secret=charToRaw("12345"))
-
 get_atlasview_ui <- function() {
   cookies::add_cookie_handlers(fluidPage(
   shinyjs::useShinyjs(),
@@ -56,10 +29,7 @@ get_atlasview_ui <- function() {
           show_rss_subscription: false,
   }"
   ))),
-  cookies::set_cookie_on_load("JWT", authentication), 
-  cookies::set_cookie_on_load("XSRF-TOKEN", id),
   tags$head(tags$script(src = "/remark/web/embed.js")),
-  htmlOutput("testingcookie"),
   # tags$head(tags$script(HTML('$.get(location.protocol + "//" + location.host + "/remark/login")'))),
   shinyjs::extendShinyjs(text = jsCode, functions = c("updateRemark")),
   title = "AtlasView",

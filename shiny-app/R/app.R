@@ -2,7 +2,7 @@ atlasviewApp <- function(...) {
   
   # define some credentials
   credentials <- data.frame(
-    user = c("user1", "admin"), # mandatory
+    user = c("asif.tamuri", "harry.hemingway"), # mandatory
     password = c("azerty", "12345"), # mandatory
     admin = c(FALSE, TRUE),
     comment = "Simple and secure authentification mechanism for single ‘Shiny’ applications.",
@@ -74,20 +74,30 @@ atlasviewApp <- function(...) {
       return(!length(reactiveValuesToList(res_auth)))
     }
     
+    observeEvent(session$input$.shinymanager_logout, {
+      shinyjs::js$logoutRemark()
+      print('you logged out')
+    })
+    
+    
     specialties <- get_specialties()
     
     observe({
       user <- reactiveValuesToList(res_auth)
-      if (length(user)) {
-        cookies::set_cookie("hello", user$user)
+      print(user)
+      if (length(user) & length(user$user)) {
+        print(paste("setting jwt because user exists", user$user, rnorm(1)))
+        jwt <- make_jwt(user$user)
+        xsrf <- jwt$jti
+        print(jwt)
+        jwt <- jose::jwt_encode_hmac(jwt, secret=charToRaw("12345"))
+        cookies::set_cookie("JWT", jwt)
+        cookies::set_cookie("XSRF-TOKEN", xsrf)
+      } else {
+        print(paste("removing cookies because user doesn't exit", rnorm(1)))
       }
     })
     
-    output$testingcookie <- renderUI({
-      cookies::set_cookie_on_load("testing", Sys.time())
-    })
-      
-      
     # update that index disease selection drop-down
     observe({
       if (not_logged_in()) { return() }

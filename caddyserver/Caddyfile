@@ -6,7 +6,7 @@ localhost {
     handle_path /remark/* {
         abort /auth/logout
         abort /logout
-        abort /auth/anonymous
+        rewrite /login /auth/anonymous/login?site=atlasview&user={http.auth.user.id}&aud=atlasview 
         reverse_proxy remark:8080
     }
 
