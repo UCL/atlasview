@@ -1,14 +1,5 @@
 atlasviewApp <- function(...) {
   
-  # define some credentials
-  credentials <- data.frame(
-    user = c("asif.tamuri", "harry.hemingway"), # mandatory
-    password = c("azerty", "12345"), # mandatory
-    admin = c(FALSE, TRUE),
-    comment = "Simple and secure authentification mechanism for single ‘Shiny’ applications.",
-    stringsAsFactors = FALSE
-  )
-  
   #read full MM res in vis format
   path_file_MM_res <-  get_data_filepath("MM_for_circo_network_vis_25052023.csv")
   MM_res <- data.table::fread(file=path_file_MM_res)
@@ -31,8 +22,6 @@ atlasviewApp <- function(...) {
   
   # ---- DATA ----
   # (From Ana)
-  home_res <- Sys.getenv("ATLASVIEW_DATA_PATH")
-  
   fpath1 <- get_data_filepath("MM_for_circo_network_vis_29112022.csv")
   fpath2 <- get_data_filepath("lkp_unique_spec_circo_plot.csv")
   fpath3 <- get_data_filepath("lkp_unique_spec_circo_plot_codes.csv")
@@ -67,34 +56,26 @@ atlasviewApp <- function(...) {
     # call the server part
     # check_credentials returns a function to authenticate users
     res_auth <- shinymanager::secure_server(
-      check_credentials = shinymanager::check_credentials(credentials)
+      check_credentials = shinymanager::check_credentials(get_credentials())
     )
     
     not_logged_in <- function() {
       return(!length(reactiveValuesToList(res_auth)))
     }
     
-    observeEvent(session$input$.shinymanager_logout, {
-      shinyjs::js$logoutRemark()
-      print('you logged out')
-    })
-    
-    
     specialties <- get_specialties()
     
     observe({
       user <- reactiveValuesToList(res_auth)
-      print(user)
       if (length(user) & length(user$user)) {
-        print(paste("setting jwt because user exists", user$user, rnorm(1)))
-        jwt <- make_jwt(user$user)
-        xsrf <- jwt$jti
-        print(jwt)
-        jwt <- jose::jwt_encode_hmac(jwt, secret=charToRaw("12345"))
-        cookies::set_cookie("JWT", jwt)
-        cookies::set_cookie("XSRF-TOKEN", xsrf)
-      } else {
-        print(paste("removing cookies because user doesn't exit", rnorm(1)))
+        if (is.null(cookies::get_cookie("JWT"))) {
+          jwt <- make_jwt(user$user)
+          xsrf <- jwt$jti
+          print(jwt)
+          jwt <- jose::jwt_encode_hmac(jwt, secret=charToRaw("12345"))
+          cookies::set_cookie("JWT", jwt)
+          cookies::set_cookie("XSRF-TOKEN", xsrf)
+        }
       }
     })
     
@@ -212,6 +193,10 @@ atlasviewApp <- function(...) {
     
   }
   
-  shinyApp(ui = shinymanager::secure_app(get_atlasview_ui()), server = server)
+  shinyApp(
+    ui = shinymanager::secure_app(
+      head_auth=tags$script('$.get(location.protocol + "//" + location.host + "/remark/auth/logout")'), 
+      get_atlasview_ui()
+    ), 
+    server = server)
 }
-

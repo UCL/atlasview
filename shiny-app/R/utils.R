@@ -21,6 +21,14 @@ get_specialties <- function() {
   )
 }
 
+#' load the credentials for users for the app
+get_credentials <- function() {
+  credentials <- read.csv(file=get_data_filepath("users.csv"), stringsAsFactors = FALSE)
+  credentials$is_hashed_password <- TRUE
+  credentials$admin <- FALSE
+  credentials
+}
+
 #' Get the current UTC time
 #' @NoRd
 now_utc <- function() {
@@ -55,5 +63,5 @@ make_jwt <- function(username) {
 }
 
 username_to_initials <- function(username) {
-  stringr::str_flatten(substr( stringr::str_split(username, "_")[[1]] , start = 1 , stop = 1 ), collapse = "+")
+  stringr::str_flatten(substr( stringr::str_split(username, "\\.")[[1]] , start = 1 , stop = 1 ), collapse = "+")
 }
