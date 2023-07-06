@@ -8,7 +8,7 @@ services:
         SKIP_FRONTEND_TEST: "true"
         SKIP_BACKEND_TEST: "true"
     image: atlasview/remark42:latest
-    restart: always
+    restart: unless-stopped
     logging:
       driver: json-file
       options:
@@ -18,8 +18,8 @@ services:
       - "8080"
     environment:
       - REMARK_URL=https://localhost/remark
-      - SECRET=12345
-      - DEBUG=true
+      - SECRET=${REMARK_SECRET}
+      - DEBUG=false
       - AUTH_ANON=true
       - SITE=atlasview
       - ANON_VOTE=true
@@ -34,6 +34,7 @@ services:
     restart: unless-stopped
     environment:
       - ATLASVIEW_DATA_PATH=/etc/shiny-app/data
+      - REMARK_SECRET=${REMARK_SECRET}
     volumes:
       - /Users/tamuri/Documents/2023/disease_atlas/atlasview-data:/etc/shiny-app/data
     expose:

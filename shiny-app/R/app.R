@@ -69,10 +69,11 @@ atlasviewApp <- function(...) {
       user <- reactiveValuesToList(res_auth)
       if (length(user) & length(user$user)) {
         if (is.null(cookies::get_cookie("JWT"))) {
+          # TODO: we need to remove these cookies on visit to the login screen 
+          # (when running shiny app in rstudio - already works when deployed to prod)
           jwt <- make_jwt(user$user)
           xsrf <- jwt$jti
-          print(jwt)
-          jwt <- jose::jwt_encode_hmac(jwt, secret=charToRaw("12345"))
+          jwt <- jose::jwt_encode_hmac(jwt, secret=charToRaw(Sys.getenv("REMARK_SECRET")))
           cookies::set_cookie("JWT", jwt)
           cookies::set_cookie("XSRF-TOKEN", xsrf)
         }
