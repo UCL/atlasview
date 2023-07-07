@@ -8,6 +8,9 @@ RUN install2.r --error --skipinstalled --ncpus 1 \
 RUN install2.r --error --skipinstalled --ncpus 1 \ 
     circlize cookies ggiraph gridExtra hablar Hmisc jose patchwork png recogito rms shinybusy shinydashboard shinyjs shinymanager svgPanZoom svglite
 
+RUN install2.r --error --skipinstalled --ncpus 1 \
+    shinytitle
+
 # install the atlasview shiny app
 RUN mkdir /build_zone
 ADD . /build_zone

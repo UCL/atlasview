@@ -108,19 +108,27 @@ atlasviewApp <- function(...) {
       }
     })
     
-    output$pageHeader <- renderUI({
+    pageTitle <- eventReactive(list(input$select_speciality, input$select_index_disease), {
+      req(res_auth$user)
       title <- "AtlasView"
       if (input$select_speciality != "") {
         speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
-        title <- paste0(title, " > ", speciality_label)
+        title <- paste0(title, ": ", speciality_label)
         
         if (!is.null(input$select_index_disease) & input$select_index_disease != "") {
           index_disease_label <- index_diseases[index_diseases$phecode_index_dis == input$select_index_disease, "phenotype_index_dis"]
-          title <- paste0(title, " > ", index_disease_label)
+          title <- paste0(title, " → ", index_disease_label)
         }
       }
-      
-      h1(title)
+      title
+    })
+    
+    output$pageTitle <- renderText({
+      pageTitle()
+    })
+    
+    observeEvent(pageTitle(), {
+      shinytitle::change_window_title(session, pageTitle())
     })
     
     output$indexDiseaseName <- renderText({

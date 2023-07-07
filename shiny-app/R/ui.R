@@ -5,7 +5,6 @@ jsCode <- "shinyjs.updateRemark = function(params) {
   
   if (params[0] != '') {
     remark_config['url'] = params[0]; 
-    document.title = params[0];
     reload_js('/remark/web/embed.js'); 
     console.log(remark_config);
   }
@@ -32,9 +31,8 @@ get_atlasview_ui <- function() {
   tags$head(tags$script(src = "/remark/web/embed.js")),
   shinyjs::extendShinyjs(text = jsCode, functions = c("updateRemark")),
   title = "AtlasView",
-  h1(
-    uiOutput('pageHeader')
-  ),
+  shinytitle::use_shiny_title(),
+  titlePanel(textOutput("pageTitle")),
   wellPanel(
     selectizeInput('select_speciality', 
                    'Speciality', 

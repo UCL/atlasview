@@ -37,6 +37,7 @@ Imports:
     shinybusy,
     shinydashboard,
     shinymanager,
+    shinytitle,
     shinyjs,
     stringr,
     survival,
