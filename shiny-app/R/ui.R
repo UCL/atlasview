@@ -60,7 +60,7 @@ get_atlasview_ui <- function() {
       shinydashboard::box(width=12,
           title=textOutput(outputId="indexDiseaseName"),
           shinybusy::add_busy_spinner(spin = "fading-circle"),
-          svgPanZoom::svgPanZoomOutput(outputId = "circosPlot", width="1000px", height="1000px")
+          svgPanZoom::svgPanZoomOutput(outputId = "circosPlot", width="100%", height="1000px")
       )
     ),
     tabPanel(

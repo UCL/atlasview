@@ -53,15 +53,12 @@ atlasviewApp <- function(...) {
   
   
   server <-  function(input, output, session) {
-    # call the server part
-    # check_credentials returns a function to authenticate users
+    # User must be authenticated to access the app. Check for res_auth$user
     res_auth <- shinymanager::secure_server(
       check_credentials = shinymanager::check_credentials(get_credentials())
     )
     
-    specialties <- get_specialties()
-    
-    # Once user has been authenticated, create the JWT and XSRF tokens required
+    # When user has been authenticated, create the JWT and XSRF tokens required
     # to automatically login to Remark comment engine
     observeEvent(
       res_auth$user,
@@ -81,8 +78,10 @@ atlasviewApp <- function(...) {
       }
     )
     
+    specialties <- get_specialties()
+    
     # update that index disease selection drop-down
-    observe({
+    observeEvent(input$select_speciality, {
       req(res_auth$user)
       
       # get the index diseases for the speciality
@@ -152,7 +151,7 @@ atlasviewApp <- function(...) {
           make_plot(get_cooccurring_diseases(MM_processed, input$select_index_disease), to_svg=TRUE)
         }
         
-        svgPanZoom::svgPanZoom(readr::read_file(plot_filename), zoomScaleSensitivity=0.5)
+        svgPanZoom::svgPanZoom(readr::read_file(plot_filename), zoomScaleSensitivity=0.2)
         
       }
     })
