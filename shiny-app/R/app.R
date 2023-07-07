@@ -59,30 +59,31 @@ atlasviewApp <- function(...) {
       check_credentials = shinymanager::check_credentials(get_credentials())
     )
     
-    not_logged_in <- function() {
-      return(!length(reactiveValuesToList(res_auth)))
-    }
-    
     specialties <- get_specialties()
     
-    observe({
-      user <- reactiveValuesToList(res_auth)
-      if (length(user) & length(user$user)) {
-        if (is.null(cookies::get_cookie("JWT"))) {
-          # TODO: we need to remove these cookies on visit to the login screen 
-          # (when running shiny app in rstudio - already works when deployed to prod)
-          jwt <- make_jwt(user$user)
-          xsrf <- jwt$jti
-          jwt <- jose::jwt_encode_hmac(jwt, secret=charToRaw(Sys.getenv("REMARK_SECRET")))
-          cookies::set_cookie("JWT", jwt)
-          cookies::set_cookie("XSRF-TOKEN", xsrf)
+    # Once user has been authenticated, create the JWT and XSRF tokens required
+    # to automatically login to Remark comment engine
+    observeEvent(
+      res_auth$user,
+      {
+        user <- reactiveValuesToList(res_auth)
+        if (length(user) & length(user$user)) {
+          if (is.null(cookies::get_cookie("JWT"))) {
+            # TODO: we need to remove these cookies on visit to the login screen 
+            # (when running shiny app in rstudio - already works when deployed to prod)
+            jwt <- make_jwt(user$user)
+            xsrf <- jwt$jti
+            jwt <- jose::jwt_encode_hmac(jwt, secret=charToRaw(Sys.getenv("REMARK_SECRET")))
+            cookies::set_cookie("JWT", jwt)
+            cookies::set_cookie("XSRF-TOKEN", xsrf)
+          }
         }
       }
-    })
+    )
     
     # update that index disease selection drop-down
     observe({
-      if (not_logged_in()) { return() }
+      req(res_auth$user)
       
       # get the index diseases for the speciality
       index_diseases <- index_diseases %>% dplyr::filter(speciality_code == input$select_speciality) %>% dplyr::select(phecode_index_dis, phenotype_index_dis)
@@ -132,7 +133,7 @@ atlasviewApp <- function(...) {
     })
     
     output$indexDiseaseName <- renderText({
-      
+      req(res_auth$user)
       if (!is.null(input$select_index_disease) & input$select_index_disease != "") {
         return((index_diseases %>% dplyr::filter(phecode_index_dis == input$select_index_disease) %>% dplyr::select(phenotype_index_dis))[[1,1]])
       } else {
@@ -159,7 +160,7 @@ atlasviewApp <- function(...) {
     # CATERPILLAR TAB ##########################################################
 
     observe({
-      if (not_logged_in()) { return() }
+      req(res_auth$user)
       if (input$select_speciality != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
       speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
       cooccurring_diseases <- MM_res %>%
@@ -175,7 +176,7 @@ atlasviewApp <- function(...) {
     })
     
     observeEvent(toListen(), {
-      if (not_logged_in()) { return() }
+      req(res_auth$user)
       if (input$select_speciality != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
         speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
         index_disease_label <- index_diseases[index_diseases$phecode_index_dis == input$select_index_disease, "phenotype_index_dis"]
@@ -187,7 +188,7 @@ atlasviewApp <- function(...) {
     })
     
     output$outputCaterpillar <- renderPlot({
-      if (not_logged_in()) { return() } 
+      req(res_auth$user)
       if (input$select_speciality != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
         speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
         MM_res_spe <- MM_res  %>% dplyr::filter(speciality_index_dis == speciality_label)
