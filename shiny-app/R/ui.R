@@ -30,7 +30,6 @@ get_atlasview_ui <- function() {
   }"
   ))),
   tags$head(tags$script(src = "/remark/web/embed.js")),
-  # tags$head(tags$script(HTML('$.get(location.protocol + "//" + location.host + "/remark/login")'))),
   shinyjs::extendShinyjs(text = jsCode, functions = c("updateRemark")),
   title = "AtlasView",
   h1(
@@ -67,8 +66,8 @@ get_atlasview_ui <- function() {
       )
     ),
     tabPanel(
-      title = "discussion",
-      value = "discussion",
+      title = "comments",
+      value = "comments",
   mainPanel(
     fluidRow(column(12,  HTML('<div id="remark42"></div>')))
     ) 

@@ -1,7 +1,4 @@
-localhost {
-
-    # see certs/README.md for command to create this
-    tls /etc/caddy/certs/localhost.crt /etc/caddy/certs/localhost.key
+{$SITE_ADDRESS} {
 
     handle_path /remark/* {
         # block logging in/out from the outside

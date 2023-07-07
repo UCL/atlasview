@@ -25,7 +25,7 @@ services:
       - ANON_VOTE=true
       - VOTES_IP=true
     volumes:
-      - ./var:/srv/var
+      - ../atlasview-data/remark:/srv/var
     networks:
       - caddy
   shiny:
@@ -36,7 +36,7 @@ services:
       - ATLASVIEW_DATA_PATH=/etc/shiny-app/data
       - REMARK_SECRET=${REMARK_SECRET}
     volumes:
-      - /Users/tamuri/Documents/2023/disease_atlas/atlasview-data:/etc/shiny-app/data
+      - ../atlasview-data:/etc/shiny-app/data
     expose:
       - "3838"
     networks:
@@ -47,6 +47,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    environment:
+      - SITE_ADDRESS=${SITE_ADDRESS}
     volumes:
       - ./caddyserver:/etc/caddy
     depends_on:
