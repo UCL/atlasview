@@ -14,11 +14,8 @@ get_data_filepath <- function(filename) {
 #' Load the list of specialties, with their code
 #' @NoRd
 get_specialties <- function() {
-  # list of all specialties
-  cbind(
-    readr::read_csv(get_data_filepath("lkp_unique_spec_circo_plot.csv"), show_col_types = FALSE), 
-    readr::read_csv(get_data_filepath("lkp_unique_spec_circo_plot_codes.csv"), show_col_types = FALSE)
-  )
+  specialties <- readr::read_csv(get_data_filepath("specialties.csv"), show_col_types = FALSE)
+  specialties[order(specialties$code), ]
 }
 
 #' load the credentials for users for the app
