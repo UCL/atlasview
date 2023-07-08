@@ -2,40 +2,26 @@ atlasviewApp <- function(...) {
   specialties <- get_specialties()
   
   #read full MM res in vis format
-  MM_res <- data.table::fread(file=get_data_filepath("MM_for_circo_network_vis_20230707.csv"))
-  MM_res <- MM_res %>% dplyr::filter(speciality_index_dis != 'GMC')
+  MM_res <- data.table::fread(file=get_data_filepath("MM_for_circo_network_vis_20230707.csv")) %>% 
+    dplyr::filter(speciality_index_dis != 'GMC') %>%
+    dplyr::left_join(y = specialties, by=c("speciality_index_dis" = "speciality")) %>%
+    dplyr::rename("speciality_code" = "code")
 
   #N of diseases and specialities 
   n_dis_spe <- data.table::fread(file = get_data_filepath("MM_2_n_Feb03_20230707.csv"))
   
   # information about index and coocurring diseases
-  index_diseases <- readr::read_csv(get_data_filepath("MM_for_circo_network_vis_20230707.csv"), show_col_types = FALSE) %>% 
-    dplyr::select(phecode_index_dis, phenotype_index_dis, speciality_index_dis) %>% 
+  index_diseases <- MM_res %>% 
+    dplyr::select(phecode_index_dis, phenotype_index_dis, speciality_index_dis, speciality_code) %>% 
     dplyr::distinct() %>% 
-    dplyr::arrange(phenotype_index_dis) %>%
-    dplyr::left_join(y = specialties, by=c("speciality_index_dis" = "speciality")) %>%
-    dplyr::rename("speciality_code" = "code")
+    dplyr::arrange(phenotype_index_dis)
   
   # ---- DATA ----
   MM_for_circo_network_vis_29112022 <- readr::read_csv(get_data_filepath("MM_for_circo_network_vis_20230707.csv"), show_col_types = FALSE)
   
-  # ---- add placeholder N ----
-  # dummy df with placeholder of N cases in index disease (nphecode)
-  df_dummy_N <- data.frame(index_dis = unique(MM_for_circo_network_vis_29112022$phecode_index_dis),
-                           nphecode = ' ')
-  
-  df_dummy_N$nphecode <- sample(100:1000, length(df_dummy_N$nphecode), replace = TRUE)
-  
-  
   # ---- PLOT ----
   # add four-letter abbreviations for specialities
   MM_processed <- merge(MM_for_circo_network_vis_29112022, specialties, by.x='speciality_cooccurring_dis', by.y='speciality')
-  
-  # merge placeholder N in index disease
-  MM_processed <- merge(MM_processed, df_dummy_N, 
-                        by.x='phecode_index_dis', 
-                        by.y='index_dis')
-  
   
   server <-  function(input, output, session) {
     # User must be authenticated to access the app. Check for res_auth$user

@@ -174,7 +174,7 @@ make_plot <- function(MM_processeds, spec_codes_merged, selected_disease, to_svg
   
   # disease name in center of circle
   disease_name = stringr::str_wrap(selected_disease$phenotype_index_dis[1], width=20)
-  disease_name = paste0(disease_name, '\n', '(n=', selected_disease$nphecode[1], ' patients)')
+  disease_name = paste0(disease_name, '\n', '(n=', 100, ' patients)')
   text(0,0, disease_name)
   
   # to save to file:
