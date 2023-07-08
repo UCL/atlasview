@@ -130,48 +130,38 @@ atlasviewApp <- function(...) {
       shinytitle::change_window_title(session, pageTitle())
     })
     
-    # show circos plot for the chosen disease
+    # Generate and display the circos diagram
     output$circosPlot <- svgPanZoom::renderSvgPanZoom({
-      # if an index disease has been selected
-      if (!is.null(input$select_index_disease) & input$select_index_disease != "") {
-        plot_filename = paste0("plot_", input$select_index_disease, ".svg")
-        
-        # if we haven't generated the plot already
-        if (!file.exists(plot_filename)) {
-          make_plot(get_cooccurring_diseases(MM_processed, input$select_index_disease), to_svg=TRUE)
-        }
-        
-        svgPanZoom::svgPanZoom(readr::read_file(plot_filename), zoomScaleSensitivity=0.2)
-        
+      req(input$select_index_disease)
+      plot_filename = paste0("plot_", input$select_index_disease, ".svg")
+      
+      # if we haven't generated the plot already
+      if (!file.exists(plot_filename)) {
+        make_plot(get_cooccurring_diseases(MM_processed, input$select_index_disease), to_svg=TRUE)
       }
+      
+      svgPanZoom::svgPanZoom(readr::read_file(plot_filename), zoomScaleSensitivity=0.2)
     })
     
     # CATERPILLAR TAB ##########################################################
 
-    observe({
-      req(res_auth$user)
-      if (input$select_speciality != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
+    observeEvent(list(input$select_speciality, input$select_index_disease), {
+      req(res_auth$user, input$select_speciality, input$select_index_disease)
       speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
       cooccurring_diseases <- MM_res %>%
         dplyr::filter(speciality_index_dis == speciality_label, phecode_index_dis == input$select_index_disease) %>%
         dplyr::select(speciality_cooccurring_dis) %>% dplyr::distinct() %>% dplyr::arrange(speciality_cooccurring_dis) %>% dplyr::pull()
       
       updateSelectInput(session, 'filter', choices = cooccurring_diseases, selected = cooccurring_diseases)
-      }
     })
     
-    toListen <- reactive({
-      list(input$select_speciality,input$select_index_disease)
-    })
-    
-    observeEvent(toListen(), {
-      req(res_auth$user)
-      if (input$select_speciality != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
+    observeEvent(list(input$select_speciality, input$select_index_disease), {
+      req(res_auth$user, input$select_speciality, input$select_index_disease)
+      page_url <- ""
+      if (input$select_index_disease != "") {
         speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
         index_disease_label <- index_diseases[index_diseases$phecode_index_dis == input$select_index_disease, "phenotype_index_dis"]
-          page_url <- paste0(input$select_speciality, input$select_index_disease)
-      } else  {
-        page_url <- ""
+        page_url <- paste0(input$select_speciality, input$select_index_disease)
       }
       shinyjs::js$updateRemark(page_url)
     })
@@ -189,7 +179,6 @@ atlasviewApp <- function(...) {
       }
     },
     width=1000, height=900)
-    
   }
   
   shinyApp(
