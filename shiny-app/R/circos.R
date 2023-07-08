@@ -23,7 +23,7 @@ get_cooccurring_diseases <- function(all_diseases, phecode_index_dis) {
 
 
 # plot figure for a given disease
-make_plot <- function(MM_processeds, spec_codes_merged, selected_disease, to_svg=FALSE) {
+make_plot <- function(spec_codes_merged, selected_disease, to_svg=FALSE) {
   # prepare the sectors
   spec_codes_merged_sectors <- spec_codes_merged
   spec_codes_merged_sectors$xlim1 <- 0
@@ -42,7 +42,7 @@ make_plot <- function(MM_processeds, spec_codes_merged, selected_disease, to_svg
   circos.track(ylim=c(0,1), bg.border=NA, track.height=.28, track.margin=c(.01,0), 
                panel.fun=function(x,y) {
                  # does this speciality sector have any co-occurring diseases?
-                 matches <- selected_disease[selected_disease$code == CELL_META$sector.index, ]
+                 matches <- selected_disease[selected_disease$cooccurring_specialty_code == CELL_META$sector.index, ]
                  if (nrow(matches) > 0) {
                    matches <- head(matches, cooccurring_diseases_per_speciality)
                    circos.text(
@@ -58,10 +58,10 @@ make_plot <- function(MM_processeds, spec_codes_merged, selected_disease, to_svg
   circos.track(ylim=c(0, 0.1), track.height=0.05, bg.border=NA, track.margin=c(.01, 0), 
                panel.fun=function(x,y) {
                  # if we have co-occurring diseases for this speciality
-                 if (CELL_META$sector.index %in% selected_disease$code) {
+                 if (CELL_META$sector.index %in% selected_disease$cooccurring_specialty_code) {
                    textcolor <- 'black'
                      
-                   matches <- selected_disease[selected_disease$code == CELL_META$sector.index, ]
+                   matches <- selected_disease[selected_disease$cooccurring_specialty_code == CELL_META$sector.index, ]
                    matches <- head(matches, cooccurring_diseases_per_speciality)
                    for (i in 1:nrow(matches)) {
                      circos.segments((1:nrow(matches)) - 0.5, -0.05, (1:nrow(matches)) - 0.5, 0.11)
@@ -139,7 +139,7 @@ make_plot <- function(MM_processeds, spec_codes_merged, selected_disease, to_svg
   circos.track(ylim = c(log(100), log(1)), bg.col=NA, bg.border=NA, track.margin=c(0, 0),
                panel.fun = function(x, y) {
                  # does this speciality sector have any co-occurring diseases?
-                 matches <- selected_disease[selected_disease$code == CELL_META$sector.index, ]
+                 matches <- selected_disease[selected_disease$cooccurring_specialty_code == CELL_META$sector.index, ]
                  if (nrow(matches) > 0) {
                    circos.rect(CELL_META$cell.xlim[1], CELL_META$cell.ylim[1],
                                CELL_META$cell.xlim[2], CELL_META$cell.ylim[2], 
