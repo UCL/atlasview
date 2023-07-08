@@ -3,10 +3,11 @@ atlasviewApp <- function(...) {
   
   #read full MM res in vis format
   MM_res <- data.table::fread(file=get_data_filepath("MM_for_circo_network_vis_20230707.csv")) %>% 
-    dplyr::filter(speciality_index_dis != 'GMC') %>%
     dplyr::left_join(y = specialties, by=c("speciality_index_dis" = "speciality")) %>%
-    dplyr::rename("speciality_code" = "code")
-
+    dplyr::rename("speciality_code" = "code") %>%
+    dplyr::left_join(y = specialties, by=c("speciality_cooccurring_dis" = "speciality")) %>%
+    dplyr::rename("cooccurring_specialty_code" = "code")
+  
   #N of diseases and specialities 
   n_dis_spe <- data.table::fread(file = get_data_filepath("MM_2_n_Feb03_20230707.csv"))
   
@@ -15,13 +16,6 @@ atlasviewApp <- function(...) {
     dplyr::select(phecode_index_dis, phenotype_index_dis, speciality_index_dis, speciality_code) %>% 
     dplyr::distinct() %>% 
     dplyr::arrange(phenotype_index_dis)
-  
-  # ---- DATA ----
-  MM_for_circo_network_vis_29112022 <- readr::read_csv(get_data_filepath("MM_for_circo_network_vis_20230707.csv"), show_col_types = FALSE)
-  
-  # ---- PLOT ----
-  # add four-letter abbreviations for specialities
-  MM_processed <- merge(MM_for_circo_network_vis_29112022, specialties, by.x='speciality_cooccurring_dis', by.y='speciality')
   
   server <-  function(input, output, session) {
     # User must be authenticated to access the app. Check for res_auth$user
@@ -108,7 +102,7 @@ atlasviewApp <- function(...) {
       
       # if we haven't generated the plot already
       if (!file.exists(plot_filename)) {
-        make_plot(MM_processed, specialties, get_cooccurring_diseases(MM_processed, input$select_index_disease), to_svg=TRUE)
+        make_plot(specialties, get_cooccurring_diseases(MM_res, input$select_index_disease), to_svg=TRUE)
       }
       
       svgPanZoom::svgPanZoom(readr::read_file(plot_filename), zoomScaleSensitivity=0.2)
