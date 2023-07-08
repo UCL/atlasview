@@ -48,8 +48,8 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
   if (blank_plot == TRUE){
     plot_title_str <- ''
   }else{
-    plot_title_str <- paste("Index: ", phenotype,
-                            ", N = ", n_cases_index_dis,
+    plot_title_str <- paste("Index: ", phenotype, "\n",
+                            "N = ", n_cases_index_dis,
                             ", Median N Dis = ", median_n_dis,
                             " , Median N Spec = ", median_n_spe, sep = '')
   }

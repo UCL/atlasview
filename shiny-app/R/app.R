@@ -141,13 +141,19 @@ atlasviewApp <- function(...) {
       shinyjs::js$updateRemark(page_url)
     })
     
+    caterpillarFilter <- reactive({
+      input$filter
+    })
+    
+    debouncedCaterpillarFilter <- caterpillarFilter %>% debounce(1000)
+    
     output$outputCaterpillar <- renderPlot({
       req(res_auth$user)
       if (input$select_speciality != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
         speciality_label <- specialties$speciality[specialties$code == input$select_speciality]
         MM_res_spe <- MM_res  %>% dplyr::filter(speciality_index_dis == speciality_label)
         MM_res_spe_phe <- MM_res_spe %>% dplyr::filter(phecode_index_dis == input$select_index_disease)
-        MM_res_spe_phe_selected <- MM_res_spe_phe %>% dplyr::filter(speciality_cooccurring_dis %in% input$filter)
+        MM_res_spe_phe_selected <- MM_res_spe_phe %>% dplyr::filter(speciality_cooccurring_dis %in% debouncedCaterpillarFilter())
         if (nrow(MM_res_spe_phe_selected) > 0) {
           caterpillar_prev_ratio_v5_view(MM_res_spe_phe_selected,  n_dis_spe,  spe_index_dis=input$specialty, speciality_colours)
         }
