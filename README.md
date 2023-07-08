@@ -34,4 +34,16 @@ stringr::str_c("atlasview_", digest::sha1("asif_tamuri"))
 
 get("ATLASVIEW_USER", envir=session$request)
 
+ubuntu@ip-192-168-56-233:~/atlasview$ git submodule init
+ubuntu@ip-192-168-56-233:~/atlasview$ git submodule update
+
+
+credentials go in atlasview-data/users.csv
+passwords are hashed in R using: `scrypt::hashPassword("my_password")`
+
+to run something when user logs out:
+    observeEvent(session$input$.shinymanager_logout, {
+      print('you logged out')
+    })
+    
 
