@@ -6,17 +6,11 @@
 caterpillar_prev_ratio_v5_view <- function(df_prev, 
                                       df_n, 
                                       spe_index_dis, 
+                                      speciality_colours,
                                       blank_plot= FALSE){
   
-  #speciality colors from lkp
-  fpath1 <- get_data_filepath("lkp_spe_col.csv")
-  my_colors <- read.csv(file = fpath1, header = TRUE)
-  my_colors <- my_colors%>% dplyr::filter(speciality != 'GMC')
-  
-  my_colors$speciality
-  my_cols <- my_colors$color
-  names(my_cols) <- my_colors$speciality
-  colScale <- scale_color_manual(values=my_cols)
+
+  colScale <- scale_color_manual(values=speciality_colours)
   
   #params plots margins 
   t <- 1.5

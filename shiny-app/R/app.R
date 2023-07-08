@@ -1,5 +1,10 @@
 atlasviewApp <- function(...) {
+  
   specialties <- get_specialties()
+  
+  speciality_colours <- read.csv(get_data_filepath("lkp_spe_col.csv"), header = TRUE)
+  specialties <- specialties %>% dplyr::left_join(y = speciality_colours, by="speciality")   # for circos plots
+  speciality_colours <- setNames(as.character(speciality_colours$color), speciality_colours$speciality)  # for caterpillar plots
   
   #read full MM res in vis format
   MM_res <- data.table::fread(file=get_data_filepath("MM_for_circo_network_vis_20230707.csv")) %>% 
@@ -144,7 +149,7 @@ atlasviewApp <- function(...) {
         MM_res_spe_phe <- MM_res_spe %>% dplyr::filter(phecode_index_dis == input$select_index_disease)
         MM_res_spe_phe_selected <- MM_res_spe_phe %>% dplyr::filter(speciality_cooccurring_dis %in% input$filter)
         if (nrow(MM_res_spe_phe_selected) > 0) {
-          caterpillar_prev_ratio_v5_view(MM_res_spe_phe_selected,  n_dis_spe,  spe_index_dis=input$specialty)
+          caterpillar_prev_ratio_v5_view(MM_res_spe_phe_selected,  n_dis_spe,  spe_index_dis=input$specialty, speciality_colours)
         }
       }
     },

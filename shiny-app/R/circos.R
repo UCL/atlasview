@@ -1,12 +1,5 @@
 # ---- GLOBALS ----
-speciality_colours <- c(
-  '#a9a9a9', '#2f4f4f', '#556b2f', '#a0522d', '#7f0000', '#006400', '#808000', 
-           '#483d8b', '#3cb371', '#4682b4', '#808080', '#9acd32', '#20b2aa', '#32cd32', 
-           '#daa520', '#7f007f', '#b03060', '#ff0000', '#ff8c00', '#ffd700', '#f4a460', 
-           '#00ff00', '#00fa9a', '#dc143c', '#00ffff', '#00bfff', '#9370db', '#a020f0', 
-           '#f08080', '#adff2f', '#ff7f50', '#ff00ff', '#1e90ff', '#f0e68c', '#dda0dd', 
-           '#afeeee', '#ee82ee', '#ff69b4', '#ffe4c4', '#ffc0cb')
-           
+
 cooccurring_diseases_per_speciality <- 5
 
 cooccurring_diseases_sector_bg_col <- "#ECECEC"
@@ -71,7 +64,7 @@ make_plot <- function(spec_codes_merged, selected_disease, patient_count, to_svg
                      get.cell.meta.data("cell.end.degree", sector.index = CELL_META$sector.index),
                      rou1 = get.cell.meta.data("cell.top.radius", track.index = 2),
                      rou2 = get.cell.meta.data("cell.bottom.radius", track.index = 2),
-                     col = speciality_colours[CELL_META$sector.numeric.index], border=NA
+                     col = spec_codes_merged$color[spec_codes_merged$code == CELL_META$sector.index], border=NA
                      )
                  } else {
                    # otherwise, no diseases for this speciality
@@ -110,7 +103,7 @@ make_plot <- function(spec_codes_merged, selected_disease, patient_count, to_svg
                        original_v = v
                        v =  log(1400)
                      }
-                     circos.rect(xstart, log(1), xstart + 1, v, col=speciality_colours[ CELL_META$sector.numeric.index])
+                     circos.rect(xstart, log(1), xstart + 1, v, col=spec_codes_merged$color[spec_codes_merged$code == CELL_META$sector.index])
                      circos.segments(xstart + 0.5, v, xstart + 0.5, log(10000), straight=TRUE, lwd=1, lty='dashed', col=sector_grid_lines_col)
                      if (truncate) {
                        circos.text(xstart + 0.5, v, "=", facing='clockwise', niceFacing=TRUE)  # can't plot unicode characters...?
@@ -147,7 +140,7 @@ make_plot <- function(spec_codes_merged, selected_disease, patient_count, to_svg
                    for (r in prevalence_breaks) {
                      circos.segments(0, r, cooccurring_diseases_per_speciality, r, col=sector_grid_lines_col)
                    }                 
-                   sectorcolor <- speciality_colours[ CELL_META$sector.numeric.index]
+                   sectorcolor <- spec_codes_merged$color[spec_codes_merged$code == CELL_META$sector.index]
                    # make transparent
                    sectorcolor <- adjustcolor(sectorcolor, alpha.f = 0.2)
                    matches <- head(matches, cooccurring_diseases_per_speciality)
