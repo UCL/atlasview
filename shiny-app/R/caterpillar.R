@@ -85,7 +85,7 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
           plot.title = element_text(size= 20, hjust = 1))+
     ylab("Prevalence (%)") +
     scale_x_discrete(labels=df_prev$phenotype_cooccurring_dis[nrow(df_prev):1]) +
-    scale_fill_manual(values=my_cols) +
+    scale_fill_manual(values=speciality_colours) +
     theme(legend.position="none")
 
 #prev ratio

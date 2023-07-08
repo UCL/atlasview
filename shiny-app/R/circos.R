@@ -21,7 +21,7 @@ make_plot <- function(spec_codes_merged, selected_disease, patient_count, to_svg
   spec_codes_merged_sectors <- spec_codes_merged
   spec_codes_merged_sectors$xlim1 <- 0
   spec_codes_merged_sectors$xlim2 <- cooccurring_diseases_per_speciality
-  spec_codes_merged_sectors <- rbind(spec_codes_merged_sectors, c('_LABELS_', ' ', 0, 5))
+  spec_codes_merged_sectors <- rbind(spec_codes_merged_sectors, c('_LABELS_', ' ', ' ', 0, 5))
   
   if (to_svg) {
     svglite::svglite(paste0('plot_', selected_disease$phecode_index_dis[1], '.svg'), width = 15, height = 15)
