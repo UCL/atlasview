@@ -106,7 +106,8 @@ atlasviewApp <- function(...) {
       
       # if we haven't generated the plot already
       if (!file.exists(plot_filename)) {
-        make_plot(specialties, get_cooccurring_diseases(MM_res, input$select_index_disease), to_svg=TRUE)
+        patient_count = n_dis_spe$n_indiv_index_dis_m_r[n_dis_spe$index_dis == input$select_index_disease]
+        make_plot(specialties, get_cooccurring_diseases(MM_res, input$select_index_disease), patient_count, to_svg=TRUE)
       }
       
       svgPanZoom::svgPanZoom(readr::read_file(plot_filename), zoomScaleSensitivity=0.2)

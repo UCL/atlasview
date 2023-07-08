@@ -23,7 +23,7 @@ get_cooccurring_diseases <- function(all_diseases, phecode_index_dis) {
 
 
 # plot figure for a given disease
-make_plot <- function(spec_codes_merged, selected_disease, to_svg=FALSE) {
+make_plot <- function(spec_codes_merged, selected_disease, patient_count, to_svg=FALSE) {
   # prepare the sectors
   spec_codes_merged_sectors <- spec_codes_merged
   spec_codes_merged_sectors$xlim1 <- 0
@@ -174,7 +174,7 @@ make_plot <- function(spec_codes_merged, selected_disease, to_svg=FALSE) {
   
   # disease name in center of circle
   disease_name = stringr::str_wrap(selected_disease$phenotype_index_dis[1], width=20)
-  disease_name = paste0(disease_name, '\n', '(n=', 100, ' patients)')
+  disease_name = paste0(disease_name, '\n', '(n=', patient_count, ' patients)')
   text(0,0, disease_name)
   
   # to save to file:
