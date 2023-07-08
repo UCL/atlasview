@@ -1,14 +1,16 @@
-jsCode <- "shinyjs.updateRemark = function(params) {
-  if (typeof window.REMARK42.destroy == 'function') {
-    window.REMARK42.destroy();
+jsCode <- "
+  shinyjs.updateRemark = function(params) {
+    if (typeof window.REMARK42.destroy == 'function') {
+      window.REMARK42.destroy();
+    }
+    
+    if (params[0] != '') {
+      remark_config['url'] = params[0]; 
+      reload_js('/remark/web/embed.js'); 
+      console.log(remark_config);
+    }
   }
-  
-  if (params[0] != '') {
-    remark_config['url'] = params[0]; 
-    reload_js('/remark/web/embed.js'); 
-    console.log(remark_config);
-  }
-}"
+"
 
 get_atlasview_ui <- function() {
   cookies::add_cookie_handlers(fluidPage(

@@ -64,23 +64,21 @@ atlasviewApp <- function(...) {
       res_auth$user,
       {
         user <- reactiveValuesToList(res_auth)
-        if (length(user) & length(user$user)) {
-          if (is.null(cookies::get_cookie("JWT"))) {
-            # TODO: we need to remove these cookies on visit to the login screen 
-            # (when running shiny app in rstudio - already works when deployed to prod)
-            jwt <- make_jwt(user$user)
-            xsrf <- jwt$jti
-            jwt <- jose::jwt_encode_hmac(jwt, secret=charToRaw(Sys.getenv("REMARK_SECRET")))
-            cookies::set_cookie("JWT", jwt)
-            cookies::set_cookie("XSRF-TOKEN", xsrf)
-          }
+        if (length(user) & length(user$user) & is.null(cookies::get_cookie("JWT"))) {
+          # TODO: we need to remove these cookies on visit to the login screen 
+          # (when running shiny app in rstudio - already works when deployed to prod)
+          jwt <- make_jwt(user$user)
+          xsrf <- jwt$jti
+          jwt <- jose::jwt_encode_hmac(jwt, secret=charToRaw(Sys.getenv("REMARK_SECRET")))
+          cookies::set_cookie("JWT", jwt)
+          cookies::set_cookie("XSRF-TOKEN", xsrf)
         }
       }
     )
     
     specialties <- get_specialties()
     
-    # update that index disease selection drop-down
+    # When speciality has been selected, update the list of index diseases
     observeEvent(input$select_speciality, {
       req(res_auth$user)
       
@@ -108,6 +106,7 @@ atlasviewApp <- function(...) {
       }
     })
     
+    # Update the title (used in both page header and window title) when the selection of specialty/disease changes
     pageTitle <- eventReactive(list(input$select_speciality, input$select_index_disease), {
       req(res_auth$user)
       title <- "AtlasView"
