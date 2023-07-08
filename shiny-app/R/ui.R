@@ -45,6 +45,7 @@ get_atlasview_ui <- function() {
    selectizeInput( 'select_index_disease','Index disease', choices = list(), options = list(placeholder = '') ),
   ),
   tabsetPanel(
+    id="panels",
     type = "tabs",
     tabPanel(
       title = "caterpillar",

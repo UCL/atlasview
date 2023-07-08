@@ -98,6 +98,10 @@ atlasviewApp <- function(...) {
     # Generate and display the circos diagram
     output$circosPlot <- svgPanZoom::renderSvgPanZoom({
       req(input$select_index_disease)
+      # the statement below clears the area when the tab loses focus. might be
+      # useful if the delay in updating is too disorienting
+      # idea from https://stackoverflow.com/questions/63135824/is-there-a-way-to-prevent-shiny-from-remembering-the-old-image-when-switching
+      # if (input$panels != "circos") return()
       plot_filename = paste0("plot_", input$select_index_disease, ".svg")
       
       # if we haven't generated the plot already
