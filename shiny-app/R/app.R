@@ -2,30 +2,29 @@ atlasviewApp <- function(...) {
   specialties <- get_specialties()
   
   #read full MM res in vis format
-  MM_res <- data.table::fread(file=get_data_filepath("MM_for_circo_network_vis_25052023.csv"))
+  MM_res <- data.table::fread(file=get_data_filepath("MM_for_circo_network_vis_20230707.csv"))
   MM_res <- MM_res %>% dplyr::filter(speciality_index_dis != 'GMC')
 
   #N of diseases and specialities 
-  n_dis_spe <- data.table::fread(file = get_data_filepath("MM_2_n_Feb03_25052023.csv"))
+  n_dis_spe <- data.table::fread(file = get_data_filepath("MM_2_n_Feb03_20230707.csv"))
   
   # information about index and coocurring diseases
-  index_diseases <- readr::read_csv(get_data_filepath("MM_for_circo_network_vis_29112022.csv"), show_col_types = FALSE) %>% 
-    dplyr::select(phecode_index_dis, phenotype_index_dis) %>% 
+  index_diseases <- readr::read_csv(get_data_filepath("MM_for_circo_network_vis_20230707.csv"), show_col_types = FALSE) %>% 
+    dplyr::select(phecode_index_dis, phenotype_index_dis, speciality_index_dis) %>% 
     dplyr::distinct() %>% 
     dplyr::arrange(phenotype_index_dis) %>%
-    dplyr::mutate(speciality_code="GAST")  # TODO: this data only has GAST diseases
+    dplyr::left_join(y = specialties, by=c("speciality_index_dis" = "speciality")) %>%
+    dplyr::rename("speciality_code" = "code")
   
   # ---- DATA ----
-  MM_for_circo_network_vis_29112022 <- readr::read_csv(get_data_filepath("MM_for_circo_network_vis_29112022.csv"),show_col_types = FALSE  )
-  lkp_unique_spec_circo_plot <- readr::read_csv(get_data_filepath("lkp_unique_spec_circo_plot.csv"), show_col_types = FALSE )
-  lkp_unique_spec_circo_plot_codes <- readr::read_csv(get_data_filepath("lkp_unique_spec_circo_plot_codes.csv"), show_col_types = FALSE)
+  MM_for_circo_network_vis_29112022 <- readr::read_csv(get_data_filepath("MM_for_circo_network_vis_20230707.csv"), show_col_types = FALSE)
   
   # ---- add placeholder N ----
   # dummy df with placeholder of N cases in index disease (nphecode)
   df_dummy_N <- data.frame(index_dis = unique(MM_for_circo_network_vis_29112022$phecode_index_dis),
                            nphecode = ' ')
   
-  df_dummy_N$nphecode <- sample(100:1000, length(df_dummy_N$nphecode))
+  df_dummy_N$nphecode <- sample(100:1000, length(df_dummy_N$nphecode), replace = TRUE)
   
   
   # ---- PLOT ----
@@ -132,8 +131,8 @@ atlasviewApp <- function(...) {
     # CATERPILLAR TAB ##########################################################
 
     observeEvent(list(input$qaselect_speciality, input$select_index_disease), {
-      req(res_auth$user, input$select_speciality, input$select_index_disease)
-      speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
+      req(res_auth$user, input$select_speciality)
+      speciality_label <- specialties$speciality[specialties$code == input$select_speciality]
       cooccurring_diseases <- MM_res %>%
         dplyr::filter(speciality_index_dis == speciality_label, phecode_index_dis == input$select_index_disease) %>%
         dplyr::select(speciality_cooccurring_dis) %>% dplyr::distinct() %>% dplyr::arrange(speciality_cooccurring_dis) %>% dplyr::pull()
@@ -155,7 +154,7 @@ atlasviewApp <- function(...) {
     output$outputCaterpillar <- renderPlot({
       req(res_auth$user)
       if (input$select_speciality != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
-        speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
+        speciality_label <- specialties$speciality[specialties$code == input$select_speciality]
         MM_res_spe <- MM_res  %>% dplyr::filter(speciality_index_dis == speciality_label)
         MM_res_spe_phe <- MM_res_spe %>% dplyr::filter(phecode_index_dis == input$select_index_disease)
         MM_res_spe_phe_selected <- MM_res_spe_phe %>% dplyr::filter(speciality_cooccurring_dis %in% input$filter)
