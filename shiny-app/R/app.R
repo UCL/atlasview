@@ -131,15 +131,6 @@ atlasviewApp <- function(...) {
       shinytitle::change_window_title(session, pageTitle())
     })
     
-    output$indexDiseaseName <- renderText({
-      req(res_auth$user)
-      if (!is.null(input$select_index_disease) & input$select_index_disease != "") {
-        return((index_diseases %>% dplyr::filter(phecode_index_dis == input$select_index_disease) %>% dplyr::select(phenotype_index_dis))[[1,1]])
-      } else {
-        return('')
-      }
-    })
-    
     # show circos plot for the chosen disease
     output$circosPlot <- svgPanZoom::renderSvgPanZoom({
       # if an index disease has been selected

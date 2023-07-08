@@ -58,7 +58,6 @@ get_atlasview_ui <- function() {
       title = "circos",
       value = "circos",
       shinydashboard::box(width=12,
-          title=textOutput(outputId="indexDiseaseName"),
           shinybusy::add_busy_spinner(spin = "fading-circle"),
           svgPanZoom::svgPanZoomOutput(outputId = "circosPlot", width="100%", height="1000px")
       )
