@@ -1,34 +1,23 @@
 atlasviewApp <- function(...) {
   
   #read full MM res in vis format
-  path_file_MM_res <-  get_data_filepath("MM_for_circo_network_vis_25052023.csv")
-  MM_res <- data.table::fread(file=path_file_MM_res)
+  MM_res <- data.table::fread(file=get_data_filepath("MM_for_circo_network_vis_25052023.csv"))
   MM_res <- MM_res %>% dplyr::filter(speciality_index_dis != 'GMC')
 
   #N of diseases and specialities 
-  path_file_M2 <- get_data_filepath("MM_2_n_Feb03_25052023.csv")
-  
-  n_dis_spe <- data.table::fread(file = path_file_M2)
+  n_dis_spe <- data.table::fread(file = get_data_filepath("MM_2_n_Feb03_25052023.csv"))
   
   # information about index and coocurring diseases
-  fpath3 <- get_data_filepath("MM_for_circo_network_vis_29112022.csv")
-  
-  index_diseases <- readr::read_csv(fpath3, show_col_types = FALSE) %>% 
+  index_diseases <- readr::read_csv(get_data_filepath("MM_for_circo_network_vis_29112022.csv"), show_col_types = FALSE) %>% 
     dplyr::select(phecode_index_dis, phenotype_index_dis) %>% 
     dplyr::distinct() %>% 
     dplyr::arrange(phenotype_index_dis) %>%
     dplyr::mutate(speciality_code="GAST")  # TODO: this data only has GAST diseases
-
   
   # ---- DATA ----
-  # (From Ana)
-  fpath1 <- get_data_filepath("MM_for_circo_network_vis_29112022.csv")
-  fpath2 <- get_data_filepath("lkp_unique_spec_circo_plot.csv")
-  fpath3 <- get_data_filepath("lkp_unique_spec_circo_plot_codes.csv")
-  
-  MM_for_circo_network_vis_29112022 <- readr::read_csv(fpath1,show_col_types = FALSE  )
-  lkp_unique_spec_circo_plot <- readr::read_csv(fpath2,show_col_types = FALSE )
-  lkp_unique_spec_circo_plot_codes <- readr::read_csv(fpath3, show_col_types = FALSE)
+  MM_for_circo_network_vis_29112022 <- readr::read_csv(get_data_filepath("MM_for_circo_network_vis_29112022.csv"),show_col_types = FALSE  )
+  lkp_unique_spec_circo_plot <- readr::read_csv(get_data_filepath("lkp_unique_spec_circo_plot.csv"), show_col_types = FALSE )
+  lkp_unique_spec_circo_plot_codes <- readr::read_csv(get_data_filepath("lkp_unique_spec_circo_plot_codes.csv"), show_col_types = FALSE)
   
   # lookup for speciality codes
   spec_codes_merged <- cbind(lkp_unique_spec_circo_plot, lkp_unique_spec_circo_plot_codes)
@@ -63,6 +52,7 @@ atlasviewApp <- function(...) {
     observeEvent(
       res_auth$user,
       {
+        req(res_auth$user)
         user <- reactiveValuesToList(res_auth)
         if (length(user) & length(user$user) & is.null(cookies::get_cookie("JWT"))) {
           # TODO: we need to remove these cookies on visit to the login screen 
@@ -137,7 +127,7 @@ atlasviewApp <- function(...) {
       
       # if we haven't generated the plot already
       if (!file.exists(plot_filename)) {
-        make_plot(get_cooccurring_diseases(MM_processed, input$select_index_disease), to_svg=TRUE)
+        make_plot(MM_processed, spec_codes_merged, get_cooccurring_diseases(MM_processed, input$select_index_disease), to_svg=TRUE)
       }
       
       svgPanZoom::svgPanZoom(readr::read_file(plot_filename), zoomScaleSensitivity=0.2)
