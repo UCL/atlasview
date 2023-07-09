@@ -149,7 +149,7 @@ atlasviewApp <- function(...) {
     })
     
     observeEvent(list(input$select_specialty, input$select_index_disease), {
-      req(res_auth$user, input$select_specialty, input$select_index_disease)
+      req(res_auth$user)
       page_url <- ""
       if (input$select_index_disease != "") {
         specialty_label <- specialties[specialties$code == input$select_specialty, "specialty"]
