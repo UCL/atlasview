@@ -47,48 +47,50 @@ atlasviewApp <- function(...) {
       }
     )
     
-    observeEvent(res_auth$user, {
-      req(res_auth$user)
-      
-      users_specialties <- get_specialties() %>% dplyr::filter(stringr::str_detect(code, res_auth$specialty_codes))
-      
-      updateSelectizeInput(session = getDefaultReactiveDomain(),
-                           inputId = "select_specialty",
-                           choices = split(users_specialties$code, users_specialties$specialty), 
-                           selected = NULL,
-                           options = list(placeholder = 'Please select a specialty', 
-                                          onInitialize = I('function() { this.setValue(""); }'))
-      )
-    })
-    
+    observeEvent(
+      res_auth$user, 
+      {
+        req(res_auth$user)
+        users_specialties <- get_specialties() %>% dplyr::filter(stringr::str_detect(code, res_auth$specialty_codes))
+        updateSelectizeInput(session = getDefaultReactiveDomain(),
+                             inputId = "select_specialty",
+                             choices = split(users_specialties$code, users_specialties$specialty), 
+                             selected = NULL,
+                             options = list(placeholder = 'Please select a specialty', 
+                                            onInitialize = I('function() { this.setValue(""); }')))
+      }
+    )
     
     # When specialty has been selected, update the list of index diseases
-    observeEvent(input$select_specialty, {
-      req(res_auth$user)
-      
-      # get the index diseases for the specialty
-      index_diseases <- index_diseases %>% dplyr::filter(specialty_code == input$select_specialty) %>% dplyr::select(phecode_index_dis, phenotype_index_dis)
-      
-      # if any were found
-      if (nrow(index_diseases) > 0) {
-        # update the index disease select box
-        updateSelectizeInput(session=getDefaultReactiveDomain(),
-                             inputId = "select_index_disease", 
-                             choices = split(index_diseases$phecode_index_dis, index_diseases$phenotype_index_dis), 
-                             selected = NULL, 
-                             options = list(placeholder = 'Please select an index disease', 
-                                            onInitialize = I('function() { this.setValue(""); }'))
-        )
-      } else {
-        # no index diseases found for the specialty - empty the select box
-        updateSelectizeInput(session=getDefaultReactiveDomain(),
-                             input="select_index_disease",
-                             choices=list(),
-                             selected=NULL,
-                             options=list(placeholder=''))
+    observeEvent(
+      input$select_specialty,
+      {
+        req(res_auth$user)
         
+        # Get all index diseases for this specialty
+        index_diseases <- index_diseases %>% 
+          dplyr::filter(specialty_code == input$select_specialty) %>% 
+          dplyr::select(phecode_index_dis, phenotype_index_dis)
+        
+        # If any diseases found
+        if (nrow(index_diseases) > 0) {
+          # Update the select box with diseases
+          choices = split(index_diseases$phecode_index_dis, index_diseases$phenotype_index_dis)
+          options = list(placeholder = 'Please select an index disease',  onInitialize = I('function() { this.setValue(""); }'))
+        } else {
+          # No index diseases found for the specialty - empty the select box
+          choices = list()
+          options = list(placeholder = '')
+        }
+        
+        updateSelectizeInput(
+          session=getDefaultReactiveDomain(), 
+          inputId = "select_index_disease",  
+          choices = choices,
+          selected = NULL,  
+          options = options)
       }
-    })
+    )
     
     # Update the title (used in both page header and window title) when the selection of specialty/disease changes
     pageTitle <- eventReactive(list(input$select_specialty, input$select_index_disease), {
@@ -106,10 +108,12 @@ atlasviewApp <- function(...) {
       title
     })
     
+    # update the page header
     output$pageTitle <- renderText({
       pageTitle()
     })
     
+    # update the window title
     observeEvent(pageTitle(), {
       shinytitle::change_window_title(session, pageTitle())
     })
@@ -162,18 +166,17 @@ atlasviewApp <- function(...) {
     debouncedCaterpillarFilter <- caterpillarFilter %>% debounce(1000)
     
     output$outputCaterpillar <- renderPlot({
-      req(res_auth$user)
-      if (input$select_specialty != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
-        specialty_label <- specialties$specialty[specialties$code == input$select_specialty]
-        MM_res_spe <- MM_res  %>% dplyr::filter(specialty_index_dis == specialty_label)
-        MM_res_spe_phe <- MM_res_spe %>% dplyr::filter(phecode_index_dis == input$select_index_disease)
-        MM_res_spe_phe_selected <- MM_res_spe_phe %>% dplyr::filter(specialty_cooccurring_dis %in% debouncedCaterpillarFilter())
-        if (nrow(MM_res_spe_phe_selected) > 0) {
-          caterpillar_prev_ratio_v5_view(MM_res_spe_phe_selected,  n_dis_spe,  spe_index_dis=input$specialty, specialty_colours)
-        }
+      req(res_auth$user, input$select_specialty, input$select_index_disease)
+      MM_res_spe_phe_selected <- MM_res %>% 
+        dplyr::filter(specialty_code == input$select_specialty) %>% 
+        dplyr::filter(phecode_index_dis == input$select_index_disease) %>% 
+        dplyr::filter(specialty_cooccurring_dis %in% debouncedCaterpillarFilter())
+      
+      if (nrow(MM_res_spe_phe_selected) > 0) {
+        caterpillar_prev_ratio_v5_view(MM_res_spe_phe_selected,  n_dis_spe,  spe_index_dis=input$specialty, specialty_colours)
       }
     },
-    width=1000, height=900)
+    width=1000, height=900)  # TODO: make height dynamic, based on number of rows returned
   }
   
   shinyApp(
