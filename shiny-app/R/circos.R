@@ -16,7 +16,7 @@ get_cooccurring_diseases <- function(all_diseases, phecode_index_dis) {
 
 
 # plot figure for a given disease
-make_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_filepath=NULL) {
+make_circos_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_filepath=NULL) {
   # prepare the sectors
   spec_codes_merged_sectors <- spec_codes_merged
   spec_codes_merged_sectors$xlim1 <- 0

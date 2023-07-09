@@ -11,13 +11,6 @@ get_data_filepath <- function(filename) {
   paste(get_data_root(), "/", filename, sep='')
 }
 
-#' Load the list of specialties, with their code
-#' @NoRd
-get_specialties <- function() {
-  specialties <- readr::read_csv(get_data_filepath("specialties.csv"), show_col_types = FALSE)
-  specialties[order(specialties$code), ]
-}
-
 #' load the credentials for users for the app
 get_credentials <- function() {
   credentials <- read.csv(file=get_data_filepath("users.csv"), stringsAsFactors = FALSE)
