@@ -1,15 +1,21 @@
 FROM rocker/shiny-verse:4
 
+ENV DEBIAN_FRONTEND noninteractive
+
+# https://askubuntu.com/a/25614
+RUN apt update
+RUN echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections
+RUN apt install -y --no-install-recommends fontconfig ttf-mscorefonts-installer
+RUN fc-cache -f -v
+
 # should already be installed in base image
 RUN install2.r --error --skipinstalled --ncpus 1 \
     data.table devtools dplyr ggplot2 grid RColorBrewer Rcpp readr scales shiny stringr survival tibble tidyr
 
 # additional packages needed for atlasview app
 RUN install2.r --error --skipinstalled --ncpus 1 \ 
-    circlize cookies ggiraph gridExtra hablar Hmisc jose patchwork png recogito rms shinybusy shinydashboard shinyjs shinymanager svgPanZoom svglite
+    circlize cookies ggiraph gridExtra hablar Hmisc jose patchwork png recogito rms shinybusy shinydashboard shinyjs shinymanager shinytitle svgPanZoom svglite
 
-RUN install2.r --error --skipinstalled --ncpus 1 \
-    shinytitle
 
 # install the atlasview shiny app
 RUN mkdir /build_zone
