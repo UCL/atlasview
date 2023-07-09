@@ -35,7 +35,7 @@ atlasviewApp <- function(...) {
       {
         req(res_auth$user)
         user <- reactiveValuesToList(res_auth)
-        if (length(user) & length(user$user) & is.null(cookies::get_cookie("JWT"))) {
+        if (is.null(cookies::get_cookie("JWT"))) {
           # TODO: we need to remove these cookies on visit to the login screen 
           # (when running shiny app in rstudio - already works when deployed to prod)
           jwt <- make_jwt(user$user)
@@ -85,7 +85,7 @@ atlasviewApp <- function(...) {
         title <- paste0(title, ": ", speciality_label)
         
         if (!is.null(input$select_index_disease) & input$select_index_disease != "") {
-          index_disease_label <- index_diseases[index_diseases$phecode_index_dis == input$select_index_disease, "phenotype_index_dis"]
+          index_disease_label <- index_diseases$phenotype_index_dis[index_diseases$phecode_index_dis == input$select_index_disease]
           title <- paste0(title, " → ", index_disease_label)
         }
       }
@@ -107,12 +107,12 @@ atlasviewApp <- function(...) {
       # useful if the delay in updating is too disorienting
       # idea from https://stackoverflow.com/questions/63135824/is-there-a-way-to-prevent-shiny-from-remembering-the-old-image-when-switching
       # if (input$panels != "circos") return()
-      plot_filename = paste0("plot_", input$select_index_disease, ".svg")
+      plot_filename = get_data_filepath(paste0("circos-cache/plot_", input$select_index_disease, ".svg"))
       
       # if we haven't generated the plot already
       if (!file.exists(plot_filename)) {
         patient_count <- n_dis_spe$n_indiv_index_dis_m_r[n_dis_spe$index_dis == input$select_index_disease]
-        make_plot(specialties, get_cooccurring_diseases(MM_res, input$select_index_disease), patient_count, to_svg=TRUE)
+        make_plot(specialties, get_cooccurring_diseases(MM_res, input$select_index_disease), patient_count, svg_filepath=plot_filename)
       }
       
       svgPanZoom::svgPanZoom(readr::read_file(plot_filename), zoomScaleSensitivity=0.2)

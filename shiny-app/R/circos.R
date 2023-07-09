@@ -16,15 +16,15 @@ get_cooccurring_diseases <- function(all_diseases, phecode_index_dis) {
 
 
 # plot figure for a given disease
-make_plot <- function(spec_codes_merged, selected_disease, patient_count, to_svg=FALSE) {
+make_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_filepath=NULL) {
   # prepare the sectors
   spec_codes_merged_sectors <- spec_codes_merged
   spec_codes_merged_sectors$xlim1 <- 0
   spec_codes_merged_sectors$xlim2 <- cooccurring_diseases_per_speciality
   spec_codes_merged_sectors <- rbind(spec_codes_merged_sectors, c('_LABELS_', ' ', ' ', 0, 5))
   
-  if (to_svg) {
-    svglite::svglite(paste0('plot_', selected_disease$phecode_index_dis[1], '.svg'), width = 15, height = 15)
+  if (!is.null(svg_filepath)) {
+    svglite::svglite(svg_filepath, width = 15, height = 15)
   }
   
   circos.clear()
@@ -173,7 +173,7 @@ make_plot <- function(spec_codes_merged, selected_disease, patient_count, to_svg
   # to save to file:
   # dev.print(pdf, paste0('plot_', selected_disease$phecode_index_dis[1], '.pdf'), width=15, height=15)
   
-  if (to_svg) {
+  if (!is.null(svg_filepath)) {
     dev.off()
   }
 
