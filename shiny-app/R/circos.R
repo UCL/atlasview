@@ -1,6 +1,6 @@
 # ---- GLOBALS ----
 
-cooccurring_diseases_per_speciality <- 5
+cooccurring_diseases_per_specialty <- 5
 
 cooccurring_diseases_sector_bg_col <- "#ECECEC"
 sector_grid_lines_col <- "#BFBFBF"
@@ -20,7 +20,7 @@ make_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_fi
   # prepare the sectors
   spec_codes_merged_sectors <- spec_codes_merged
   spec_codes_merged_sectors$xlim1 <- 0
-  spec_codes_merged_sectors$xlim2 <- cooccurring_diseases_per_speciality
+  spec_codes_merged_sectors$xlim2 <- cooccurring_diseases_per_specialty
   spec_codes_merged_sectors <- rbind(spec_codes_merged_sectors, c('_LABELS_', ' ', ' ', 0, 5))
   
   if (!is.null(svg_filepath)) {
@@ -29,17 +29,17 @@ make_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_fi
   
   circos.clear()
   circos.par(track.height=0.25, start.degree=(90-4.5), gap.after=0.2, cell.padding=c(0,0))
-  circos.initialize(spec_codes_merged_sectors$code, xlim = c(0, cooccurring_diseases_per_speciality))
+  circos.initialize(spec_codes_merged_sectors$code, xlim = c(0, cooccurring_diseases_per_specialty))
   
   # track for the long-names of co-occurring disease
   circos.track(ylim=c(0,1), bg.border=NA, track.height=.28, track.margin=c(.01,0), 
                panel.fun=function(x,y) {
-                 # does this speciality sector have any co-occurring diseases?
+                 # does this specialty sector have any co-occurring diseases?
                  matches <- selected_disease[selected_disease$cooccurring_specialty_code == CELL_META$sector.index, ]
                  if (nrow(matches) > 0) {
-                   matches <- head(matches, cooccurring_diseases_per_speciality)
+                   matches <- head(matches, cooccurring_diseases_per_specialty)
                    circos.text(
-                     x=(1:cooccurring_diseases_per_speciality - 0.5)[0:nrow(matches)], 
+                     x=(1:cooccurring_diseases_per_specialty - 0.5)[0:nrow(matches)], 
                      y=0,
                      labels=matches$phenotype_cooccurring_dis, 
                      facing="clockwise", niceFacing=T, cex=0.65, adj=c(0, .5))
@@ -47,15 +47,15 @@ make_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_fi
                }
   )
   
-  # track for short-names of speciality for each sector
+  # track for short-names of specialty for each sector
   circos.track(ylim=c(0, 0.1), track.height=0.05, bg.border=NA, track.margin=c(.01, 0), 
                panel.fun=function(x,y) {
-                 # if we have co-occurring diseases for this speciality
+                 # if we have co-occurring diseases for this specialty
                  if (CELL_META$sector.index %in% selected_disease$cooccurring_specialty_code) {
                    textcolor <- 'black'
                      
                    matches <- selected_disease[selected_disease$cooccurring_specialty_code == CELL_META$sector.index, ]
-                   matches <- head(matches, cooccurring_diseases_per_speciality)
+                   matches <- head(matches, cooccurring_diseases_per_specialty)
                    for (i in 1:nrow(matches)) {
                      circos.segments((1:nrow(matches)) - 0.5, -0.05, (1:nrow(matches)) - 0.5, 0.11)
                    }
@@ -67,7 +67,7 @@ make_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_fi
                      col = spec_codes_merged$color[spec_codes_merged$code == CELL_META$sector.index], border=NA
                      )
                  } else {
-                   # otherwise, no diseases for this speciality
+                   # otherwise, no diseases for this specialty
                    textcolor <- 'darkgray'
                  }
                  
@@ -90,9 +90,9 @@ make_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_fi
                                CELL_META$cell.xlim[2], CELL_META$cell.ylim[2], 
                                col = cooccurring_diseases_sector_bg_col, border = NA)
                    for (r in head(prevalence_ratio_breaks,-1)) {
-                     circos.segments(0, r, cooccurring_diseases_per_speciality, r, col=sector_grid_lines_col)
+                     circos.segments(0, r, cooccurring_diseases_per_specialty, r, col=sector_grid_lines_col)
                    }
-                   matches <- head(matches, cooccurring_diseases_per_speciality)
+                   matches <- head(matches, cooccurring_diseases_per_specialty)
                    value <- log(matches$prev_ratio)
                    # circos.barplot doesn't plot on log-scale. draw rectangles instead
                    xstart = 0
@@ -107,7 +107,7 @@ make_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_fi
                      circos.segments(xstart + 0.5, v, xstart + 0.5, log(10000), straight=TRUE, lwd=1, lty='dashed', col=sector_grid_lines_col)
                      if (truncate) {
                        circos.text(xstart + 0.5, v, "=", facing='clockwise', niceFacing=TRUE)  # can't plot unicode characters...?
-                       # circos.triangle(x1=xstart, y1=log(1000), x2=xstart+1, y2=log(1000), x3=xstart+0.5, y3=log(2000), border=speciality_colours[ CELL_META$sector.numeric.index], col=speciality_colours[ CELL_META$sector.numeric.index])
+                       # circos.triangle(x1=xstart, y1=log(1000), x2=xstart+1, y2=log(1000), x3=xstart+0.5, y3=log(2000), border=specialty_colours[ CELL_META$sector.numeric.index], col=specialty_colours[ CELL_META$sector.numeric.index])
                      }
                      if (truncate) {
                       circos.text(xstart + 0.5, v + 0.3, round(exp(original_v), 1), facing = 'clockwise', niceFacing = TRUE, adj=c(0, 0.5), cex=0.5)
@@ -118,10 +118,10 @@ make_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_fi
                      xstart = xstart + 1
                    }
                    # note: value+log(3) is padding to place the values at top of rectangle
-                   # circos.text((1:cooccurring_diseases_per_speciality - 0.5)[0:nrow(matches)], value + log(3), round(exp(value), 2), facing = 'clockwise', niceFacing = TRUE, cex=0.6)
+                   # circos.text((1:cooccurring_diseases_per_specialty - 0.5)[0:nrow(matches)], value + log(3), round(exp(value), 2), facing = 'clockwise', niceFacing = TRUE, cex=0.6)
                  } else {
                    for (r in head(prevalence_ratio_breaks,-1)) {
-                     circos.segments(0, r, cooccurring_diseases_per_speciality, r, col=sector_grid_lines_col)
+                     circos.segments(0, r, cooccurring_diseases_per_specialty, r, col=sector_grid_lines_col)
                    }
                  }
                }
@@ -131,19 +131,19 @@ make_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_fi
   prevalence_breaks = log(c(1, 5, 10, 50, 100))
   circos.track(ylim = c(log(100), log(1)), bg.col=NA, bg.border=NA, track.margin=c(0, 0),
                panel.fun = function(x, y) {
-                 # does this speciality sector have any co-occurring diseases?
+                 # does this specialty sector have any co-occurring diseases?
                  matches <- selected_disease[selected_disease$cooccurring_specialty_code == CELL_META$sector.index, ]
                  if (nrow(matches) > 0) {
                    circos.rect(CELL_META$cell.xlim[1], CELL_META$cell.ylim[1],
                                CELL_META$cell.xlim[2], CELL_META$cell.ylim[2], 
                                col = cooccurring_diseases_sector_bg_col, border = NA)
                    for (r in prevalence_breaks) {
-                     circos.segments(0, r, cooccurring_diseases_per_speciality, r, col=sector_grid_lines_col)
+                     circos.segments(0, r, cooccurring_diseases_per_specialty, r, col=sector_grid_lines_col)
                    }                 
                    sectorcolor <- spec_codes_merged$color[spec_codes_merged$code == CELL_META$sector.index]
                    # make transparent
                    sectorcolor <- adjustcolor(sectorcolor, alpha.f = 0.2)
-                   matches <- head(matches, cooccurring_diseases_per_speciality)
+                   matches <- head(matches, cooccurring_diseases_per_specialty)
                    value <- log(matches$prevalence)
                    xstart = 0
                    for (v in value) {
@@ -152,7 +152,7 @@ make_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_fi
                    }
                  } else {
                    for (r in prevalence_breaks) {
-                     circos.segments(0, r, cooccurring_diseases_per_speciality, r, col=sector_grid_lines_col)
+                     circos.segments(0, r, cooccurring_diseases_per_specialty, r, col=sector_grid_lines_col)
                    }                 
                  }
 

@@ -2,15 +2,15 @@ atlasviewApp <- function(...) {
   
   specialties <- get_specialties()
   
-  speciality_colours <- read.csv(get_data_filepath("lkp_spe_col.csv"), header = TRUE)
-  specialties <- specialties %>% dplyr::left_join(y = speciality_colours, by="speciality")   # for circos plots
-  speciality_colours <- setNames(as.character(speciality_colours$color), speciality_colours$speciality)  # for caterpillar plots
+  specialty_colours <- read.csv(get_data_filepath("lkp_spe_col.csv"), header = TRUE)
+  specialties <- specialties %>% dplyr::left_join(y = specialty_colours, by="specialty")   # for circos plots
+  specialty_colours <- setNames(as.character(specialty_colours$color), specialty_colours$specialty)  # for caterpillar plots
   
   #read full MM res in vis format
   MM_res <- data.table::fread(file=get_data_filepath("MM_for_circo_network_vis_20230707.csv")) %>% 
-    dplyr::left_join(y = specialties, by=c("speciality_index_dis" = "speciality")) %>%
-    dplyr::rename("speciality_code" = "code") %>%
-    dplyr::left_join(y = specialties, by=c("speciality_cooccurring_dis" = "speciality")) %>%
+    dplyr::left_join(y = specialties, by=c("specialty_index_dis" = "specialty")) %>%
+    dplyr::rename("specialty_code" = "code") %>%
+    dplyr::left_join(y = specialties, by=c("specialty_cooccurring_dis" = "specialty")) %>%
     dplyr::rename("cooccurring_specialty_code" = "code")
   
   #N of diseases and specialities 
@@ -18,7 +18,7 @@ atlasviewApp <- function(...) {
   
   # information about index and coocurring diseases
   index_diseases <- MM_res %>% 
-    dplyr::select(phecode_index_dis, phenotype_index_dis, speciality_index_dis, speciality_code) %>% 
+    dplyr::select(phecode_index_dis, phenotype_index_dis, specialty_index_dis, specialty_code) %>% 
     dplyr::distinct() %>% 
     dplyr::arrange(phenotype_index_dis)
   
@@ -53,21 +53,21 @@ atlasviewApp <- function(...) {
       users_specialties <- get_specialties() %>% dplyr::filter(stringr::str_detect(code, res_auth$specialty_codes))
       
       updateSelectizeInput(session = getDefaultReactiveDomain(),
-                           inputId = "select_speciality",
-                           choices = split(users_specialties$code, users_specialties$speciality), 
+                           inputId = "select_specialty",
+                           choices = split(users_specialties$code, users_specialties$specialty), 
                            selected = NULL,
-                           options = list(placeholder = 'Please select a speciality', 
+                           options = list(placeholder = 'Please select a specialty', 
                                           onInitialize = I('function() { this.setValue(""); }'))
       )
     })
     
     
-    # When speciality has been selected, update the list of index diseases
-    observeEvent(input$select_speciality, {
+    # When specialty has been selected, update the list of index diseases
+    observeEvent(input$select_specialty, {
       req(res_auth$user)
       
-      # get the index diseases for the speciality
-      index_diseases <- index_diseases %>% dplyr::filter(speciality_code == input$select_speciality) %>% dplyr::select(phecode_index_dis, phenotype_index_dis)
+      # get the index diseases for the specialty
+      index_diseases <- index_diseases %>% dplyr::filter(specialty_code == input$select_specialty) %>% dplyr::select(phecode_index_dis, phenotype_index_dis)
       
       # if any were found
       if (nrow(index_diseases) > 0) {
@@ -80,7 +80,7 @@ atlasviewApp <- function(...) {
                                             onInitialize = I('function() { this.setValue(""); }'))
         )
       } else {
-        # no index diseases found for the speciality - empty the select box
+        # no index diseases found for the specialty - empty the select box
         updateSelectizeInput(session=getDefaultReactiveDomain(),
                              input="select_index_disease",
                              choices=list(),
@@ -91,12 +91,12 @@ atlasviewApp <- function(...) {
     })
     
     # Update the title (used in both page header and window title) when the selection of specialty/disease changes
-    pageTitle <- eventReactive(list(input$select_speciality, input$select_index_disease), {
+    pageTitle <- eventReactive(list(input$select_specialty, input$select_index_disease), {
       req(res_auth$user)
       title <- "AtlasView"
-      if (input$select_speciality != "") {
-        speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
-        title <- paste0(title, ": ", speciality_label)
+      if (input$select_specialty != "") {
+        specialty_label <- specialties[specialties$code == input$select_specialty, "specialty"]
+        title <- paste0(title, ": ", specialty_label)
         
         if (!is.null(input$select_index_disease) & input$select_index_disease != "") {
           index_disease_label <- index_diseases$phenotype_index_dis[index_diseases$phecode_index_dis == input$select_index_disease]
@@ -134,23 +134,23 @@ atlasviewApp <- function(...) {
     
     # CATERPILLAR TAB ##########################################################
 
-    observeEvent(list(input$qaselect_speciality, input$select_index_disease), {
-      req(res_auth$user, input$select_speciality)
-      speciality_label <- specialties$speciality[specialties$code == input$select_speciality]
+    observeEvent(list(input$qaselect_specialty, input$select_index_disease), {
+      req(res_auth$user, input$select_specialty)
+      specialty_label <- specialties$specialty[specialties$code == input$select_specialty]
       cooccurring_diseases <- MM_res %>%
-        dplyr::filter(speciality_index_dis == speciality_label, phecode_index_dis == input$select_index_disease) %>%
-        dplyr::select(speciality_cooccurring_dis) %>% dplyr::distinct() %>% dplyr::arrange(speciality_cooccurring_dis) %>% dplyr::pull()
+        dplyr::filter(specialty_index_dis == specialty_label, phecode_index_dis == input$select_index_disease) %>%
+        dplyr::select(specialty_cooccurring_dis) %>% dplyr::distinct() %>% dplyr::arrange(specialty_cooccurring_dis) %>% dplyr::pull()
       
       updateSelectInput(session, 'filter', choices = cooccurring_diseases, selected = cooccurring_diseases)
     })
     
-    observeEvent(list(input$select_speciality, input$select_index_disease), {
-      req(res_auth$user, input$select_speciality, input$select_index_disease)
+    observeEvent(list(input$select_specialty, input$select_index_disease), {
+      req(res_auth$user, input$select_specialty, input$select_index_disease)
       page_url <- ""
       if (input$select_index_disease != "") {
-        speciality_label <- specialties[specialties$code == input$select_speciality, "speciality"]
+        specialty_label <- specialties[specialties$code == input$select_specialty, "specialty"]
         index_disease_label <- index_diseases[index_diseases$phecode_index_dis == input$select_index_disease, "phenotype_index_dis"]
-        page_url <- paste0(input$select_speciality, input$select_index_disease)
+        page_url <- paste0(input$select_specialty, input$select_index_disease)
       }
       shinyjs::js$updateRemark(page_url)
     })
@@ -163,13 +163,13 @@ atlasviewApp <- function(...) {
     
     output$outputCaterpillar <- renderPlot({
       req(res_auth$user)
-      if (input$select_speciality != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
-        speciality_label <- specialties$speciality[specialties$code == input$select_speciality]
-        MM_res_spe <- MM_res  %>% dplyr::filter(speciality_index_dis == speciality_label)
+      if (input$select_specialty != "" & !is.null(input$select_index_disease) & input$select_index_disease != "") {
+        specialty_label <- specialties$specialty[specialties$code == input$select_specialty]
+        MM_res_spe <- MM_res  %>% dplyr::filter(specialty_index_dis == specialty_label)
         MM_res_spe_phe <- MM_res_spe %>% dplyr::filter(phecode_index_dis == input$select_index_disease)
-        MM_res_spe_phe_selected <- MM_res_spe_phe %>% dplyr::filter(speciality_cooccurring_dis %in% debouncedCaterpillarFilter())
+        MM_res_spe_phe_selected <- MM_res_spe_phe %>% dplyr::filter(specialty_cooccurring_dis %in% debouncedCaterpillarFilter())
         if (nrow(MM_res_spe_phe_selected) > 0) {
-          caterpillar_prev_ratio_v5_view(MM_res_spe_phe_selected,  n_dis_spe,  spe_index_dis=input$specialty, speciality_colours)
+          caterpillar_prev_ratio_v5_view(MM_res_spe_phe_selected,  n_dis_spe,  spe_index_dis=input$specialty, specialty_colours)
         }
       }
     },

@@ -2,15 +2,15 @@
 
 #df_prev: df with prev and prev_ratio for one index_disease 
 #df_n: df_results median n diseases 
-#spe_index_dis: speciality of index disease 
+#spe_index_dis: specialty of index disease 
 caterpillar_prev_ratio_v5_view <- function(df_prev, 
                                       df_n, 
                                       spe_index_dis, 
-                                      speciality_colours,
+                                      specialty_colours,
                                       blank_plot= FALSE){
   
 
-  colScale <- scale_color_manual(values=speciality_colours)
+  colScale <- scale_color_manual(values=specialty_colours)
   
   #params plots margins 
   t <- 1.5
@@ -68,7 +68,7 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
   #prevalence of co-occ disease in index disease
   p1 <- ggplot(df_prev,
                aes(y=prevalence,
-                   fill=as.factor(speciality_cooccurring_dis),
+                   fill=as.factor(specialty_cooccurring_dis),
                    x=as.factor(id)))+
     geom_bar(stat="identity",width=0.5)+
     coord_flip(ylim = c(0,100)) +
@@ -85,14 +85,14 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
           plot.title = element_text(size= 20, hjust = 1))+
     ylab("Prevalence (%)") +
     scale_x_discrete(labels=df_prev$phenotype_cooccurring_dis[nrow(df_prev):1]) +
-    scale_fill_manual(values=speciality_colours) +
+    scale_fill_manual(values=specialty_colours) +
     theme(legend.position="none")
 
 #prev ratio
 p3 <-  ggplot(df_prev,
               aes(x=prev_ratio,
                   xmin=ci_left_prev_ratio,xmax=ci_right_prev_ratio,
-                  col=as.factor(speciality_cooccurring_dis),y=as.factor(id)))+
+                  col=as.factor(specialty_cooccurring_dis),y=as.factor(id)))+
   geom_errorbarh(height=0)+
   geom_point(shape=15, size = 2)+ 
   geom_vline(xintercept = 1, linetype="dashed", color = "black", linewidth=0.75) +

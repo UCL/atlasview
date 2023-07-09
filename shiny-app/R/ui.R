@@ -36,8 +36,8 @@ get_atlasview_ui <- function() {
   shinytitle::use_shiny_title(),
   titlePanel(textOutput("pageTitle")),
   wellPanel(
-    selectizeInput('select_speciality', 
-                   'Speciality', 
+    selectizeInput('select_specialty', 
+                   'Specialty', 
                    choices = list(), 
                    options = list(placeholder = '')), 
    selectizeInput( 'select_index_disease','Index disease', choices = list(), options = list(placeholder = '') ),
