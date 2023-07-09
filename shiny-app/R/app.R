@@ -47,6 +47,20 @@ atlasviewApp <- function(...) {
       }
     )
     
+    observeEvent(res_auth$user, {
+      req(res_auth$user)
+      
+      users_specialties <- get_specialties() %>% dplyr::filter(stringr::str_detect(code, res_auth$specialty_codes))
+      
+      updateSelectizeInput(session = getDefaultReactiveDomain(),
+                           inputId = "select_speciality",
+                           choices = split(users_specialties$code, users_specialties$speciality), 
+                           selected = NULL,
+                           options = list(placeholder = 'Please select a speciality', 
+                                          onInitialize = I('function() { this.setValue(""); }'))
+      )
+    })
+    
     
     # When speciality has been selected, update the list of index diseases
     observeEvent(input$select_speciality, {

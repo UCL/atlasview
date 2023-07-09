@@ -38,10 +38,8 @@ get_atlasview_ui <- function() {
   wellPanel(
     selectizeInput('select_speciality', 
                    'Speciality', 
-                   choices = split(get_specialties()$code, get_specialties()$speciality), 
-                   options = list(placeholder = 'Please select a speciality', 
-                                  onInitialize = I('function() { this.setValue(""); }'))
-    ), 
+                   choices = list(), 
+                   options = list(placeholder = '')), 
    selectizeInput( 'select_index_disease','Index disease', choices = list(), options = list(placeholder = '') ),
   ),
   tabsetPanel(
