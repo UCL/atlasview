@@ -50,7 +50,9 @@ services:
     environment:
       - SITE_ADDRESS=${SITE_ADDRESS}
     volumes:
-      - ./caddyserver:/etc/caddy
+      - ./caddyserver/Caddyfile:/etc/caddy/Caddyfile
+      - ../atlasview-data/caddy/data:/data
+      - ../atlasview-data/caddy/config:/config
     depends_on:
       - shiny
       - remark
