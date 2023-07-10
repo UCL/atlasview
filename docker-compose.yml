@@ -1,10 +1,20 @@
+# Run the application using:
+# REMARK_SECRET=<remark secret key> SITE_ADDRESS=<DNS name of host> docker compose up -d
+
 networks:
   caddy:
+
+# There are three services running: the Remark commenting engine, R Shiny server and Caddy server tying them together
+# All services assume the AtlasView data directory lives at `../atlasview-data/`. Change if this is not the case.
 services:
   remark:
+    # We're building Remark from out own copy of the source code, 
+    # rather than the available pre-built image. This is because we patch the 
+    # source code to remove the ability to logout.
     build:
       context: ./remark42/remark42
       args:
+        # We don't run tests to reduce build time
         SKIP_FRONTEND_TEST: "true"
         SKIP_BACKEND_TEST: "true"
     image: atlasview/remark42:latest
@@ -17,7 +27,7 @@ services:
     expose:
       - "8080"
     environment:
-      - REMARK_URL=https://localhost/remark
+      - REMARK_URL=https://${SITE_ADDRESS}/remark
       - SECRET=${REMARK_SECRET}
       - DEBUG=false
       - AUTH_ANON=true
