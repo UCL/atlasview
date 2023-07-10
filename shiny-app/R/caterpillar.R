@@ -48,7 +48,8 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
   if (blank_plot == TRUE){
     plot_title_str <- ''
   }else{
-    plot_title_str <- paste("Index: ", phenotype, "\n",
+    phenotype_title <- stringr::str_wrap(phenotype, width=80)
+    plot_title_str <- paste("Index: ", phenotype_title, "\n",
                             "N = ", n_cases_index_dis,
                             ", Median N Dis = ", median_n_dis,
                             " , Median N Spec = ", median_n_spe, sep = '')
@@ -84,7 +85,7 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
           axis.title.x = element_text(size=15),
           plot.title = element_text(size= 20, hjust = 1))+
     ylab("Prevalence (%)") +
-    scale_x_discrete(labels=df_prev$phenotype_cooccurring_dis[nrow(df_prev):1]) +
+    scale_x_discrete(labels=stringr::str_trunc(df_prev$phenotype_cooccurring_dis[nrow(df_prev):1], 50)) +
     scale_fill_manual(values=specialty_colours) +
     theme(legend.position="none")
 
