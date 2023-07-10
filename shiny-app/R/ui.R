@@ -1,35 +1,37 @@
-jsCode <- "
-  shinyjs.updateRemark = function(params) {
-    if (typeof window.REMARK42.destroy == 'function') {
-      window.REMARK42.destroy();
-    }
-    
-    if (params[0] != '') {
-      remark_config['url'] = params[0]; 
-      reload_js('/remark/web/embed.js'); 
-      console.log(remark_config);
-    }
-  }
-"
+
 
 get_atlasview_ui <- function() {
-  cookies::add_cookie_handlers(fluidPage(
-  shinyjs::useShinyjs(),
-  tags$head(tags$script(HTML("
+  jsCode <- "
+    shinyjs.updateRemark = function(params) {
+      if (typeof window.REMARK42.destroy == 'function') {
+        window.REMARK42.destroy();
+      }
+      
+      if (params[0] != '') {
+        remark_config['url'] = params[0]; 
+        reload_js('/remark/web/embed.js'); 
+        console.log(remark_config);
+      }
+    }"
+  
+  remarkConfig <- "
       function reload_js(src) {
         $('script[src=\"' + src + '\"]').remove();
         $('<script>').attr('src', src).appendTo('head');
       }
 
-  var remark_config = {
-          host: location.protocol + '//' + location.host + '/remark',
-          site_id: 'atlasview',
-          url: 'testing',
-          simple_view: false,
-          show_email_subscription: false,
-          show_rss_subscription: false,
-  }"
-  ))),
+      var remark_config = {
+        host: location.protocol + '//' + location.host + '/remark',
+        site_id: 'atlasview',
+        url: 'testing',
+        simple_view: false,
+        show_email_subscription: false,
+        show_rss_subscription: false
+      }"
+  
+  cookies::add_cookie_handlers(fluidPage(
+  shinyjs::useShinyjs(),
+  tags$head(tags$script(HTML(remarkConfig))),
   tags$head(tags$script(src = "/remark/web/embed.js")),
   shinyjs::extendShinyjs(text = jsCode, functions = c("updateRemark")),
   title = "AtlasView",
@@ -42,6 +44,7 @@ get_atlasview_ui <- function() {
                    options = list(placeholder = '')), 
    selectizeInput( 'select_index_disease','Index disease', choices = list(), options = list(placeholder = '') ),
   ),
+  conditionalPanel("output.nrows", 
   tabsetPanel(
     id="panels",
     type = "tabs",
@@ -52,7 +55,8 @@ get_atlasview_ui <- function() {
         selectInput('filter', 'Filter', choices = c(), multiple=TRUE),
       ),
       plotOutput(
-        outputId = "outputCaterpillar"
+        outputId = "outputCaterpillar",
+        width="100%"
       )
     ),
     tabPanel(
@@ -70,7 +74,7 @@ get_atlasview_ui <- function() {
     fluidRow(column(12,  HTML('<div id="remark42"></div>')))
     ) 
     )
-  ),
+  )),
 ))
 }
 

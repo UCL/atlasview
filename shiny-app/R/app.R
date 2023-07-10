@@ -96,6 +96,13 @@ atlasviewApp <- function(...) {
       }
     )
     
+    output$nrows <- reactive({
+      req(input$select_index_disease)
+      TRUE
+    })
+    
+    outputOptions(output, "nrows", suspendWhenHidden = FALSE) 
+    
     # Update the page title (used in both header and window title) when the selection of specialty/disease changes
     pageTitle <- eventReactive(
       list(input$select_specialty, input$select_index_disease), 
@@ -164,7 +171,7 @@ atlasviewApp <- function(...) {
         caterpillar_prev_ratio_v5_view(MM_res_spe_phe_selected,  n_dis_spe,  spe_index_dis=input$specialty, specialty_colours)
       }
     },
-    width=1000, height=900)  # TODO: make height dynamic, based on number of rows returned
+    height=900)  # TODO: make height dynamic, based on number of rows returned
     
     # CIRCOS TAB ##############################################################
     
