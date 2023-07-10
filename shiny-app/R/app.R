@@ -9,14 +9,14 @@ atlasviewApp <- function(...) {
   specialty_colours <- setNames(as.character(specialty_colours$color), specialty_colours$specialty)  # for caterpillar plots
   
   #read full MM res in vis format
-  MM_res <- data.table::fread(file=get_data_filepath("MM_for_circo_network_vis_20230707.csv")) %>% 
+  MM_res <- data.table::fread(file=get_data_filepath("MM_for_circo_network_vis.csv")) %>% 
     dplyr::left_join(y = specialties, by=c("specialty_index_dis" = "specialty")) %>%
     dplyr::rename("specialty_code" = "code") %>%
     dplyr::left_join(y = specialties, by=c("specialty_cooccurring_dis" = "specialty")) %>%
     dplyr::rename("cooccurring_specialty_code" = "code")
   
   # N of diseases and specialties 
-  n_dis_spe <- data.table::fread(file = get_data_filepath("MM_2_n_Feb03_20230707.csv"))
+  n_dis_spe <- data.table::fread(file = get_data_filepath("MM_2_n.csv"))
   
   # information about index and co-occurring diseases
   index_diseases <- MM_res %>% 
