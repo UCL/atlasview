@@ -3,7 +3,7 @@
 library(magrittr)
 
 # Filepaths to real data files
-MM_for_circos_network_filepath = '../../atlasview-data/MM_for_circo_network_vis_20230707.csv.bak'
+MM_for_circos_network_filepath = '../../atlasview-data/MM_for_circo_network_vis.csv'
 MM_2_n_filepath = '../../atlasview-data/MM_2_n.csv'
 
 
