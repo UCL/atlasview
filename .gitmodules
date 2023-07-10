@@ -1,0 +1,3 @@
+[submodule "remark42"]
+	path = remark42/remark42
+	url = https://github.com/umputun/remark42

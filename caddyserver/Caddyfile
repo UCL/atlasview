@@ -1,0 +1,15 @@
+{$SITE_ADDRESS} {
+
+    handle_path /remark/* {
+        # block logging in/out from the outside
+        abort /logout
+        abort /auth/anonymous
+        reverse_proxy remark:8080
+    }
+
+    handle {
+        reverse_proxy shiny:3838
+    }
+    
+}
+
