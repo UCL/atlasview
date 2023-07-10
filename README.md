@@ -23,7 +23,7 @@ First, clone the repository and make a local copy of the data directory
 
 ```
 git clone git@github.com:UCL/atlasview.git
-cp atlasview/atlasview-data .
+cp atlasview/deployment/atlasview-data .
 ```
 
 The Remark commenting engine is a submodule in the repository. We download the source code and patch it, ready for Docker Compose to build. Our patches remove the logout links, because the R Shiny app handles credentials and login/logout.
@@ -37,26 +37,18 @@ cd remark42/remark42
 git apply ../*.patch
 ```
 
-Two environment variables need to be present to run the application:
+Two environment variables need to be set to run the application:
 
 1. `REMARK_SECRET` - a long, hard-to-guess, string to encrypt authentication tokens for Remark
 2. `SITE_ADDRESS` - the DNS name to access the website. Caddy needs this to automatically provision SSL certificates. If running on your local machine, this is simply `localhost`
 
-Finally, go to the top directory of the respository (the one containing `docker-compose.yml`). In this document, we will always pass the values of the environment variables in the same command:
+Finally, start using Docker Compose from the top directory of the repository (the one containing `docker-compose.yml`). In this example, we pass the values of the environment variables in the same command:
 
 ```
 REMARK_SECRET=12345 SITE_ADDRESS=localhost docker compose up
 ```
 
-The [`docker-compose.yml`](./docker-compose.yml) contains further details on the configuration.
-
-Once the services have started up, you can visit [https://localhost/](https://localhost/) and login with username `local.user` and password `local.password`.
-
-
-
-
-
-
+Once the services have started, you can visit [https://localhost/](https://localhost/) and login with username `local.user` and password `local.password`.
 
 ## Administration
 
@@ -65,15 +57,15 @@ Once the services have started up, you can visit [https://localhost/](https://lo
 User credentials are kept in `atlasview-data/users.csv`. There are three columns for each user, and each string is quoted:
 
 - `user`: username styled as `<firstname>.<lastname>` by convention
-- `password`: a password hashed using the R function `scrypt::hashPassword()`. Helper script located at `provisioning/scrypt-password.R`
-- `specialty_codes`: a regex expression specifying what specialty codes the use is allowed to see.
+- `password`: a password hashed using the R function `scrypt::hashPassword()`. Helper script located at `deployment/scrypt-password.R`
+- `specialty_codes`: a regex expression specifying what specialty codes the user can see.
 	- To see everything, use: `"."`
-	- Specify specialty using its code e.g.: `"CARD"`
+	- Specify a specialty using its code e.g.: `"CARD"`
 	- Multiple codes can be separated with pipe e.g.: `"ALLE|CARD"`
 
 ### Applying updates
 
-After pulling new changes from the repository, `docker compose down` followed by `docker compose up` will pick-up and rebuild the containers if required. Don't forget to specify the `REMARK_SECRET` and `SITE_ADDRESS` on the command-line if required.
+After pulling new changes from the repository, `docker compose down` followed by `docker compose up` will pick-up and rebuild the containers if required. Don't forget to specify the `REMARK_SECRET` and `SITE_ADDRESS` on the command-line.
 
 You can rebuild a single container without bringing down other containers. For example, to apply changes to the Shiny container use:
 
