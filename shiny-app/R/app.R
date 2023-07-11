@@ -49,6 +49,28 @@ atlasviewApp <- function(...) {
       }
     )
     
+    
+    # Application accepts a `/?disease=<specialty_code>$<phecode>` query parameter
+    diseaseFromURL <- reactiveValues(specialty=NULL, disease=NULL)
+    
+    # Extract the `disease` parameter from URL, if it exists
+    observeEvent(
+      session$clientData$url_search,
+      {
+        query <- parseQueryString(session$clientData$url_search)
+        req(query[['disease']])
+        split =stringr::str_split(query[['disease']], "\\$")[[1]]
+        diseaseFromURL$specialty <- split[1]
+        diseaseFromURL$disease <- split[2]
+      }
+    )
+    
+    # If disease has been picked up from URL, assume user wants to see the comments page
+    observe({
+      req(diseaseFromURL$disease)
+      updateTabsetPanel(session, "panels", selected="comments")
+    })
+    
     # Populate the specialties drop-down with those items user is allowed to view
     # specified in `users.csv`
     observeEvent(
@@ -56,10 +78,17 @@ atlasviewApp <- function(...) {
       {
         req(res_auth$user)
         users_specialties <- specialties %>% dplyr::filter(stringr::str_detect(code, res_auth$specialty_codes))
+        
+        # Set the selected specialty from URL, if it has been provided
+        selected = NULL
+        if (!is.null(diseaseFromURL$specialty)) {
+          selected = diseaseFromURL$specialty
+        }
+        
         updateSelectizeInput(session = getDefaultReactiveDomain(),
                              inputId = "select_specialty",
                              choices = split(users_specialties$code, users_specialties$specialty), 
-                             selected = NULL,
+                             selected = selected,
                              options = list(placeholder = 'Please select a specialty', 
                                             onInitialize = I('function() { this.setValue(""); }')))
       }
@@ -76,11 +105,18 @@ atlasviewApp <- function(...) {
           dplyr::filter(specialty_code == input$select_specialty) %>% 
           dplyr::select(phecode_index_dis, phenotype_index_dis)
         
+        selected = NULL
+        
         # If any diseases found
         if (nrow(index_diseases) > 0) {
           # Update the select box with diseases
           choices = split(index_diseases$phecode_index_dis, index_diseases$phenotype_index_dis)
           options = list(placeholder = 'Please select an index disease',  onInitialize = I('function() { this.setValue(""); }'))
+          
+          # Set the selected disease from the URL, if it has been provided
+          if (!is.null(diseaseFromURL$disease)) {
+            selected = diseaseFromURL$disease
+          }
         } else {
           # No index diseases found for the specialty - empty the select box
           choices = list()
@@ -91,7 +127,7 @@ atlasviewApp <- function(...) {
           session=getDefaultReactiveDomain(), 
           inputId = "select_index_disease",  
           choices = choices,
-          selected = NULL,  
+          selected = selected,  
           options = options)
       }
     )
@@ -202,12 +238,11 @@ atlasviewApp <- function(...) {
         req(res_auth$user)
         page_url <- ""  # an empty page URL disables comments
         if (input$select_index_disease != "") {
-          page_url <- paste0(input$select_specialty, input$select_index_disease)
+          page_url <- paste0("/?disease=", input$select_specialty, "$", input$select_index_disease)
         }
         shinyjs::js$updateRemark(page_url)
       }
     )
-    
   }
   
   shinyApp(

@@ -34,6 +34,7 @@ services:
       - SITE=atlasview
       - ANON_VOTE=true
       - VOTES_IP=true
+      - ALLOWED_HOSTS=${SITE_ADDRESS}
     volumes:
       - ../atlasview-data/remark:/srv/var
     networks:

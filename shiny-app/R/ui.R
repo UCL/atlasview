@@ -23,7 +23,7 @@ get_atlasview_ui <- function() {
       var remark_config = {
         host: location.protocol + '//' + location.host + '/remark',
         site_id: 'atlasview',
-        url: 'testing',
+        url: 'root',
         simple_view: false,
         show_email_subscription: false,
         show_rss_subscription: false
