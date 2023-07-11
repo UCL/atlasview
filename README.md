@@ -4,20 +4,20 @@ A website to view and comment on Disease Atlas results.
 
 ## Architecture
 
-- The application is written in R using the Shiny package. 
-- The [Remark42](https://remark42.com/) web app, a simple and lightweight commenting engine, is used to handle comments. We applied some small patches to the source for seamless integration with the main application.
-- [Caddy](https://caddyserver.com/) is used to handle web requests, and proxy those requests to the R Shiny server and Remark42 comment server. Caddy is simple to configure and offers zero-configuration automatic HTTPS out-of-the-box.
+- The core application is written in R/Shiny. 
+- The [Remark42](https://remark42.com/) web app, a simple and lightweight commenting engine, is used to handle comments. We patch the app a little for seamless integration with the core R application.
+- [Caddy](https://caddyserver.com/) is used to handle web requests, and proxy those requests to the R/Shiny server and Remark42 comment server. Caddy is simple to configure and offers zero-configuration automatic HTTPS out-of-the-box.
 
 ## Deployment
 
-The application services have been packaged into containers, and are run using [Docker Compose](https://docs.docker.com/compose/). You need install Docker on your machine if you'd like to run a local copy of the application.
+The application services have been packaged into containers, and are run using [Docker Compose](https://docs.docker.com/compose/). You need to have Docker installed on your machine if you'd like to run a local copy of the application.
 
 ### Instructions
 
-Two directories residing in the same folder need to be setup to run the application:
+Two directories residing next to each other are needed to run the application:
 
-1. `atlasview` - a clone of the AtlasView repository
-2. `atlasview-data` - the AtlasView results and other associated data files needed for the application. This folder is not part of the repository (changes should not be committed) but there is dummy data to get you started.
+- `atlasview` - a clone of the AtlasView repository
+- `atlasview-data` - the AtlasView results and other data files needed for the application. This folder is not part of the repository (changes should not be committed) but there is dummy data in the repository to get you started.
 
 First, clone the repository and make a local copy of the data directory
 
@@ -26,7 +26,7 @@ git clone git@github.com:UCL/atlasview.git
 cp atlasview/deployment/atlasview-data .
 ```
 
-The Remark42 commenting engine is a submodule in the repository. We download the source code and patch it, ready for Docker Compose to build. Our patches remove the logout links, because the R Shiny app handles credentials and login/logout.
+The Remark42 code is a submodule in the repository. We download the source code and patch it, ready for Docker Compose to build. Our patches remove the logout links, because the R Shiny app handles credentials and login/logout.
 
 ```
 # Set up the Remark42 engine
@@ -37,12 +37,12 @@ cd remark42/remark42
 git apply ../*.patch
 ```
 
-Two environment variables need to be set to run the application:
+Two environment variables are required to run the application:
 
 1. `REMARK_SECRET` - a long, hard-to-guess, string to encrypt authentication tokens for Remark42
 2. `SITE_ADDRESS` - the DNS name to access the website. Caddy needs this to automatically provision SSL certificates. If running on your local machine, this is simply `localhost`
 
-Finally, start using Docker Compose from the top directory of the repository (the one containing `docker-compose.yml`). In this example, we pass the values of the environment variables in the same command:
+Finally, start Docker Compose from the top directory of the repository (the one containing `docker-compose.yml`). In this example, we pass the values of the environment variables in the same command:
 
 ```
 REMARK_SECRET=12345 SITE_ADDRESS=localhost docker compose up
