@@ -5,8 +5,8 @@ A website to view and comment on Disease Atlas results.
 ## Architecture
 
 - The application is written in R using the Shiny package. 
-- The [Remark](https://remark42.com/) web app, a simple and lightweight commenting engine, is used to handle comments. We applied some small patches to the source for seamless integration with the main application.
-- [Caddy](https://caddyserver.com/) is used to handle web requests, and proxy those requests to the R Shiny server and Remark comment server. Caddy is simple to configure and offers zero-configuration automatic HTTPS out-of-the-box.
+- The [Remark42](https://remark42.com/) web app, a simple and lightweight commenting engine, is used to handle comments. We applied some small patches to the source for seamless integration with the main application.
+- [Caddy](https://caddyserver.com/) is used to handle web requests, and proxy those requests to the R Shiny server and Remark42 comment server. Caddy is simple to configure and offers zero-configuration automatic HTTPS out-of-the-box.
 
 ## Deployment
 
@@ -26,7 +26,7 @@ git clone git@github.com:UCL/atlasview.git
 cp atlasview/deployment/atlasview-data .
 ```
 
-The Remark commenting engine is a submodule in the repository. We download the source code and patch it, ready for Docker Compose to build. Our patches remove the logout links, because the R Shiny app handles credentials and login/logout.
+The Remark42 commenting engine is a submodule in the repository. We download the source code and patch it, ready for Docker Compose to build. Our patches remove the logout links, because the R Shiny app handles credentials and login/logout.
 
 ```
 # Set up the Remark42 engine
@@ -39,7 +39,7 @@ git apply ../*.patch
 
 Two environment variables need to be set to run the application:
 
-1. `REMARK_SECRET` - a long, hard-to-guess, string to encrypt authentication tokens for Remark
+1. `REMARK_SECRET` - a long, hard-to-guess, string to encrypt authentication tokens for Remark42
 2. `SITE_ADDRESS` - the DNS name to access the website. Caddy needs this to automatically provision SSL certificates. If running on your local machine, this is simply `localhost`
 
 Finally, start using Docker Compose from the top directory of the repository (the one containing `docker-compose.yml`). In this example, we pass the values of the environment variables in the same command:
