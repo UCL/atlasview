@@ -127,25 +127,5 @@ sudo apt install rclone zip
 mkdir -p atlasview-backups/comments
 ```
 
-Run `rclone config` to setup remote share as required. Scheduled the following script to run every six hours (root crontab).
-
-```
-cd /home/ubuntu/atlasview-backups/comments
-
-# Run backup program inside Remark42 container - saves a backup to atlasview-data/remark/backup
-docker exec -it atlasview-remark-1 backup
-
-# Get the latest file in the backup directory, and process into Excel file
-/home/ubuntu/atlasview/remark42/backup2excel.py "$(ls -dAt /home/ubuntu/atlasview-data/remark/backup/* | head -n1)"
-
-# Create a timestamped backup of atlasview-data (excluding cache etc)
-cd /home/ubuntu
-zip -r atlasview-data-$(date -d "today" +"%Y%m%d%H%M").zip atlasview-data/caddy atlasview-data/remark atlasview-data/users.csv -x atlasview-data/remark/backup/**\*
-mv atlasview-data-*.zip atlasview-backups
-
-# sync the atlasview-backup directory with remote share
-rclone sync atlasview-backups/ onedrive_ucl:DiseaseAtlas/atlasview-backups/
-```
-
-
+Run `rclone config` to setup remote share as required. The [`do-backup.sh`](deployment/do-backup.sh) script is scheduled to run every six hours (root cronjob).
 
