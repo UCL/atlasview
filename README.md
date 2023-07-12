@@ -39,13 +39,14 @@ git apply ../*.patch
 
 Two environment variables are required to run the application:
 
-1. `REMARK_SECRET` - a long, hard-to-guess, string to encrypt authentication tokens for Remark42
-2. `SITE_ADDRESS` - the DNS name to access the website. Caddy needs this to automatically provision SSL certificates. If running on your local machine, this is simply `localhost`
+1. `ATLASVIEW_SITE_ADDRESS` - the DNS name to access the website. Caddy needs this to automatically provision SSL certificates. If running on your local machine, this is simply `localhost`
+2. `REMARK42_SECRET` - a long, hard-to-guess, string to encrypt authentication tokens for Remark42
+3. `REMARK42_ADMIN_PASSWD` - 
 
 Finally, start Docker Compose from the top directory of the repository (the one containing `docker-compose.yml`). In this example, we pass the values of the environment variables in the same command:
 
 ```
-REMARK_SECRET=12345 SITE_ADDRESS=localhost docker compose up
+ATLASVIEW_SITE_ADDRESS=localhost REMARK42_SECRET=12345 docker compose up
 ```
 
 Once the services have started, you can visit [https://localhost/](https://localhost/) and login with username `local.user` and password `local.password`.
@@ -65,12 +66,22 @@ User credentials are kept in `atlasview-data/users.csv`. There are three columns
 
 ### Applying updates
 
-After pulling new changes from the repository, `docker compose down` followed by `docker compose up` will pick-up and rebuild the containers if required. Don't forget to specify the `REMARK_SECRET` and `SITE_ADDRESS` on the command-line.
+After pulling new changes from the repository, `docker compose down` followed by `docker compose up` will pick-up and rebuild the containers if required. Don't forget to specify the `REMARK42_SECRET` and `ATLASVIEW_SITE_ADDRESS` on the command-line.
 
 You can rebuild a single container without bringing down other containers. For example, to apply changes to the Shiny container use:
 
 ```
-REMARK_SECRET=12345 SITE_ADDRESS=localhost docker compose up -d --no-deps --build shiny
+ATLASVIEW_SITE_ADDRESS=localhost REMARK42_SECRET=12345 docker compose up -d --no-deps --build shiny
+```
+
+### Backing up and exporting comments
+
+Remark42 will backup comments every 24 hours into `atlasview-data/remark/backup`. If you set the `REMARK42_ADMIN_PASSWD` environment variable, you can also backup by connecting to the Remark42 container and running `backup --url=http://localhost:8080`
+
+The `backup2excel.py` Python script will read a given backup file and export the comments into an Excel file. It requires the Python `pandas` and `openpyxl` libraries:
+
+```
+atlasview/remark42/backup2excel.py atlasview-data/remark/backup/<gzipped-backup-file>.gz
 ```
 
 ### The `atlasview-data` directory

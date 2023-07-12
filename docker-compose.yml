@@ -27,14 +27,15 @@ services:
     expose:
       - "8080"
     environment:
-      - REMARK_URL=https://${SITE_ADDRESS}/remark
-      - SECRET=${REMARK_SECRET}
+      - REMARK_URL=https://${ATLASVIEW_SITE_ADDRESS}/remark
+      - SECRET=${REMARK42_SECRET}
       - DEBUG=false
       - AUTH_ANON=true
       - SITE=atlasview
       - ANON_VOTE=true
       - VOTES_IP=true
-      - ALLOWED_HOSTS=${SITE_ADDRESS}
+      - ALLOWED_HOSTS=${ATLASVIEW_SITE_ADDRESS}
+      - ADMIN_PASSWD=${REMARK42_ADMIN_PASSWD}
     volumes:
       - ../atlasview-data/remark:/srv/var
     networks:
@@ -45,7 +46,7 @@ services:
     restart: unless-stopped
     environment:
       - ATLASVIEW_DATA_PATH=/etc/shiny-app/data
-      - REMARK_SECRET=${REMARK_SECRET}
+      - REMARK_SECRET=${REMARK42_SECRET}
     volumes:
       - ../atlasview-data:/etc/shiny-app/data
     expose:
@@ -59,7 +60,7 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      - SITE_ADDRESS=${SITE_ADDRESS}
+      - SITE_ADDRESS=${ATLASVIEW_SITE_ADDRESS}
     volumes:
       - ./caddyserver/Caddyfile:/etc/caddy/Caddyfile
       - ../atlasview-data/caddy/data:/data
