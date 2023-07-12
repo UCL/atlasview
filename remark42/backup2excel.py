@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # This script reads a Remark42 backup file, flattens the entries and saves to Excel file
 # 
@@ -6,7 +6,11 @@
 #
 # ./backup2excel.py backup-atlasview-20230710.gz
 #
-# You can trigger a backup by connecting to the Remark container and running: backup --url=http://localhost:8080
+# You can trigger a backup by connecting to the Remark container 
+#   docker exec -it d6fdb45bf732 sh
+# Then backup using
+#   backup --url http://localhost:8080
+ 
 
 import json
 import gzip
