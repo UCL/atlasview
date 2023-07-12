@@ -37,19 +37,29 @@ cd remark42/remark42
 git apply ../*.patch
 ```
 
-Two environment variables are required to run the application:
+From the top of the atlasview repository (the one containing `docker-compose.yml`), we need to setup environment variables in `.env`. To run on the application on localhost, the example file is okay:
+
+```
+cp .env.example .env
+```
+
+Finally, start the applications containers:
+
+```
+docker compose up
+```
+
+Once services have started, you can visit [https://localhost/](https://localhost/) and login with username `local.user` and password `local.password`.
+
+### App environment variables
+
+Three environment variables are required to run the application:
 
 1. `ATLASVIEW_SITE_ADDRESS` - the DNS name to access the website. Caddy needs this to automatically provision SSL certificates. If running on your local machine, this is simply `localhost`
 2. `REMARK42_SECRET` - a long, hard-to-guess, string to encrypt authentication tokens for Remark42
-3. `REMARK42_ADMIN_PASSWD` - 
+3. `REMARK42_ADMIN_PASSWD` - required to secure the endpoints if you want to do manual backup of Remark42 comments
 
-Finally, start Docker Compose from the top directory of the repository (the one containing `docker-compose.yml`). In this example, we pass the values of the environment variables in the same command:
-
-```
-ATLASVIEW_SITE_ADDRESS=localhost REMARK42_SECRET=12345 docker compose up
-```
-
-Once the services have started, you can visit [https://localhost/](https://localhost/) and login with username `local.user` and password `local.password`.
+Put the values in the `.env` file. This is automatically read by Docker Compose.
 
 ## Administration
 
@@ -66,22 +76,12 @@ User credentials are kept in `atlasview-data/users.csv`. There are three columns
 
 ### Applying updates
 
-After pulling new changes from the repository, `docker compose down` followed by `docker compose up` will pick-up and rebuild the containers if required. Don't forget to specify the `REMARK42_SECRET` and `ATLASVIEW_SITE_ADDRESS` on the command-line.
+After pulling new changes from the repository, `docker compose down` followed by `docker compose build` will pick-up and rebuild the containers if required.
 
 You can rebuild a single container without bringing down other containers. For example, to apply changes to the Shiny container use:
 
 ```
-ATLASVIEW_SITE_ADDRESS=localhost REMARK42_SECRET=12345 docker compose up -d --no-deps --build shiny
-```
-
-### Backing up and exporting comments
-
-Remark42 will backup comments every 24 hours into `atlasview-data/remark/backup`. If you set the `REMARK42_ADMIN_PASSWD` environment variable, you can also backup by connecting to the Remark42 container and running `backup --url=http://localhost:8080`
-
-The `backup2excel.py` Python script will read a given backup file and export the comments into an Excel file. It requires the Python `pandas` and `openpyxl` libraries:
-
-```
-atlasview/remark42/backup2excel.py atlasview-data/remark/backup/<gzipped-backup-file>.gz
+docker compose up -d --no-deps --build shiny
 ```
 
 ### The `atlasview-data` directory
@@ -96,5 +96,56 @@ This directory contains data and configuration to run the application. The data 
 - `caddy/`: directory to hold Caddy server config and data, including TLS certificates that should be preserved between sessions
 - `circos-cache/`: the circos plots are expensive to compute, so the SVG file which is generated and served is saved for future requests
 - `remark/`: the Remark comment engine database of comments and backups
+
+
+### Backing up and exporting comments
+
+Remark42 will backup comments every 24 hours into `atlasview-data/remark/backup`. If you set the `REMARK42_ADMIN_PASSWD` environment variable, you can also backup by connecting to the Remark42 container and running `backup --url=http://localhost:8080`
+
+The `backup2excel.py` Python script will read a given backup file and export the comments into an Excel file. It requires the Python `pandas` and `openpyxl` libraries:
+
+```
+atlasview/remark42/backup2excel.py atlasview-data/remark/backup/<gzipped-backup-file>.gz
+```
+
+## AWS setup
+
+We've created an EC2 instance in the AWS ARC Playpen (currently named "tamuri-atlasview"), on which the containerised application is running. Installation is as above. The `.env` file is updated with the EC2 DNS name, and new Remark42 secret and admin passwords. Ports 80 and 443 are both open because they're needed for Caddy to automatically handle TLS certificates.
+
+### Backups
+
+Set up the environment for backups and copying over to OneDrive share
+
+```
+sudo apt update
+sudo apt install python3-pip
+sudo pip install pandas openpyxl  # we need these installed system-wide
+
+sudo apt install rclone zip
+
+# created a backup area, same level as atlasview folder
+mkdir -p atlasview-backups/comments
+```
+
+Run `rclone config` to setup remote share as required. Scheduled the following script to run every six hours (root crontab).
+
+```
+cd /home/ubuntu/atlasview-backups/comments
+
+# Run backup program inside Remark42 container - saves a backup to atlasview-data/remark/backup
+docker exec -it atlasview-remark-1 backup
+
+# Get the latest file in the backup directory, and process into Excel file
+/home/ubuntu/atlasview/remark42/backup2excel.py "$(ls -dAt /home/ubuntu/atlasview-data/remark/backup/* | head -n1)"
+
+# Create a timestamped backup of atlasview-data (excluding cache etc)
+cd /home/ubuntu
+zip -r atlasview-data-$(date -d "today" +"%Y%m%d%H%M").zip atlasview-data/caddy atlasview-data/remark atlasview-data/users.csv -x atlasview-data/remark/backup/**\*
+mv atlasview-data-*.zip atlasview-backups
+
+# sync the atlasview-backup directory with remote share
+rclone sync atlasview-backups/ onedrive_ucl:DiseaseAtlas/atlasview-backups/
+```
+
 
 
