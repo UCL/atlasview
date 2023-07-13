@@ -7,9 +7,7 @@
 # ./backup2excel.py backup-atlasview-20230710.gz
 #
 # You can trigger a backup by connecting to the Remark container 
-#   docker exec -it d6fdb45bf732 sh
-# Then backup using
-#   backup --url http://localhost:8080
+#   docker exec -it <container id> backup
  
 
 import json
