@@ -1,7 +1,7 @@
 cd /home/ubuntu/atlasview-backups/comments
 
 # connect to the remark container and trigger a backup
-docker exec -it atlasview-remark-1 backup
+docker exec atlasview-remark-1 backup
 
 # run script to convert backup of comments into an excel file
 /home/ubuntu/atlasview/remark42/backup2excel.py "$(ls -dAt /home/ubuntu/atlasview-data/remark/backup/* | head -n1)"
