@@ -1,3 +1,5 @@
+# DATA #########################################################################
+
 #' Get the path to data files
 #' NoRd
 get_data_root <- function() {
@@ -10,6 +12,43 @@ get_data_root <- function() {
 get_data_filepath <- function(filename) {
   paste(get_data_root(), "/", filename, sep='')
 }
+
+#' Load, process, and return data for specialties and diseases
+get_atlasview_data <- function() {
+  specialties <- readr::read_csv(get_data_filepath("specialties.csv"), show_col_types = FALSE) %>%
+    dplyr::arrange(code)
+  
+  specialty_colours <- read.csv(get_data_filepath("lkp_spe_col.csv"), header = TRUE)
+  
+  specialties <- specialties %>% dplyr::left_join(y = specialty_colours, by="specialty")   # for circos plots
+  specialty_colours <- setNames(as.character(specialty_colours$color), specialty_colours$specialty)  # for caterpillar plots
+  
+  #read full MM res in vis format
+  MM_res <- data.table::fread(file=get_data_filepath("MM_for_circo_network_vis.csv")) %>% 
+    dplyr::left_join(y = specialties, by=c("specialty_index_dis" = "specialty")) %>%
+    dplyr::rename("specialty_code" = "code") %>%
+    dplyr::left_join(y = specialties, by=c("specialty_cooccurring_dis" = "specialty")) %>%
+    dplyr::rename("cooccurring_specialty_code" = "code")
+  
+  # N of diseases and specialties 
+  n_dis_spe <- data.table::fread(file = get_data_filepath("MM_2_n.csv"))
+  
+  # information about index and co-occurring diseases
+  index_diseases <- MM_res %>% 
+    dplyr::select(phecode_index_dis, phenotype_index_dis, specialty_index_dis, specialty_code) %>% 
+    dplyr::distinct() %>% 
+    dplyr::arrange(phenotype_index_dis)
+  
+  list(
+    specialties = specialties,
+    specialty_colours = specialty_colours,
+    MM_res = MM_res,
+    n_dis_spe = n_dis_spe,
+    index_diseases = index_diseases
+  )
+}
+
+
 
 #' load the credentials for users for the app
 get_credentials <- function() {
@@ -26,7 +65,6 @@ now_utc <- function() {
   attr(now, "tzone") <- "UTC"
   now
 }
-
 
 make_jwt <- function(username) {
   user_id <- paste0('atlasview_', digest::digest(username, algo="sha1"))

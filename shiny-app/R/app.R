@@ -1,30 +1,15 @@
 atlasviewApp <- function(...) {
   
-  specialties <- readr::read_csv(get_data_filepath("specialties.csv"), show_col_types = FALSE) %>%
-    dplyr::arrange(code)
-  
-  specialty_colours <- read.csv(get_data_filepath("lkp_spe_col.csv"), header = TRUE)
-  
-  specialties <- specialties %>% dplyr::left_join(y = specialty_colours, by="specialty")   # for circos plots
-  specialty_colours <- setNames(as.character(specialty_colours$color), specialty_colours$specialty)  # for caterpillar plots
-  
-  #read full MM res in vis format
-  MM_res <- data.table::fread(file=get_data_filepath("MM_for_circo_network_vis.csv")) %>% 
-    dplyr::left_join(y = specialties, by=c("specialty_index_dis" = "specialty")) %>%
-    dplyr::rename("specialty_code" = "code") %>%
-    dplyr::left_join(y = specialties, by=c("specialty_cooccurring_dis" = "specialty")) %>%
-    dplyr::rename("cooccurring_specialty_code" = "code")
-  
-  # N of diseases and specialties 
-  n_dis_spe <- data.table::fread(file = get_data_filepath("MM_2_n.csv"))
-  
-  # information about index and co-occurring diseases
-  index_diseases <- MM_res %>% 
-    dplyr::select(phecode_index_dis, phenotype_index_dis, specialty_index_dis, specialty_code) %>% 
-    dplyr::distinct() %>% 
-    dplyr::arrange(phenotype_index_dis)
-  
+  atlasview_data <- get_atlasview_data()
+  specialties <- atlasview_data$specialties
+  specialty_colours <- atlasview_data$specialty_colours
+  MM_res <- atlasview_data$MM_res
+  n_dis_spe <- atlasview_data$n_dis_spe
+  index_diseases <- atlasview_data$index_diseases
+
   server <-  function(input, output, session) {
+    
+    
     # User must be authenticated to access the app. Check for res_auth$user
     res_auth <- shinymanager::secure_server(
       check_credentials = shinymanager::check_credentials(get_credentials())
@@ -48,7 +33,6 @@ atlasviewApp <- function(...) {
         }
       }
     )
-    
     
     # Application accepts a `/?disease=<specialty_code>$<phecode>` query parameter
     diseaseFromURL <- reactiveValues(specialty=NULL, disease=NULL)
