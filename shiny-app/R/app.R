@@ -1,14 +1,8 @@
 atlasviewApp <- function(...) {
   
-  atlasview_data <- get_atlasview_data()
-  specialties <- atlasview_data$specialties
-  specialty_colours <- atlasview_data$specialty_colours
-  MM_res <- atlasview_data$MM_res
-  n_dis_spe <- atlasview_data$n_dis_spe
-  index_diseases <- atlasview_data$index_diseases
-
   server <-  function(input, output, session) {
     
+    atlasview_data <- get_atlasview_data()
     
     # User must be authenticated to access the app. Check for res_auth$user
     res_auth <- shinymanager::secure_server(
@@ -61,7 +55,7 @@ atlasviewApp <- function(...) {
       res_auth$user, 
       {
         req(res_auth$user)
-        users_specialties <- specialties %>% dplyr::filter(stringr::str_detect(code, res_auth$specialty_codes))
+        users_specialties <- atlasview_data$specialties %>% dplyr::filter(stringr::str_detect(code, res_auth$specialty_codes))
         
         # Set the selected specialty from URL, if it has been provided
         selected = NULL
@@ -85,16 +79,16 @@ atlasviewApp <- function(...) {
         req(res_auth$user)
         
         # Get all index diseases for this specialty
-        index_diseases <- index_diseases %>% 
+        specialty_index_diseases <- atlasview_data$index_diseases %>% 
           dplyr::filter(specialty_code == input$select_specialty) %>% 
           dplyr::select(phecode_index_dis, phenotype_index_dis)
         
         selected = NULL
         
         # If any diseases found
-        if (nrow(index_diseases) > 0) {
+        if (nrow(specialty_index_diseases) > 0) {
           # Update the select box with diseases
-          choices = split(index_diseases$phecode_index_dis, index_diseases$phenotype_index_dis)
+          choices = split(specialty_index_diseases$phecode_index_dis, specialty_index_diseases$phenotype_index_dis)
           options = list(placeholder = 'Please select an index disease',  onInitialize = I('function() { this.setValue(""); }'))
           
           # Set the selected disease from the URL, if it has been provided
@@ -130,10 +124,10 @@ atlasviewApp <- function(...) {
         req(res_auth$user)
         title <- "AtlasView"
         if (input$select_specialty != "") {
-          title <- paste0(title, ": ", specialties$specialty[specialties$code == input$select_specialty])
+          title <- paste0(title, ": ", atlasview_data$specialties$specialty[atlasview_data$specialties$code == input$select_specialty])
           
           if (input$select_index_disease != "") {
-            index_disease_label <- index_diseases$phenotype_index_dis[index_diseases$phecode_index_dis == input$select_index_disease]
+            index_disease_label <- atlasview_data$index_diseases$phenotype_index_dis[atlasview_data$index_diseases$phecode_index_dis == input$select_index_disease]
             title <- paste0(title, " → ", index_disease_label)
           }
         }
@@ -160,7 +154,7 @@ atlasviewApp <- function(...) {
       list(input$select_specialty, input$select_index_disease), 
       {
         req(res_auth$user, input$select_specialty)
-        cooccurring_diseases <- MM_res %>%
+        cooccurring_diseases <- atlasview_data$MM_res %>%
           dplyr::filter(specialty_code == input$select_specialty, phecode_index_dis == input$select_index_disease) %>%
           dplyr::select(specialty_cooccurring_dis) %>% 
           dplyr::distinct() %>% 
@@ -180,7 +174,7 @@ atlasviewApp <- function(...) {
     output$outputCaterpillar <- renderPlot({
       req(res_auth$user, input$select_specialty, input$select_index_disease)
       
-      MM_res_spe_phe_selected <- MM_res %>% 
+      MM_res_spe_phe_selected <- atlasview_data$MM_res %>% 
         dplyr::filter(
           specialty_code == input$select_specialty,
           phecode_index_dis == input$select_index_disease,
@@ -188,7 +182,7 @@ atlasviewApp <- function(...) {
         )
       
       if (nrow(MM_res_spe_phe_selected) > 0) {
-        caterpillar_prev_ratio_v5_view(MM_res_spe_phe_selected,  n_dis_spe,  spe_index_dis=input$specialty, specialty_colours)
+        caterpillar_prev_ratio_v5_view(MM_res_spe_phe_selected,  atlasview_data$n_dis_spe,  spe_index_dis=input$specialty, atlasview_data$specialty_colours)
       }
     },
     height=900)  # TODO: make height dynamic, based on number of rows returned
@@ -207,8 +201,8 @@ atlasviewApp <- function(...) {
       
       # if we haven't a saved copy of the plot
       if (!file.exists(plot_filename)) {
-        patient_count <- n_dis_spe$n_indiv_index_dis_m_r[n_dis_spe$index_dis == input$select_index_disease]
-        make_circos_plot(specialties, get_cooccurring_diseases(MM_res, input$select_index_disease), patient_count, svg_filepath=plot_filename)
+        patient_count <- atlasview_data$n_dis_spe$n_indiv_index_dis_m_r[atlasview_data$n_dis_spe$index_dis == input$select_index_disease]
+        make_circos_plot(atlasview_data$specialties, get_cooccurring_diseases(atlasview_data$MM_res, input$select_index_disease), patient_count, svg_filepath=plot_filename)
       }
       
       svgPanZoom::svgPanZoom(readr::read_file(plot_filename), zoomScaleSensitivity=0.2)
