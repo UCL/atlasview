@@ -17,11 +17,9 @@ atlasview_server <-  function(input, output, session) {
       if (is.null(cookies::get_cookie("JWT"))) {
         # TODO: we need to remove these cookies on visit to the login screen 
         # (when running shiny app in rstudio - already works when deployed to prod)
-        jwt <- make_jwt(user$user)
-        xsrf <- jwt$jti
-        jwt <- jose::jwt_encode_hmac(jwt, secret=charToRaw(Sys.getenv("REMARK_SECRET")))
-        cookies::set_cookie("JWT", jwt)
-        cookies::set_cookie("XSRF-TOKEN", xsrf)
+        jwt <- get_jwt_token(user$user)
+        cookies::set_cookie("JWT", jwt$JWT)
+        cookies::set_cookie("XSRF-TOKEN", jwt$XSRF)
       }
     }
   )

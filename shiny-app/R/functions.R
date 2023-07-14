@@ -66,7 +66,7 @@ now_utc <- function() {
   now
 }
 
-make_jwt <- function(username) {
+get_jwt_token <- function(username) {
   user_id <- paste0('atlasview_', digest::digest(username, algo="sha1"))
   jwt_list <- list(
     aud="atlasview",
@@ -86,8 +86,10 @@ make_jwt <- function(username) {
   
   jti <- digest::digest(jwt_list, algo="sha1")
   jwt_list$jti <- jti
+  xsrf <- jwt$jti
   authentication <- do.call(jose::jwt_claim, jwt_list)
-  authentication
+  jwt <- jose::jwt_encode_hmac(jwt, secret=charToRaw(Sys.getenv("REMARK_SECRET")))
+  list(JWT=jwt, XSRF=xsrf)
 }
 
 username_to_initials <- function(username) {
