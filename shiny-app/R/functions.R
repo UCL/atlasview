@@ -86,7 +86,7 @@ get_jwt_token <- function(username) {
   
   jti <- digest::digest(jwt_list, algo="sha1")
   jwt_list$jti <- jti
-  xsrf <- jwt$jti
+  xsrf <- jti
   jwt <- do.call(jose::jwt_claim, jwt_list)
   jwt <- jose::jwt_encode_hmac(jwt, secret=charToRaw(Sys.getenv("REMARK_SECRET")))
   list(JWT=jwt, XSRF=xsrf)
