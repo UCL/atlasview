@@ -16,8 +16,8 @@ The application services have been packaged into containers, and are run using [
 
 Two directories residing next to each other are needed to run the application:
 
-- `atlasview` - a clone of the AtlasView repository
-- `atlasview-data` - the AtlasView results and other data files needed for the application. This folder is not part of the repository (changes should not be committed) but there is dummy data in the repository to get you started.
+- `atlasview` - a clone of this AtlasView repository
+- `atlasview-data` - the AtlasView results and other data files needed for the application. This folder is not part of the repository (changes should not be committed) but there is [dummy data](./deployment/atlasview-data) in the repository to get you started.
 
 First, clone the repository and make a local copy of the data directory
 
@@ -26,7 +26,7 @@ git clone git@github.com:UCL/atlasview.git
 cp atlasview/deployment/atlasview-data .
 ```
 
-The Remark42 code is a submodule in the repository. We download the source code and patch it, ready for Docker Compose to build. Our patches remove the logout links, because the R Shiny app handles credentials and login/logout.
+The Remark42 code is a submodule in the repository. We download the source code and patch it, ready for Docker to build. Our patches remove the logout links, because the R Shiny app handles credentials and login/logout.
 
 ```
 # Set up the Remark42 engine
@@ -37,7 +37,7 @@ cd remark42/remark42
 git apply ../*.patch
 ```
 
-From the top of the atlasview repository (the one containing `docker-compose.yml`), we need to setup environment variables in `.env`. To run on the application on localhost, the example file is okay:
+From the top of the atlasview repository (the one containing `docker-compose.yml`), we need to setup environment variables in `.env`. To run on the application on localhost, copy the example `.env` file:
 
 ```
 cp .env.example .env
@@ -127,5 +127,5 @@ sudo apt install rclone zip
 mkdir -p atlasview-backups/comments
 ```
 
-Run `rclone config` to setup remote share as required. The [`do-backup.sh`](deployment/do-backup.sh) script is scheduled to run every six hours (root cronjob).
+Run `rclone config` to setup remote share as required. The [`do-backup.sh`](./deployment/do-backup.sh) script is scheduled to run every six hours (root cronjob).
 

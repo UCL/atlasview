@@ -1,4 +1,5 @@
 # TODO: handle when atlasview installed under different user
+echo "Running backup script $(date)"
 
 cd /home/ubuntu/atlasview-backups/comments
 
