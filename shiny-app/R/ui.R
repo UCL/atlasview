@@ -1,7 +1,5 @@
-
-
-get_atlasview_ui <- function() {
-  jsCode <- "
+atlasview_ui <- function() {
+  shinyjsCode <- "
     shinyjs.updateRemark = function(params) {
       if (typeof window.REMARK42.destroy == 'function') {
         window.REMARK42.destroy();
@@ -14,7 +12,7 @@ get_atlasview_ui <- function() {
       }
     }"
   
-  remarkConfig <- "
+  remarkJsCode <- "
       function reload_js(src) {
         $('script[src=\"' + src + '\"]').remove();
         $('<script>').attr('src', src).appendTo('head');
@@ -29,52 +27,59 @@ get_atlasview_ui <- function() {
         show_rss_subscription: false
       }"
   
-  cookies::add_cookie_handlers(fluidPage(
-  shinyjs::useShinyjs(),
-  tags$head(tags$script(HTML(remarkConfig))),
-  tags$head(tags$script(src = "/remark/web/embed.js")),
-  shinyjs::extendShinyjs(text = jsCode, functions = c("updateRemark")),
-  title = "AtlasView",
-  shinytitle::use_shiny_title(),
-  titlePanel(textOutput("pageTitle")),
-  wellPanel(
-    selectizeInput('select_specialty', 
-                   'Specialty', 
-                   choices = list(), 
-                   options = list(placeholder = '')), 
-   selectizeInput( 'select_index_disease','Index disease', choices = list(), options = list(placeholder = '') ),
-  ),
-  conditionalPanel("output.nrows", 
-  tabsetPanel(
-    id="panels",
-    type = "tabs",
-    tabPanel(
-      title = "caterpillar",
-      value = "caterpillar",
-      wellPanel(
-        selectInput('filter', 'Filter', choices = c(), multiple=TRUE),
-      ),
-      plotOutput(
-        outputId = "outputCaterpillar",
-        width="100%"
-      )
+  ui <- fluidPage(
+    shinyjs::useShinyjs(),
+    tags$head(tags$script(HTML(remarkJsCode))),
+    tags$head(tags$script(src = "/remark/web/embed.js")),
+    shinyjs::extendShinyjs(text = shinyjsCode, functions = c("updateRemark")),
+    
+    title = "AtlasView",
+    shinytitle::use_shiny_title(),
+    titlePanel(textOutput("pageTitle")),
+    
+    wellPanel(
+      selectizeInput('select_specialty', 
+                     'Specialty', 
+                     choices = list(), 
+                     options = list(placeholder = '')), 
+     selectizeInput( 'select_index_disease','Index disease', choices = list(), options = list(placeholder = '') ),
     ),
-    tabPanel(
-      title = "circos",
-      value = "circos",
-      shinydashboard::box(width=12,
-          shinybusy::add_busy_spinner(spin = "fading-circle"),
-          svgPanZoom::svgPanZoomOutput(outputId = "circosPlot", width="100%", height="1000px")
-      )
-    ),
-    tabPanel(
-      title = "comments",
-      value = "comments",
-  mainPanel(
-    fluidRow(column(12,  HTML('<div id="remark42"></div>')))
-    ) 
-    )
-  )),
-))
+    
+    conditionalPanel("output.nrows", 
+      tabsetPanel(
+        id="panels",
+        type = "tabs",
+        tabPanel(
+          title = "caterpillar",
+          value = "caterpillar",
+          wellPanel(
+            selectInput('filter', 'Filter', choices = c(), multiple=TRUE),
+          ),
+          plotOutput(
+            outputId = "outputCaterpillar",
+            width="100%"
+          )
+        ),
+        tabPanel(
+          title = "circos",
+          value = "circos",
+          shinydashboard::box(width=12,
+              shinybusy::add_busy_spinner(spin = "fading-circle"),
+              svgPanZoom::svgPanZoomOutput(outputId = "circosPlot", width="100%", height="1000px")
+          )
+        ),
+        tabPanel(
+          title = "comments",
+          value = "comments", 
+          mainPanel(
+            fluidRow(column(12,  HTML('<div id="remark42"></div>')))
+          ) 
+        )
+      )  # end tabsetPanel
+    )  # end conditionalPanel
+  )  # end fluidPage
+  
+  ui <- cookies::add_cookie_handlers(ui)
+  ui
 }
 

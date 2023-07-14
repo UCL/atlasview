@@ -36,6 +36,8 @@ services:
       - VOTES_IP=true
       - ALLOWED_HOSTS=${ATLASVIEW_SITE_ADDRESS}
       - ADMIN_PASSWD=${REMARK42_ADMIN_PASSWD}
+      # Backup timestamps to match host (Remark container is set to CDT time??)
+      - TZ=UTC
     volumes:
       - ../atlasview-data/remark:/srv/var
     networks:
