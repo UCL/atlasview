@@ -1,6 +1,4 @@
-
-
-get_atlasview_ui <- function() {
+atlasview_ui <- function() {
   jsCode <- "
     shinyjs.updateRemark = function(params) {
       if (typeof window.REMARK42.destroy == 'function') {
