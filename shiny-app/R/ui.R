@@ -33,9 +33,77 @@ atlasview_ui <- function() {
     tags$head(tags$script(src = "/remark/web/embed.js")),
     shinyjs::extendShinyjs(text = shinyjsCode, functions = c("updateRemark")),
     
-    title = "AtlasView",
+    title = "AtlasViews",
     shinytitle::use_shiny_title(),
     titlePanel(textOutput("pageTitle")),
+    div(
+      HTML(
+        "<p>
+        The purpose of this website (alpha version) is to get the views of 
+        clinicians on the co-occurring disease results in the Disease Atlas.
+        </p>
+        <p>
+        <strong>Where does the data come from?</strong> The Disease Atlas 
+        results on co-occurring diseases are presented for the first time here. 
+        In brief n the population of England (56 million people) we defined 
+        index diseases and co-occurring diseases using ICD-10 coded 
+        hospitalisation data. In England up to 20 diagnosis codes are applied 
+        for each admission and the coding standards explicitly mandates coding 
+        of all diseases, and is not confined to those directly causing 
+        admission. 
+        </p>
+        <p>
+        <strong>What analysis has been performed?</strong> For people with each 
+        index disease we estimated the prevalence of up to 100 diseases 
+        co-occurring in at least 10 people (‘long tail, pairwise 
+        multimorbidity’). We included co-occurring diseases recorded at any time 
+        from start of recording (1998) up to the census date (22 Jan 2020). 
+        We report two different measures of co-occurrence
+        <ul>
+          <li />The (absolute) prevalence of a co-occurring disease, 
+          irrespective of whether it is more common than expected.
+          <li />The excess prevalence of a co-occurring disease, compared to age 
+          and sex adjusted prevalence in the whole 56 million population. 
+          This is the standardised co-occurrence ratio, SCR).
+        </ul>
+        </p>
+        <p> 
+        <strong>How have the results been visualised?</strong> We display the 
+        exact same results (prevalence and SCR) in two different ways:
+        <ul>
+        <li />Circos plot – where each specialty maintains a constant position 
+        on the ‘clockface’
+        <li />Caterpillar plot - in which the estimates are ranked on SCR
+        </ul>
+        </p>
+        <p>
+        Here are some prompts for the kinds of things we are interested in 
+        initial feedback on:
+        <ol>
+        <li />Please provide any <strong>general comments</strong> e.g. the 
+        purpose, the data,  analysis or visualisation of results:
+        <ul>
+        <li />For example is there anything that needs clarification?
+        <li />Do you think it is easier for a clinician to understand the Circos 
+        plot or the caterpillar plot?
+        </ul>
+        <li />Please provide <strong>index disease specific comments</strong>.
+        For each disease please comment on:
+        <ul>
+        <li />Are the associations <strong>valid</strong>? – e.g. they reflect 
+        what is expected in clinical practice / or are consistent with current 
+        research understanding
+        <li />Are any of the associations <strong>novel</strong> and not part of
+        current clinical thinking?
+        <li />Are there any novel associations that you consider to be 
+        <strong>clinically relevant</strong>? i.e. might inform patient 
+        management.
+        </ul>
+        </ol>
+        </p>
+        "
+      )
+    ),
     
     wellPanel(
       selectizeInput('select_specialty', 
