@@ -10,7 +10,8 @@ atlasview_ui <- function() {
         reload_js('/remark/web/embed.js'); 
         console.log(remark_config);
       }
-    }"
+    }
+  "
   
   remarkJsCode <- "
       function reload_js(src) {
@@ -25,7 +26,17 @@ atlasview_ui <- function() {
         simple_view: false,
         show_email_subscription: false,
         show_rss_subscription: false
-      }"
+      }
+  
+      function toggle_guide() {
+        $('#av-guide').toggle();
+        if ($('#av-guide').is(':visible')) {
+          $('#av-toggle-guide').text('Hide guide');
+        } else {
+          $('#av-toggle-guide').text('Show guide');
+        }
+      }
+  "
   
   ui <- fluidPage(
     shinyjs::useShinyjs(),
@@ -37,15 +48,18 @@ atlasview_ui <- function() {
     shinytitle::use_shiny_title(),
     titlePanel(textOutput("pageTitle")),
     div(
-      HTML(
+      p("The purpose of this website (alpha version) is to get the views of 
+        clinicians on the co-occurring disease results in the Disease Atlas.")
+      ),
+    a(id="av-toggle-guide", href="javascript:toggle_guide();", "Hide guide"),
+    br(),
+    div(id = "av-guide", 
+        br(),
+        HTML(
         "<p>
-        The purpose of this website (alpha version) is to get the views of 
-        clinicians on the co-occurring disease results in the Disease Atlas.
-        </p>
-        <p>
         <strong>Where does the data come from?</strong> The Disease Atlas 
         results on co-occurring diseases are presented for the first time here. 
-        In brief n the population of England (56 million people) we defined 
+        In brief in the population of England (56 million people) we defined 
         index diseases and co-occurring diseases using ICD-10 coded 
         hospitalisation data. In England up to 20 diagnosis codes are applied 
         for each admission and the coding standards explicitly mandates coding 
@@ -64,7 +78,7 @@ atlasview_ui <- function() {
           irrespective of whether it is more common than expected.
           <li />The excess prevalence of a co-occurring disease, compared to age 
           and sex adjusted prevalence in the whole 56 million population. 
-          This is the standardised co-occurrence ratio, SCR).
+          This is the standardised co-occurrence ratio, SCR.
         </ul>
         </p>
         <p> 
@@ -101,10 +115,9 @@ atlasview_ui <- function() {
         </ul>
         </ol>
         </p>
-        "
-      )
+        ")
     ),
-    
+    br(),
     wellPanel(
       selectizeInput('select_specialty', 
                      'Specialty', 
