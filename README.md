@@ -43,7 +43,7 @@ From the top of the atlasview repository (the one containing `docker-compose.yml
 cp .env.example .env
 ```
 
-Finally, start the applications containers:
+Finally, start the application containers. Note that if you want to run this on a **Mac with Apple Silicon**, you will need to install Rosetta and [enable it in the Docker Desktop settings](https://docs.docker.com/desktop/settings/mac/#use-rosetta-for-x86amd64-emulation-on-apple-silicon) (under `Features in development`). Rosetta can be installed by running `softwareupdate --install-rosetta`.
 
 ```
 docker compose up
