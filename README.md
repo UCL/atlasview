@@ -23,7 +23,7 @@ First, clone the repository and make a local copy of the data directory
 
 ```
 git clone git@github.com:UCL/atlasview.git
-cp atlasview/deployment/atlasview-data .
+cp -R atlasview/deployment/atlasview-data .
 ```
 
 The Remark42 code is a submodule in the repository. We download the source code and patch it, ready for Docker to build. Our patches remove the logout links, because the R Shiny app handles credentials and login/logout.
