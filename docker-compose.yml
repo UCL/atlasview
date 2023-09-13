@@ -45,6 +45,7 @@ services:
   shiny:
     build: ./shiny-app
     image: atlasview/shiny:latest
+    platform: linux/x86_64
     restart: unless-stopped
     environment:
       - ATLASVIEW_DATA_PATH=/etc/shiny-app/data
