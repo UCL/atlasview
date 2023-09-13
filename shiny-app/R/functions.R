@@ -15,10 +15,10 @@ get_data_filepath <- function(filename) {
 
 #' Load, process, and return data for specialties and diseases
 get_atlasview_data <- function() {
-  specialties <- readr::read_csv(get_data_filepath("specialties.csv"), show_col_types = FALSE) %>%
+  specialties <- data.table::fread(get_data_filepath("specialties.csv"), header = TRUE) %>%
     dplyr::arrange(code)
   
-  specialty_colours <- read.csv(get_data_filepath("lkp_spe_col.csv"), header = TRUE)
+  specialty_colours <- data.table::fread(get_data_filepath("lkp_spe_col.csv"), header = TRUE)
   
   specialties <- specialties %>% dplyr::left_join(y = specialty_colours, by="specialty")   # for circos plots
   specialty_colours <- setNames(as.character(specialty_colours$color), specialty_colours$specialty)  # for caterpillar plots
