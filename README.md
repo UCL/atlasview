@@ -4,7 +4,7 @@ A website to view and comment on Disease Atlas results.
 
 ## Architecture
 
-- The core application is written in R/Shiny. 
+- The core application is written in R/Shiny.
 - The [Remark42](https://remark42.com/) web app, a simple and lightweight commenting engine, is used to handle comments. We patch the app a little for seamless integration with the core R application.
 - [Caddy](https://caddyserver.com/) is used to handle web requests, and proxy those requests to the R/Shiny server and Remark42 comment server. Caddy is simple to configure and offers zero-configuration automatic HTTPS out-of-the-box.
 
@@ -24,6 +24,20 @@ First, clone the repository and make a local copy of the data directory
 ```
 git clone git@github.com:UCL/atlasview.git
 cp -R atlasview/deployment/atlasview-data .
+```
+
+**Important:** don't forget to replace the dummy data files with your own files. We expect the
+following files to be present:
+
+<!-- TODO: should we add some explanation for each file and which headers they should contain? -->
+
+```
+atlasview-data
+├── MM_2_n.csv
+├── MM_for_circo_network_vis.csv
+├── lkp_spe_col.csv
+├── specialties.csv
+└── users.csv
 ```
 
 The Remark42 code is a submodule in the repository. We download the source code and patch it, ready for Docker to build. Our patches remove the logout links, because the R Shiny app handles credentials and login/logout.
@@ -128,4 +142,3 @@ mkdir -p atlasview-backups/comments
 ```
 
 Run `rclone config` to setup remote share as required. The [`do-backup.sh`](./deployment/do-backup.sh) script is scheduled to run every six hours (root cronjob).
-
