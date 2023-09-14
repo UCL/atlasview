@@ -106,11 +106,32 @@ docker compose up -d --no-deps --build shiny
 
 This directory contains data and configuration to run the application. The data is the directory should persist between restarts etc. It contains analysis of clinical data, so should not be shared with anyone without permission.
 
-- `MM_2_n.csv`: patient counts and other stats for each index disease
-- `MM_for_circo_network_vis.csv`: co-occurring diseases for every index disease
-- `lkp_spe_col.csv`: colour coding for each specialty
-- `specialties.csv`: full name and short code for each specialty
-- `users.csv`: user credentials to login to the website
+<!-- TODO: add definitions for the column names -->
+- `MM_2_n.csv`: patient counts and other stats for each index disease. We expect *at least* the following columns:
+  - `n_indiv_index_dis_m_r`
+  - `index_dis`
+  - `median_n_dis`
+  - `median_n_spe`
+- `MM_for_circo_network_vis.csv`: co-occurring diseases for every index disease, with *at least* the following columns:
+  - `specialty_code`
+  - `phecode_index_dis`
+  - `phenotype_index_dis`
+  - `phenotype_cooccurring_dis`
+  - `specialty_cooccurring_dis`
+  - `prevalence`
+  - `prev_ratio`
+  - `ci_left_prev_ratio`
+  - `ci_right_prev_ratio`
+- `lkp_spe_col.csv`: color coding for each specialty, with the following columns:
+  - `specialty`
+  - `color`
+- `specialties.csv`: full name and short code for each specialty, with the following columns:
+  - `specialty`
+  - `code`
+- `users.csv`: user credentials to login to the website, with the following columns:
+  - `user`
+  - `password`
+  - `specialty_codes`
 - `caddy/`: directory to hold Caddy server config and data, including TLS certificates that should be preserved between sessions
 - `circos-cache/`: the circos plots are expensive to compute, so the SVG file which is generated and served is saved for future requests
 - `remark/`: the Remark comment engine database of comments and backups
