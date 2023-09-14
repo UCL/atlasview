@@ -29,7 +29,7 @@ cp -R atlasview/deployment/atlasview-data .
 **Important:** don't forget to replace the dummy data files with your own files. We expect the
 following files to be present:
 
-<!-- TODO: should we add some explanation for each file and which headers they should contain? -->
+See [below](#the-atlasview-data-directory) for more details on the data files.
 
 ```
 atlasview-data
