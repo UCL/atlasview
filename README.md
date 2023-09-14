@@ -21,7 +21,7 @@ Two directories residing next to each other are needed to run the application:
 
 First, clone the repository and make a local copy of the data directory
 
-```
+```sh
 git clone git@github.com:UCL/atlasview.git
 cp -R atlasview/deployment/atlasview-data .
 ```
@@ -31,7 +31,7 @@ following files to be present:
 
 See [below](#the-atlasview-data-directory) for more details on the data files.
 
-```
+```sh
 atlasview-data
 ├── MM_2_n.csv
 ├── MM_for_circo_network_vis.csv
@@ -44,7 +44,7 @@ atlasview-data
 
 The Remark42 code is a submodule in the repository. We download the source code and patch it, ready for Docker to build. Our patches remove the logout links, because the R Shiny app handles credentials and login/logout.
 
-```
+```sh
 # Set up the Remark42 engine
 cd atlasview
 git submodule init
@@ -57,7 +57,7 @@ git apply ../*.patch
 
 From the top of the atlasview repository (the one containing `docker-compose.yml`), we need to setup environment variables in `.env`. To run on the application on localhost, copy the example `.env` file:
 
-```
+```sh
 cp .env.example .env
 ```
 
@@ -73,7 +73,7 @@ Update the values in the `.env` file as necessary. This is automatically read by
 
 Finally, start the application containers. Note that if you want to run this on a **Mac with Apple Silicon**, you will need to install Rosetta and [enable it in the Docker Desktop settings](https://docs.docker.com/desktop/settings/mac/#use-rosetta-for-x86amd64-emulation-on-apple-silicon) (under `Features in development`). Rosetta can be installed by running `softwareupdate --install-rosetta`.
 
-```
+```sh
 docker compose up
 ```
 
@@ -87,10 +87,10 @@ User credentials are kept in `atlasview-data/users.csv`. There are three columns
 
 - `user`: username styled as `<firstname>.<lastname>` by convention
 - `password`: a password hashed using the R function `scrypt::hashPassword()`. Helper script located at `deployment/scrypt-password.R`
-- `specialty_codes`: a regex expression specifying what specialty codes the user can see.
-	- To see everything, use: `"."`
-	- Specify a specialty using its code e.g.: `"CARD"`
-	- Multiple codes can be separated with pipe e.g.: `"ALLE|CARD"`
+  - `specialty_codes`: a regex expression specifying what specialty codes the user can see.
+    To see everything, use: `"."`
+  - Specify a specialty using its code e.g.: `"CARD"`
+  - Multiple codes can be separated with pipe e.g.: `"ALLE|CARD"`
 
 ### Applying updates
 
@@ -98,7 +98,7 @@ After pulling new changes from the repository, `docker compose down` followed by
 
 You can rebuild a single container without bringing down other containers. For example, to apply changes to the Shiny container use:
 
-```
+```sh
 docker compose up -d --no-deps --build shiny
 ```
 
@@ -115,14 +115,13 @@ This directory contains data and configuration to run the application. The data 
 - `circos-cache/`: the circos plots are expensive to compute, so the SVG file which is generated and served is saved for future requests
 - `remark/`: the Remark comment engine database of comments and backups
 
-
 ### Backing up and exporting comments
 
 Remark42 will backup comments every 24 hours into `atlasview-data/remark/backup`. If you set the `REMARK42_ADMIN_PASSWD` environment variable, you can also backup by connecting to the Remark42 container and running `backup --url=http://localhost:8080`
 
 The `backup2excel.py` Python script will read a given backup file and export the comments into an Excel file. It requires the Python `pandas` and `openpyxl` libraries:
 
-```
+```sh
 atlasview/remark42/backup2excel.py atlasview-data/remark/backup/<gzipped-backup-file>.gz
 ```
 
@@ -134,7 +133,7 @@ We've created an EC2 instance in the AWS ARC Playpen (currently named "tamuri-at
 
 Set up the environment for backups and copying over to OneDrive share
 
-```
+```sh
 sudo apt update
 sudo apt install python3-pip
 sudo pip install pandas openpyxl  # we need these installed system-wide
