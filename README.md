@@ -12,7 +12,7 @@ A website to view and comment on Disease Atlas results.
 
 The application services have been packaged into containers, and are run using [Docker Compose](https://docs.docker.com/compose/). You need to have Docker installed on your machine if you'd like to run a local copy of the application.
 
-### Instructions
+### Clone and set up directories
 
 Two directories residing next to each other are needed to run the application:
 
@@ -40,6 +40,8 @@ atlasview-data
 └── users.csv
 ```
 
+### Set up the `Remark42` engine
+
 The Remark42 code is a submodule in the repository. We download the source code and patch it, ready for Docker to build. Our patches remove the logout links, because the R Shiny app handles credentials and login/logout.
 
 ```
@@ -51,11 +53,23 @@ cd remark42/remark42
 git apply ../*.patch
 ```
 
+### Set up environment variables
+
 From the top of the atlasview repository (the one containing `docker-compose.yml`), we need to setup environment variables in `.env`. To run on the application on localhost, copy the example `.env` file:
 
 ```
 cp .env.example .env
 ```
+
+Three environment variables are required to run the application:
+
+1. `ATLASVIEW_SITE_ADDRESS` - the DNS name to access the website. Caddy needs this to automatically provision SSL certificates. If running on your local machine, this is simply `localhost`
+2. `REMARK42_SECRET` - a long, hard-to-guess, string to encrypt authentication tokens for Remark42
+3. `REMARK42_ADMIN_PASSWD` - required to secure the endpoints if you want to do manual backup of Remark42 comments
+
+Update the values in the `.env` file as necessary. This is automatically read by `docker compose`.
+
+### Deploy the application
 
 Finally, start the application containers. Note that if you want to run this on a **Mac with Apple Silicon**, you will need to install Rosetta and [enable it in the Docker Desktop settings](https://docs.docker.com/desktop/settings/mac/#use-rosetta-for-x86amd64-emulation-on-apple-silicon) (under `Features in development`). Rosetta can be installed by running `softwareupdate --install-rosetta`.
 
@@ -64,16 +78,6 @@ docker compose up
 ```
 
 Once services have started, you can visit [https://localhost/](https://localhost/) and login with username `local.user` and password `local.password`.
-
-### App environment variables
-
-Three environment variables are required to run the application:
-
-1. `ATLASVIEW_SITE_ADDRESS` - the DNS name to access the website. Caddy needs this to automatically provision SSL certificates. If running on your local machine, this is simply `localhost`
-2. `REMARK42_SECRET` - a long, hard-to-guess, string to encrypt authentication tokens for Remark42
-3. `REMARK42_ADMIN_PASSWD` - required to secure the endpoints if you want to do manual backup of Remark42 comments
-
-Put the values in the `.env` file. This is automatically read by Docker Compose.
 
 ## Administration
 
