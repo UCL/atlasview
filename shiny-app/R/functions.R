@@ -27,7 +27,7 @@ get_atlasview_data <- function() {
   
   #read full MM res in vis format
   MM_res <- data.table::fread(file=get_data_filepath("MM_for_circo_network_vis.csv"),
-                              colClasses = list(character = c(1:9, 13), numeric = 10:12)) %>% 
+                              colClasses = list(character = c(1:8, 13), numeric = 9:12)) %>% 
     dplyr::left_join(y = specialties, by=c("specialty_index_dis" = "specialty")) %>%
     dplyr::rename("specialty_code" = "code") %>%
     dplyr::left_join(y = specialties, by=c("specialty_cooccurring_dis" = "specialty")) %>%
