@@ -138,13 +138,22 @@ This directory contains data and configuration to run the application. The data 
 
 ### Backing up and exporting comments
 
-Remark42 will backup comments every 24 hours into `atlasview-data/remark/backup`. If you set the `REMARK42_ADMIN_PASSWD` environment variable, you can also backup by connecting to the Remark42 container and running `backup --url=http://localhost:8080`
+Remark42 will backup comments every 24 hours into `atlasview-data/remark/backup`. If you set the
+`REMARK42_ADMIN_PASSWD` environment variable, you can also backup by connecting to the Remark42
+container and running `backup --url=http://localhost:8080`:
 
+```sh
+docker exec atlasview-remark-1 backup --url http://localhost:8080
+```
+
+Ths will create a timestamped, gzipped backup file in `atlasview-data/remark/backup`.
 The `backup2excel.py` Python script will read a given backup file and export the comments into an Excel file. It requires the Python `pandas` and `openpyxl` libraries:
 
 ```sh
 atlasview/remark42/backup2excel.py atlasview-data/remark/backup/<gzipped-backup-file>.gz
 ```
+
+which will produce an Excel file in the current working directory.
 
 ## AWS setup
 
