@@ -1,7 +1,7 @@
 "specialty","color"
 "Acute Internal Medicine","#454545"
 "Adolescent Medicine","#D8BFD8"
-"Allergy","#000000"
+"Allergy","#6495ED"
 "Anaesthetics","#5D3FD3"
 "Audiovestibular","#36454F"
 "Aviation and Space Medicine",NA
@@ -109,3 +109,4 @@
 "Urogynaecology",NA
 "Urology","#FFB6C1"
 "Vascular Surgery","#E30B5C"
+"blank","#D3D3D3"
