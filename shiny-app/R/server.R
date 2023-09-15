@@ -118,7 +118,7 @@ atlasview_server <-  function(input, output, session) {
     list(input$select_specialty, input$select_index_disease), 
     {
       req(res_auth$user)
-      title <- "AtlasView"
+      title <- "AtlasViews"
       if (input$select_specialty != "") {
         title <- paste0(title, ": ", atlasview_data$specialties$specialty[atlasview_data$specialties$code == input$select_specialty])
         
