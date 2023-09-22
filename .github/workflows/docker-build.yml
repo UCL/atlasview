@@ -1,0 +1,20 @@
+name: Docker Build CD
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Copy environment file if it doesn't exist yet
+      run: |
+        if [ ! -f .env ]; then
+          cp .env.example .env
+        fi
+
+    - name: Build the docker images
+      run: docker compose up -d --build
