@@ -172,6 +172,21 @@ gh release create <TAG_NAME>
 
 and following the interactive prompts.
 
+### Creating a self-hosted runner
+
+The `tamuri-atlasview` EC2 instance already has a self-hosted GHA runner configured, which will be
+used to run the workflows in this repo. If necessary, you can create a new runner by going to the
+repo settings `Actions > Runners`, clicking on the "New self-hosted runner" button and following the
+instructions for the relevant operating system.
+
+If you want the runner to stay active, instead of running the `./run.sh` script in the last step,
+instead run
+
+```sh
+sudo ./svc.sh install
+sudo ./svc.sh start
+```
+
 ### Backups
 
 Set up the environment for backups and copying over to OneDrive share
