@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: Move to atlasview working directory
-      run: cd $WORKDIR
+      run: cd $WORKDIR && echo 'Current working directory ' $(pwd)
 
     - name: Copy environment file if it doesn't exist yet
       run: |
