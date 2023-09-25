@@ -25,7 +25,7 @@ jobs:
           cp .env.example .env
         fi
 
-    - name: Copy dummy data directory to runner if it doesn't
+    - name: Copy dummy data directory to runner if it doesn't exist
       run: |
         if [ ! -d $DATADIR ]; then
           cp -R ./deployment/atlasview-data $DATADIR
