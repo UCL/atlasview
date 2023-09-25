@@ -5,10 +5,12 @@ on: workflow_dispatch
 jobs:
   build:
     runs-on: self-hosted
+    env:
+      WORKDIR: /home/ubuntu/atlasview
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+    - name: Move to atlasview working directory
+      run: cd $WORKDIR
 
     - name: Copy environment file if it doesn't exist yet
       run: |
@@ -16,5 +18,25 @@ jobs:
           cp .env.example .env
         fi
 
+    # - name: Set up Docker's Apt repository
+    #   run: |
+    #     # Add Docker's official GPG key:
+    #     sudo apt-get -y update
+    #     sudo apt-get -y install ca-certificates curl gnupg
+    #     sudo install -m 0755 -d /etc/apt/keyrings
+    #     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    #     sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+    #     # Add the repository to Apt sources:
+    #     echo \
+    #       "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+    #       "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+    #       sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    #     sudo apt-get -y update
+
+    # - name: Install Docker packages
+    #   run: |
+    #     sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
     - name: Build the docker images
-      run: docker compose up -d --build
+      run: sudo docker compose up -d --build --no-deps shiny
