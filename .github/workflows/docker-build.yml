@@ -35,4 +35,4 @@ jobs:
       run: sudo docker --version
 
     - name: Build the docker images
-      run: sudo docker compose up -d --build --no-deps shiny
+      run: sudo docker compose up -d --build
