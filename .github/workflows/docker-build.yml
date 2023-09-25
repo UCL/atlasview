@@ -25,8 +25,11 @@ jobs:
           cp .env.example .env
         fi
 
-    - name: Link data directory to runner work directory
-      run: ln -s $DATADIR ../atlasview-data
+    - name: Copy dummy data directory to runner if it doesn't
+      run: |
+        if [ ! -d $DATADIR ]; then
+          cp -R ./deployment/atlasview-data $DATADIR
+        fi
 
     - name: Check that docker is installed
       run: sudo docker --version
