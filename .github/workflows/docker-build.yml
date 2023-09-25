@@ -5,13 +5,16 @@ on: workflow_dispatch
 jobs:
   build:
     runs-on: self-hosted
+    defaults:
+      run:
+        # Use existing atlasview directory on self-hosted runner
+        working-directory: /home/ubuntu/atlasview
     env:
-      WORKDIR: /home/ubuntu/atlasview
       DATADIR: /home/ubuntu/atlasview-data
 
     steps:
-    - name: Move to atlasview working directory
-      run: cd $WORKDIR && echo 'Current working directory ' $(pwd)
+    - name: Pull latest updates
+      run: git pull
 
     - name: Copy environment file if it doesn't exist yet
       run: |
