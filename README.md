@@ -159,6 +159,19 @@ which will produce an Excel file in the current working directory.
 
 We've created an EC2 instance in the AWS ARC Playpen (currently named "tamuri-atlasview"), on which the containerised application is running. Installation is as above. The `.env` file is updated with the EC2 DNS name, and new Remark42 secret and admin passwords. Ports 80 and 443 are both open because they're needed for Caddy to automatically handle TLS certificates.
 
+### Continuous Deployment
+
+The EC2 instance has a [self-hosted GitHub Actions
+runner](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners),
+which is configured to continuously deploy the `docker` containers, using [the provided GitHub Actions workflow](./.github/workflows/docker-build.yml). New workflow runs will be triggered on new *releases* or by [manually triggering](https://docs.github.com/en/actions/using-workflows/manually-running-a-workflow) them. A new *release* can be created by following the steps [described here](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository) or by using the GitHub CLI:
+
+```sh
+git tag <TAG_NAME>
+gh release create <TAG_NAME>
+```
+
+and following the interactive prompts.
+
 ### Backups
 
 Set up the environment for backups and copying over to OneDrive share
