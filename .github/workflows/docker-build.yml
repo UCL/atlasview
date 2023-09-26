@@ -8,17 +8,8 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-    defaults:
-      run:
-        # Use existing atlasview directory on self-hosted runner
-        working-directory: /home/ubuntu/atlasview
 
     steps:
-    - name: Pull latest updates
-      run: git pull
-
-    - name: Check that docker is installed
-      run: sudo docker --version
-
-    - name: Build the docker images
-      run: sudo docker compose up -d --build
+    - name: Deploy
+      run: ./deployment/deploy.sh
+      working-directory: /home/ubuntu/atlasview
