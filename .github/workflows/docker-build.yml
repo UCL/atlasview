@@ -12,24 +12,10 @@ jobs:
       run:
         # Use existing atlasview directory on self-hosted runner
         working-directory: /home/ubuntu/atlasview
-    env:
-      DATADIR: /home/ubuntu/atlasview-data
 
     steps:
     - name: Pull latest updates
       run: git pull
-
-    - name: Copy environment file if it doesn't exist yet
-      run: |
-        if [ ! -f .env ]; then
-          cp .env.example .env
-        fi
-
-    - name: Copy dummy data directory to runner if it doesn't exist
-      run: |
-        if [ ! -d $DATADIR ]; then
-          cp -R ./deployment/atlasview-data $DATADIR
-        fi
 
     - name: Check that docker is installed
       run: sudo docker --version
