@@ -1,0 +1,12 @@
+- name: Provision the self-hosted GitHub Actions runner
+  hosts: all
+  become: true
+
+  roles:
+    - role: docker
+    - role: gha-runner
+
+
+    # Clone atlasview repo
+    # Set up .env file
+    # Copy atlasview-data directory
