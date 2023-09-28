@@ -3,10 +3,12 @@
   become: true
 
   roles:
+    ## Install Docker
     - role: docker
+      tags: docker
+    ## Set up atlasview directories
+    - role: atlasview
+      tags: atlasview
+    ## Set up GitHub Actions runner
     - role: gha-runner
-
-
-    # Clone atlasview repo
-    # Set up .env file
-    # Copy atlasview-data directory
+      tags: gha-runner
