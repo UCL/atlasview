@@ -1,0 +1,32 @@
+## Adapted from https://community.ibm.com/community/user/ibmz-and-linuxone/blogs/asif-mahmud1/2020/03/15/cloning-private-git-repository-using-ansible
+- name: Generate SSH key for accessing GitHub
+  ansible.builtin.command: "ssh-keygen -t rsa -f {{ key_path }} -N ''"
+  args:
+    creates: "{{ key_path }}"
+  register: ssh_key
+
+- name: Create ssh config file
+  ansible.builtin.template:
+    src: ssh_config.j2
+    dest: "{{ ssh_config_path }}"
+    mode: "0644"
+
+- name: Get key content
+  ansible.builtin.command: "cat {{ key_path }}.pub"
+  register: key_content
+  changed_when: ssh_key.changed
+  notify:
+    - Add SSH public key to GitHub account
+
+- name: Ensure known_host entry for GitHub
+  block:
+    - name: Fetch GitHub public key
+      ansible.builtin.command: "ssh-keyscan -t rsa github.com"
+      register: keyscan
+      changed_when: false
+
+    - name: Add GitHub public key to known_hosts
+      ansible.builtin.known_hosts:
+        name: github.com
+        key: "{{ keyscan.stdout }}"
+        path: "{{ known_hosts_path }}"
