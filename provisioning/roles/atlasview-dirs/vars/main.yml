@@ -4,6 +4,7 @@ remote:
   atlasview_main: "{{ atlasview_root }}/atlasview"
   atlasview_data: "{{ atlasview_root }}/atlasview-data"
   atlasview_env: "{{ atlasview_root }}/atlasview/.env"
+  atlasview_backups: "{{ atlasview_root }}/atlasview-backups"
 
 local:
   atlasview_data: "{{ playbook_dir }}/../../atlasview-data"
