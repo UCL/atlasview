@@ -10,6 +10,11 @@
     dest: "{{ atlasview_root }}"
     mode: "0755"
 
+- name: Set up Remark42 engine
+  ansible.builtin.script:
+    cmd: "{{ setup_remark42 }}"
+    chdir: "{{ remote.atlasview_main }}"
+
 - name: Copy local .env file
   ansible.builtin.copy:
     src: "{{ local.atlasview_env }}"

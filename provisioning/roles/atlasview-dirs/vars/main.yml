@@ -10,3 +10,5 @@ remote:
 local:
   atlasview_data: "{{ playbook_dir }}/../../atlasview-data"
   atlasview_env: "{{ playbook_dir }}/../.env"
+
+setup_remark42: "setup-remark42.sh"

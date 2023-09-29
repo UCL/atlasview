@@ -7,10 +7,10 @@ echo $PWD
 git pull --tags
 echo "\n*** CURRENT VERSION: $(git describe --tags) ***\n"
 
-# Set up Remark42 engine
-git submodule update --init --recursive
+# Make sure Remark42 patches were applied
 cd remark42/remark42
-git apply ../*.patch
+git apply --reverse --check ../*.patch  # fails if patches were not applied
+git status                              # should show changes to auth-panel.tsx and profile.tsx
 
 cd $HOME/atlasview
 
