@@ -26,3 +26,6 @@
     path: "{{ remote.atlasview_backups }}/comments"
     state: directory
     mode: "0755"
+
+- name: Set up cron jobs
+  ansible.builtin.include_tasks: cron-jobs.yml
