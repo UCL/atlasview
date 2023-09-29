@@ -18,9 +18,6 @@
       register: key_content
       changed_when: ssh_key.changed
 
-    - ansible.builtin.debug:
-        msg: "{{ github_token }}"
-
     - name: Upload key to GitHub account
       ansible.builtin.uri:
         url: https://api.github.com/user/keys
@@ -35,8 +32,9 @@
           # FIXME: use ansible-vault to encrypt GH_PAT
           Authorization: "token {{ github_token }}"
         status_code: 200, 201
-      changed_when: key_content.changed
       register: task_log
+      when: ssh_key.changed
+      failed_when: "'key is already in use' in task_log.json.errors[0].values()"
 
 - name: Ensure known_host entry for GitHub
   block:
