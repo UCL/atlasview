@@ -11,12 +11,32 @@
     dest: "{{ ssh_config_path }}"
     mode: "0644"
 
-- name: Get key content
-  ansible.builtin.command: "cat {{ key_path }}.pub"
-  register: key_content
-  changed_when: ssh_key.changed
-  notify:
-    - Add SSH public key to GitHub account
+- name: Add SSH public key to GitHub account
+  block:
+    - name: Get key content
+      ansible.builtin.command: "cat {{ key_path }}.pub"
+      register: key_content
+      changed_when: ssh_key.changed
+
+    - ansible.builtin.debug:
+        msg: "{{ github_token }}"
+
+    - name: Upload key to GitHub account
+      ansible.builtin.uri:
+        url: https://api.github.com/user/keys
+        validate_certs: false
+        method: POST
+        body:
+          title: "{{ key_title }}"
+          key: "{{ key_content.stdout }}"
+        body_format: json
+        headers:
+          Content-Type: "application/json"
+          # FIXME: use ansible-vault to encrypt GH_PAT
+          Authorization: "token {{ github_token }}"
+        status_code: 200, 201
+      changed_when: key_content.changed
+      register: task_log
 
 - name: Ensure known_host entry for GitHub
   block:
