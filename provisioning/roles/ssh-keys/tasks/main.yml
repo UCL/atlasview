@@ -34,7 +34,6 @@
         status_code: 200, 201
       register: task_log
       when: ssh_key.changed
-      failed_when: "'key is already in use' in task_log.json.errors[0].values()"
 
 - name: Ensure known_host entry for GitHub
   block:
