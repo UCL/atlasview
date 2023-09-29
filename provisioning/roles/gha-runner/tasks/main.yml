@@ -4,6 +4,7 @@
   vars:
     # FIXME: use `ansible-vault` to encrypt this variable instead
     access_token: "{{ lookup('env', 'GH_PAT') }}"
+    runner_user: "{{ ansible_user }}"
     runner_dir: /opt/actions-runner/{{ github_account }}/{{ github_repo }}
   tags:
     - uninstall  # To uninstall the runner with ansible-playbook playbook.yml --tags uninstall
