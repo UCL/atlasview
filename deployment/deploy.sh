@@ -1,5 +1,5 @@
 # Copy repo to working directory and cd into it
-cp -r $GITHUB_WORKSPACE $HOME
+sudo cp -r $GITHUB_WORKSPACE $HOME
 cd $HOME/atlasview
 echo $PWD
 
