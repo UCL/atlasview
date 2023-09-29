@@ -11,8 +11,8 @@
     - role: ssh-keys
       tags: ssh-keys
     ## Set up atlasview directories
-    - role: atlasview
-      tags: atlasview
+    - role: atlasview-dirs
+      tags: atlasview-dirs
     ## Set up GitHub Actions runner
     - role: gha-runner
       become: true
