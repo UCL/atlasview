@@ -40,19 +40,6 @@ atlasview-data
 └── users.csv
 ```
 
-### Set up the `Remark42` engine
-
-The Remark42 code is a submodule in the repository. We download the source code and patch it, ready for Docker to build. Our patches remove the logout links, because the R Shiny app handles credentials and login/logout.
-
-```sh
-# Set up the Remark42 engine
-cd atlasview
-git submodule init
-git submodule update
-cd remark42/remark42
-git apply ../*.patch
-```
-
 ### Set up environment variables
 
 From the top of the atlasview repository (the one containing `docker-compose.yml`), we need to setup environment variables in `.env`. To run on the application on localhost, copy the example `.env` file:
@@ -172,20 +159,9 @@ gh release create <TAG_NAME>
 
 and following the interactive prompts.
 
-### Creating a self-hosted runner
-
-The `tamuri-atlasview` EC2 instance already has a self-hosted GHA runner configured, which will be
-used to run the workflows in this repo. If necessary, you can create a new runner by going to the
-repo settings `Actions > Runners`, clicking on the "New self-hosted runner" button and following the
-instructions for the relevant operating system.
-
-If you want the runner to stay active, instead of running the `./run.sh` script in the last step,
-instead run
-
-```sh
-sudo ./svc.sh install
-sudo ./svc.sh start
-```
+To provision and configure the GHA runner, follow the
+[instructions in the `provisioning` README](./provisioning/README.md). This will automate most of
+the steps above on the remote machine where the application will be deployed.
 
 ### Backups
 
