@@ -5,7 +5,7 @@ echo $PWD
 
 # Update repo and show current status of the repo
 git pull --tags
-git describe --tags
+echo "\n*** CURRENT VERSION: $(git describe --tags) ***\n"
 
 # Set up Remark42 engine
 git submodule update --init --recursive
