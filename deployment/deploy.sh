@@ -1,9 +1,6 @@
-# Ensure we're in the correct working directory
-WORKDIR=$HOME/atlasview
-
 # Copy repo to working directory and cd into it
-cp -r $GITHUB_WORKSPACE $WORKDIR
-cd $WORKDIR
+cp -r $GITHUB_WORKSPACE $HOME
+cd $HOME/atlasview
 echo $PWD
 
 # Show current status of the repo
