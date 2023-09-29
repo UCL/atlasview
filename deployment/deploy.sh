@@ -10,8 +10,7 @@ git describe --tags
 # Set up Remark42 engine
 git submodule update --init --recursive
 cd remark42/remark42
-# For some reason the remark42/remark42/ files are root-owned, so need sudo
-sudo git apply ../*.patch
+git apply ../*.patch
 
 cd $HOME/atlasview
 
