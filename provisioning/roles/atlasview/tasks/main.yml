@@ -3,6 +3,7 @@
     repo: "git@github.com:{{ atlasview_repo }}.git"
     dest: "{{ remote.atlasview_main }}"
     version: "main"
+    force: true
 
 - name: Copy local atlasview-data directory
   ansible.builtin.copy:
