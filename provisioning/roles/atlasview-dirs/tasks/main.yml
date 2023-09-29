@@ -1,8 +1,17 @@
-- name: Clone atlasview repo in home directory
-  ansible.builtin.git:
-    repo: "https://github.com/{{ github_account }}/{{ github_repo }}"
-    dest: "{{ atlasview_root }}/{{ github_repo }}"
+- name: Create atlasview placeholder directory
+  ansible.builtin.file:
+    path: "{{ remote.atlasview_main }}"
+    state: directory
+    mode: "0755"
 
-# - name: Copy local atlasview-data directory
-# - name: Set up the Remark42 engine
-# - name: Copy local .env file
+- name: Copy local atlasview-data directory
+  ansible.builtin.copy:
+    src: "{{ local.atlasview_data }}"
+    dest: "{{ atlasview_root }}"
+    mode: "0755"
+
+- name: Copy local .env file
+  ansible.builtin.copy:
+    src: "{{ local.atlasview_env }}"
+    dest: "{{ remote.atlasview_env }}"
+    mode: "0644"
