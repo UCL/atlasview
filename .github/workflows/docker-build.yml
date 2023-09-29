@@ -15,4 +15,5 @@ jobs:
 
     - name: Deploy
       run: ./deployment/deploy.sh
-
+      env:
+        GITHUB_WORKSPACE: ${{ github.workspace }}
