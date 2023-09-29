@@ -1,8 +1,8 @@
-- name: Create atlasview placeholder directory
-  ansible.builtin.file:
-    path: "{{ remote.atlasview_main }}"
-    state: directory
-    mode: "0755"
+- name: Clone atlasview repo
+  ansible.builtin.git:
+    repo: "git@github.com:{{ atlasview_repo }}.git"
+    dest: "{{ remote.atlasview_main }}"
+    version: "main"
 
 - name: Copy local atlasview-data directory
   ansible.builtin.copy:

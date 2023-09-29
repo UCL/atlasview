@@ -1,9 +1,10 @@
-# Copy repo to working directory and cd into it
-sudo cp -r $GITHUB_WORKSPACE $HOME
+# Move to atlasview in home directory
+# We expect this directory to be created during initial provisioning of the runner
 cd $HOME/atlasview
 echo $PWD
 
-# Show current status of the repo
+# Update repo and show current status of the repo
+git pull --tags
 git describe --tags
 
 # Set up Remark42 engine
