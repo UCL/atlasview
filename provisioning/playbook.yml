@@ -1,14 +1,19 @@
 - name: Provision the self-hosted GitHub Actions runner
   hosts: all
-  become: true
+  become: false
 
   roles:
     ## Install Docker
     - role: docker
+      become: true
       tags: docker
+    ## Add ssh keys for access to private GitHub repositories
+    - role: ssh-keys
+      tags: ssh-keys
     ## Set up atlasview directories
     - role: atlasview
       tags: atlasview
     ## Set up GitHub Actions runner
     - role: gha-runner
+      become: true
       tags: gha-runner
