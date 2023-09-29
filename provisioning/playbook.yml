@@ -11,8 +11,11 @@
     - role: ssh-keys
       tags: ssh-keys
     ## Set up atlasview directories
-    - role: atlasview-dirs
-      tags: atlasview-dirs
+    - role: atlasview
+      tags: atlasview
+    ## TODO: set up rclone
+    # - role rclone
+    #   tags: rclone
     ## Set up GitHub Actions runner
     - role: gha-runner
       become: true
