@@ -1,8 +1,10 @@
 # Ensure we're in the correct working directory
 WORKDIR=$HOME/atlasview
 
-# Copy repo to working directory and cd into it
-cp -r $GITHUB_WORKSPACE $WORKDIR
+# Copy repo to working directory if it doesn't exist yet
+if [ ! -d "$WORKDIR" ]; then
+    cp -r $GITHUB_WORKSPACE $WORKDIR
+fi
 cd $WORKDIR
 echo $PWD
 
