@@ -6,8 +6,8 @@ cp -r $GITHUB_WORKSPACE $WORKDIR
 cd $WORKDIR
 echo $PWD
 
-# Pull latest updates
-git pull
+# Show current status of the repo
+git describe --tags
 
 # Check that docker is installed and build images
 sudo docker --version
