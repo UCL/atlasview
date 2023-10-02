@@ -1,17 +1,16 @@
-# TODO: handle when atlasview installed under different user
 echo "Running backup script $(date)"
 
-cd /home/ubuntu/atlasview-backups/comments
+cd ${HOME}/atlasview-backups/comments
 
 # connect to the remark container and trigger a backup
 docker exec atlasview-remark-1 backup
 
 # run script to convert backup of comments into an excel file
 # use the latest created backup file, whatever the name
-/home/ubuntu/atlasview/remark42/backup2excel.py "$(ls -dAt /home/ubuntu/atlasview-data/remark/backup/* | head -n1)"
+${HOME}/atlasview/remark42/backup2excel.py "$(ls -dAt ${HOME}/atlasview-data/remark/backup/* | head -n1)"
 
 # create a timestamped backup of atlasview-data except caches and data files etc
-cd /home/ubuntu
+cd ${HOME}
 zip -r atlasview-data-$(date -d "today" +"%Y%m%d%H%M").zip atlasview-data/caddy atlasview-data/remark atlasview-data/users.csv -x atlasview-data/remark/backup/**\*
 mv atlasview-data-*.zip atlasview-backups
 
