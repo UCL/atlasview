@@ -3,7 +3,12 @@
 #' Get the path to data files
 #' NoRd
 get_data_root <- function() {
-  Sys.getenv("ATLASVIEW_DATA_PATH")
+  out <- Sys.getenv("ATLASVIEW_DATA_PATH") 
+  if (out == "") {
+    warning("ATLASVIEW_DATA_PATH variable not set, defaulting to `../deployment/atlasview-data`")
+    out <- file.path("../deployment/atlasview-data")
+  }
+  out
 }
 
 #' Get the full path to a AtlasView data file 
