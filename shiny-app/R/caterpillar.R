@@ -61,6 +61,11 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
   } else if (max(df_prev$prev_ratio) >= 100) {
     max_limit <- max(df_prev$prev_ratio)
   }
+  
+  # Initialize plotting variables
+  # Avoids 'no visible binding for global variable' in R CMD check
+  prevalence <- specialty_cooccurring_dis <- id <- NULL
+  prev_ratio <- ci_left_prev_ratio <- ci_right_prev_ratio <- NULL
 
   # prevalence of co-occ disease in index disease
   p1 <- ggplot(
