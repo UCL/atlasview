@@ -178,7 +178,7 @@ display_version <- function() {
   html_link <- a(href = gh_link, sha)
   
   ## Format info message with html tags
-  info_msg <- div(p(glue::glue("Running atlasview {version} - commit"), html_link))
+  info_msg <- div(p(glue::glue("Atlasview {version} - commit"), html_link))
   
   shiny.info::display(message = info_msg, position = "top right", type = "message")
 }
