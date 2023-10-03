@@ -13,7 +13,7 @@ RUN install2.r --error --skipinstalled --ncpus 1 \
     data.table devtools dplyr ggplot2 grid RColorBrewer Rcpp readr scales shiny stringr survival tibble tidyr
 
 # additional packages needed for atlasview app
-RUN install2.r --error --skipinstalled --ncpus 1 \ 
+RUN install2.r --error --skipinstalled --ncpus 1 \
     circlize cookies ggiraph gridExtra hablar Hmisc jose patchwork png recogito rms shinybusy shinydashboard shinyjs shinymanager shinytitle svgPanZoom svglite
 
 
@@ -28,10 +28,8 @@ RUN rm .Rprofile
 
 EXPOSE 3838
 
-# TODO: create an atlasview R package, and install properly into environment
-CMD R -e "options('shiny.port' = 3838,shiny.host='0.0.0.0'); devtools::load_all(); atlasviewApp()"
+RUN R -e 'devtools::install(pkg = ".", dependencies = TRUE)'
+CMD R -e "options('shiny.port' = 3838, shiny.host='0.0.0.0'); atlasview::atlasviewApp()"
 
 # to build: docker build -t atlasview .
 # to run:   docker run -p 3838:3838 atlasview
-
-
