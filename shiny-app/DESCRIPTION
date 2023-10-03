@@ -14,11 +14,13 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports:
     circlize,
+    cookies,
     data.table,
     digest,
     dplyr,
     ggplot2,
     jose,
+    lubridate,
     magrittr,
     patchwork,
     readr,
