@@ -51,7 +51,7 @@ atlasview_ui <- function() {
       p("The purpose of this website (alpha version) is to get the views of
         clinicians on the co-occurring disease results in the Disease Atlas.")
       ),
-    a(id="av-toggle-guide", href="javascript:toggle_guide();", "Hide guide"),
+    a(id = "av-toggle-guide", href = "javascript:toggle_guide();", "Hide guide"),
     br(),
     div(id = "av-guide",
         br(),
@@ -129,25 +129,26 @@ atlasview_ui <- function() {
 
     conditionalPanel("output.nrows",
       tabsetPanel(
-        id="panels",
+        id = "panels",
         type = "tabs",
         tabPanel(
           title = "caterpillar",
           value = "caterpillar",
           wellPanel(
-            selectInput('filter', 'Filter', choices = c(), multiple=TRUE),
+            selectInput('filter', 'Filter', choices = c(), multiple = TRUE),
           ),
           plotOutput(
             outputId = "outputCaterpillar",
-            width="100%"
+            width = "100%"
           )
         ),
         tabPanel(
           title = "circos",
           value = "circos",
-          shinydashboard::box(width=12,
-              shinybusy::add_busy_spinner(spin = "fading-circle"),
-              svgPanZoom::svgPanZoomOutput(outputId = "circosPlot", width="100%", height="1000px")
+          shinydashboard::box(
+            width = 12,
+            shinybusy::add_busy_spinner(spin = "fading-circle"),
+            svgPanZoom::svgPanZoomOutput(outputId = "circosPlot", width = "100%", height = "1000px")
           )
         ),
         tabPanel(
