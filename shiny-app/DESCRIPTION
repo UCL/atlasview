@@ -23,7 +23,6 @@ Imports:
     glue,
     jose,
     lubridate,
-    magrittr,
     patchwork,
     readr,
     shiny,
