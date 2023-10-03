@@ -14,6 +14,7 @@ get_data_filepath <- function(filename) {
 }
 
 #' Load, process, and return data for specialties and diseases
+#' @importFrom stats setNames
 get_atlasview_data <- function() {
   specialties <- data.table::fread(get_data_filepath("specialties.csv"), header = TRUE,
                                    colClasses = c("character", "character")) %>%
@@ -55,7 +56,7 @@ get_atlasview_data <- function() {
 
 #' load the credentials for users for the app
 get_credentials <- function() {
-  credentials <- read.csv(file=get_data_filepath("users.csv"), stringsAsFactors = FALSE)
+  credentials <- utils::read.csv(file=get_data_filepath("users.csv"), stringsAsFactors = FALSE)
   credentials$is_hashed_password <- TRUE
   credentials$admin <- FALSE
   credentials
