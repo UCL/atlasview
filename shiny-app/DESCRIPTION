@@ -44,4 +44,6 @@ Imports:
     svglite,
     svgPanZoom,
     tibble,
-    tidyr
+    tidyr,
+    gert,
+    shiny.info
