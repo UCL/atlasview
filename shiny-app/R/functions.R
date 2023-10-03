@@ -20,12 +20,13 @@ get_data_filepath <- function(filename) {
 
 #' Load, process, and return data for specialties and diseases
 #' @importFrom stats setNames
+#' @importFrom rlang .data
 get_atlasview_data <- function() {
   specialties <- data.table::fread(
     get_data_filepath("specialties.csv"),
     header = TRUE, colClasses = c("character", "character")
   )
-  specialties <- dplyr::arrange(specialties, code)
+  specialties <- dplyr::arrange(specialties, .data$code)
   
   specialty_colours <- data.table::fread(get_data_filepath("lkp_spe_col.csv"),
     header = TRUE, colClasses = c("character", "character")
@@ -50,9 +51,12 @@ get_atlasview_data <- function() {
   
   # information about index and co-occurring diseases
   index_diseases <- dplyr::select(MM_res,
-    phecode_index_dis, phenotype_index_dis, specialty_index_dis, specialty_code
+    .data$phecode_index_dis,
+    .data$phenotype_index_dis,
+    .data$specialty_index_dis,
+    .data$specialty_code
   )
-  index_diseases <- dplyr::arrange(dplyr::distinct(index_diseases), phenotype_index_dis)
+  index_diseases <- dplyr::arrange(dplyr::distinct(index_diseases), .data$phenotype_index_dis)
   
   list(
     specialties = specialties,
