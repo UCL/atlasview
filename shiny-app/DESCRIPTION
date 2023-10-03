@@ -3,7 +3,7 @@ Title: View the Co-Occurring Disease Results from the Disease Atlas
 Version: 0.0.0.9000
 Authors@R:
   c(
-    person("Asif", "Tamuri", , "a.tamur@ucl.ac.uk", role = c("aut", "cre")),
+    person("Asif", "Tamuri", , "a.tamuri@ucl.ac.uk", role = c("aut", "cre")),
     person("Milan", "Malfait", , "m.malfait@ucl.ac.uk", role = c("aut"))
   )
 Description: The purpose of this app is to get the views of

@@ -9,7 +9,7 @@
 The purpose of this app is to get the views of clinicians on the co-occurring disease results in the Disease Atlas.
 }
 \author{
-\strong{Maintainer}: Asif Tamuri \email{a.tamur@ucl.ac.uk}
+\strong{Maintainer}: Asif Tamuri \email{a.tamuri@ucl.ac.uk}
 
 Authors:
 \itemize{
