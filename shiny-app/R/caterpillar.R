@@ -55,10 +55,6 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
     )
   }
 
-
-  # plot ratio
-  max_y <- 10^7
-
   # max y axis in prev_ratio
   if (max(df_prev$prev_ratio) < 100) {
     max_limit <- 100
@@ -125,7 +121,6 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
     xlab("Prevalence ratio") +
     colScale
 
-
   ### combine:
   pl <- p1 + p3 + patchwork::plot_annotation(plot_title_str, theme = theme(plot.title = element_text(size = 20, hjust = 0.5)))
 
@@ -137,11 +132,6 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
     ffplot_output <- paste(ffplot_output, "_blank.png", sep = "")
   }
 
-  # save
-  # ggsave(pl, file=ffplot_output, width = 20, height=20, dpi=300, bg="white")
-
-  # to check what we are plotting
-  # return(df_prev)
   return(pl)
 }
 
