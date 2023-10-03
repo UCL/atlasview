@@ -3,6 +3,7 @@
 #df_prev: df with prev and prev_ratio for one index_disease 
 #df_n: df_results median n diseases 
 #spe_index_dis: specialty of index disease 
+#' @importFrom rlang .data
 caterpillar_prev_ratio_v5_view <- function(df_prev,
                                            df_n,
                                            spe_index_dis,
@@ -16,14 +17,14 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
   b <- 0.1
   l <- 0.2
 
-  df_prev <- dplyr::arrange(df_prev, desc(prev_ratio))
+  df_prev <- dplyr::arrange(df_prev, dplyr::desc(.data$prev_ratio))
 
   # phenotype and phecode of index disease (after sorting)
   phenotype <- df_prev$phenotype_index_dis[1]
   phe <- df_prev$phecode_index_dis[1]
 
   # not in plots
-  df_prev <- dplyr::filter(df_prev, phecode_index_dis != cooc_dis)
+  df_prev <- dplyr::filter(df_prev, .data$phecode_index_dis != .data$cooc_dis)
 
   # subset if there is long list
   if (nrow(df_prev) > 50) {
@@ -36,7 +37,7 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
   df_prev$id <- nrow(df_prev):1
 
   # median_n
-  df_n_phe <- dplyr::filter(df_n, index_dis == phe)
+  df_n_phe <- dplyr::filter(df_n, .data$index_dis == phe)
   median_n_dis <- df_n_phe$median_n_dis
   median_n_spe <- df_n_phe$median_n_spe
   n_cases_index_dis <- df_n_phe$n_indiv_index_dis_m_r

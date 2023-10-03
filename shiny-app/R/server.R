@@ -1,3 +1,4 @@
+#' @importFrom rlang .data
 atlasview_server <-  function(input, output, session) {
 
   atlasview_data <- get_atlasview_data()
@@ -84,11 +85,11 @@ atlasview_server <-  function(input, output, session) {
       # get all index diseases for this specialty
       specialty_index_diseases <- dplyr::filter(
         atlasview_data$index_diseases,
-        specialty_code == input$select_specialty
+        .data$specialty_code == input$select_specialty
       )
       specialty_index_diseases <- dplyr::select(
         specialty_index_diseases,
-        phecode_index_dis, phenotype_index_dis
+        .data$phecode_index_dis, .data$phenotype_index_dis
       )
 
       selected <- NULL
@@ -167,11 +168,12 @@ atlasview_server <-  function(input, output, session) {
       req(res_auth$user, input$select_specialty)
       cooccurring_diseases <- dplyr::filter(
         atlasview_data$MM_res,
-        specialty_code == input$select_specialty, phecode_index_dis == input$select_index_disease
+        .data$specialty_code == input$select_specialty,
+        .data$phecode_index_dis == input$select_index_disease
       )
-      cooccurring_diseases <- dplyr::select(cooccurring_diseases, specialty_cooccurring_dis)
+      cooccurring_diseases <- dplyr::select(cooccurring_diseases, .data$specialty_cooccurring_dis)
       cooccurring_diseases <- dplyr::distinct(cooccurring_diseases)
-      cooccurring_diseases <- dplyr::arrange(cooccurring_diseases, specialty_cooccurring_dis)
+      cooccurring_diseases <- dplyr::arrange(cooccurring_diseases, .data$specialty_cooccurring_dis)
       cooccurring_diseases <- dplyr::pull(cooccurring_diseases)
 
       updateSelectInput(session, "filter", choices = cooccurring_diseases, selected = cooccurring_diseases)
@@ -190,9 +192,9 @@ atlasview_server <-  function(input, output, session) {
 
       MM_res_spe_phe_selected <- dplyr::filter(
         atlasview_data$MM_res,
-        specialty_code == input$select_specialty,
-        phecode_index_dis == input$select_index_disease,
-        specialty_cooccurring_dis %in% debouncedCaterpillarFilter()
+        .data$specialty_code == input$select_specialty,
+        .data$phecode_index_dis == input$select_index_disease,
+        .data$specialty_cooccurring_dis %in% debouncedCaterpillarFilter()
       )
 
       if (nrow(MM_res_spe_phe_selected) > 0) {

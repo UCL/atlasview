@@ -25,6 +25,7 @@ Imports:
     lubridate,
     patchwork,
     readr,
+    rlang,
     shiny,
     shinybusy,
     shinydashboard,
