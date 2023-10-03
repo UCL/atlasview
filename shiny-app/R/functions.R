@@ -1,7 +1,7 @@
 # DATA #########################################################################
 
 #' Get the path to data files
-#' NoRd
+#' @noRd
 get_data_root <- function() {
   out <- Sys.getenv("ATLASVIEW_DATA_PATH") 
   if (out == "") {
@@ -13,7 +13,7 @@ get_data_root <- function() {
 
 #' Get the full path to a AtlasView data file 
 #' @param filename name of a file
-#' @NoRd
+#' @noRd
 get_data_filepath <- function(filename) {
   paste(get_data_root(), "/", filename, sep='')
 }
@@ -74,7 +74,7 @@ get_credentials <- function() {
 }
 
 #' Get the current UTC time
-#' @NoRd
+#' @noRd
 now_utc <- function() {
   now <- Sys.time()
   attr(now, "tzone") <- "UTC"
