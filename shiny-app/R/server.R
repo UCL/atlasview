@@ -124,7 +124,7 @@ atlasview_server <-  function(input, output, session) {
 
         if (input$select_index_disease != "") {
           index_disease_label <- atlasview_data$index_diseases$phenotype_index_dis[atlasview_data$index_diseases$phecode_index_dis == input$select_index_disease]
-          title <- paste0(title, " → ", index_disease_label)
+          title <- paste0(title, " \u2192 ", index_disease_label)
         }
       }
       title

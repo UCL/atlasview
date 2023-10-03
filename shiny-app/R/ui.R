@@ -69,8 +69,8 @@ atlasview_ui <- function() {
         <p>
         <strong>What analysis has been performed?</strong> For people with each
         index disease we estimated the prevalence of up to 100 diseases
-        co-occurring in at least 10 people (‘long tail, pairwise
-        multimorbidity’). We included co-occurring diseases recorded at any time
+        co-occurring in at least 10 people ('long tail, pairwise
+        multimorbidity'). We included co-occurring diseases recorded at any time
         from start of recording (1998) up to the census date (22 Jan 2020).
         We report two different measures of co-occurrence
         <ul>
@@ -85,8 +85,8 @@ atlasview_ui <- function() {
         <strong>How have the results been visualised?</strong> We display the
         exact same results (prevalence and SCR) in two different ways:
         <ul>
-        <li />Circos plot – where each specialty maintains a constant position
-        on the ‘clockface’
+        <li />Circos plot - where each specialty maintains a constant position
+        on the 'clockface'
         <li />Caterpillar plot - in which the estimates are ranked on SCR
         </ul>
         </p>
@@ -104,7 +104,7 @@ atlasview_ui <- function() {
         <li />Please provide <strong>index disease specific comments</strong>.
         For each disease please comment on:
         <ul>
-        <li />Are the associations <strong>valid</strong>? – e.g. they reflect
+        <li />Are the associations <strong>valid</strong>? - e.g. they reflect
         what is expected in clinical practice / or are consistent with current
         research understanding
         <li />Are any of the associations <strong>novel</strong> and not part of
