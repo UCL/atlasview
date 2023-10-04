@@ -159,6 +159,8 @@ gh release create <TAG_NAME>
 
 and following the interactive prompts.
 
+>Note that `<TAG_NAME>` should be a [semantic version](https://semver.org/) number, e.g. `v1.0.0`.
+
 The workflow will also update the `shiny-app` R package's version number, which is used by the Shiny
 app to display the version number in the footer. This is achieved through the `deployment/update-shiny-app-version.R` script, which is run as part of the workflow.
 
