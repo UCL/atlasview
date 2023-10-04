@@ -10,3 +10,5 @@ version <- sub("^v", "", tags$name[1])
 desc <- desc::desc()
 desc$set_version(version)
 desc$write()
+
+usethis::ui_done("Bumped version of atlasview to {version}")
