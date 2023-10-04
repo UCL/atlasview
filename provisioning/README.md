@@ -89,3 +89,11 @@ You can spin up the VM and provision it with the Ansible playbook using the foll
 vagrant up
 ./provision.sh --limit devel
 ```
+
+**Note**: the `Vagrantfile` is configured to use an ARM-based VM, so it will only work on machines
+with that architecture. If you want to use an x86 VM, you can edit the `Vagrantfile` and change the
+`config.vm.box` value:
+
+```Vagrantfile
+config.vm.box = "bento/ubuntu-22.04"
+```
