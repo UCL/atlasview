@@ -29,7 +29,7 @@
         body_format: json
         headers:
           Content-Type: "application/json"
-          # FIXME: use ansible-vault to encrypt GH_PAT
+          # FIXME: use ansible-vault to encrypt GITHUB_PAT
           Authorization: "token {{ github_token }}"
         status_code: 200, 201
       register: task_log

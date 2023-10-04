@@ -4,4 +4,4 @@ ssh_config_path: "{{ home_dir }}/.ssh/config"
 known_hosts_path: "{{ home_dir }}/.ssh/known_hosts"
 key_title: "atlasview-host-ssh"
 
-github_token: "{{ lookup('ansible.builtin.env', 'GH_PAT') }}"
+github_token: "{{ lookup('ansible.builtin.env', 'GITHUB_PAT') }}"

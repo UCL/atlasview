@@ -3,7 +3,7 @@
     name: monolithprojects.github_actions_runner
   vars:
     # FIXME: use `ansible-vault` to encrypt this variable instead
-    access_token: "{{ lookup('env', 'GH_PAT') }}"
+    access_token: "{{ lookup('env', 'GITHUB_PAT') }}"
     runner_user: "{{ ansible_user }}"
     runner_dir: /opt/actions-runner/{{ github_account }}/{{ github_repo }}
   tags:

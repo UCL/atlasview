@@ -31,7 +31,7 @@ with the required scopes and add it to the `.env_ansible` file, which should now
 following line:
 
 ```sh
-export GH_PAT=ghp_*********************
+export GITHUB_PAT=ghp_*********************
 ```
 
 The `.env_ansible` file is ignored by git, so it won't be committed to the repo.
