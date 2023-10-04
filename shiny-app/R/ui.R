@@ -118,6 +118,7 @@ atlasview_ui <- function() {
         ")
     ),
     br(),
+    display_version(),
     wellPanel(
       selectizeInput('select_specialty', 
                      'Specialty', 
@@ -164,3 +165,14 @@ atlasview_ui <- function() {
   ui
 }
 
+## Display the current version and commit of the app
+display_version <- function() {
+  version <- paste0("v", packageVersion("atlasview"))
+  
+  ## Create link to release on GitHub
+  gh_link <- glue::glue("https://github.com/UCL/atlasview/releases/tag/{version}")
+  
+  ## Format info message with html tags
+  info_msg <- div(p(style = "margin:0;", "Atlasview", a(href = gh_link, version)))
+  shiny.info::display(message = info_msg, position = "top right", type = "message")
+}
