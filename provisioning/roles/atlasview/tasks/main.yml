@@ -7,9 +7,13 @@
 
 - name: Copy local atlasview-data directory
   ansible.builtin.copy:
-    src: "{{ local.atlasview_data }}"
-    dest: "{{ atlasview_root }}"
+    src: "{{ item }}"
+    dest: "{{ atlasview_root }}/atlasview-data"
     mode: "0755"
+  ## Only copy over the CSV files from the local machine
+  ## `atlasview-data` also contains config files for caddy and remark,
+  ## which should not be copied over!
+  with_fileglob: "{{ remote.atlasview_data }}/*.csv"
 
 - name: Set up Remark42 engine
   ansible.builtin.script:
