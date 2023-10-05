@@ -193,7 +193,9 @@ atlasview_server <-  function(input, output, session) {
     # if (input$panels != "circos") return()
     
     # We cache circos plots, because they are expensive to generate
-    plot_filename = get_data_filepath(paste0("circos-cache/plot_", input$select_index_disease, ".svg"))
+    circos_cache_dir <- get_data_filepath("circos-cache")
+    if (!dir.exists(circos_cache_dir)) dir.create(circos_cache_dir)
+    plot_filename <- paste0(file.path(circos_cache_dir, "plot_"), input$select_index_disease, ".svg")
     
     # if we haven't a saved copy of the plot
     if (!file.exists(plot_filename)) {
