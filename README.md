@@ -144,7 +144,7 @@ which will produce an Excel file in the current working directory.
 
 ## AWS setup
 
-We've created an EC2 instance in the AWS ARC Playpen (currently named "tamuri-atlasview"), on which
+We've created an AWS EC2 instance, on which
 the containerised application is running. Installation is as above. The `.env` file is updated with
 the EC2 DNS name, and new Remark42 secret and admin passwords. Ports 80 and 443 are both open
 because they're needed for Caddy to automatically handle TLS certificates.
