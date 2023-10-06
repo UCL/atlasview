@@ -1,0 +1,36 @@
+- name: Clone atlasview repo
+  ansible.builtin.git:
+    repo: "git@github.com:{{ atlasview_repo }}.git"
+    dest: "{{ remote.atlasview_main }}"
+    version: "main"
+    force: true
+
+- name: Copy local atlasview-data files
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ remote.atlasview_data }}/"
+    mode: "0644"
+  ## Only copy over the CSV files from the local machine
+  ## `atlasview-data` also contains config files for caddy and remark,
+  ## which should not be copied over!
+  with_fileglob: "{{ local.atlasview_data }}/*.csv"
+
+- name: Set up Remark42 engine
+  ansible.builtin.script:
+    cmd: "{{ setup_remark42 }}"
+    chdir: "{{ remote.atlasview_main }}"
+
+- name: Copy local .env file
+  ansible.builtin.copy:
+    src: "{{ local.atlasview_env }}"
+    dest: "{{ remote.atlasview_env }}"
+    mode: "0644"
+
+- name: Create atlasview-backups directory
+  ansible.builtin.file:
+    path: "{{ remote.atlasview_backups }}/comments"
+    state: directory
+    mode: "0755"
+
+- name: Set up cron jobs
+  ansible.builtin.include_tasks: cron-jobs.yml

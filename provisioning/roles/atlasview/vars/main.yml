@@ -1,0 +1,17 @@
+atlasview_root: "{{ ansible_env.HOME }}"
+atlasview_repo: "{{ github_account }}/{{ github_repo }}"
+
+remote:
+  atlasview_main: "{{ atlasview_root }}/atlasview"
+  atlasview_data: "{{ atlasview_root }}/atlasview-data"
+  atlasview_env: "{{ atlasview_root }}/atlasview/.env"
+  atlasview_backups: "{{ atlasview_root }}/atlasview-backups"
+
+local:
+  atlasview_data: "{{ playbook_dir }}/../../atlasview-data"
+  atlasview_env: "{{ playbook_dir }}/../.env"
+
+setup_remark42: "setup-remark42.sh"
+
+atlasview_backup_script: "{{ remote.atlasview_main }}/deployment/do-backup.sh"
+atlasview_crontab_out: "{{ atlasview_root }}/crontab.out"

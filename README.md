@@ -40,19 +40,6 @@ atlasview-data
 └── users.csv
 ```
 
-### Set up the `Remark42` engine
-
-The Remark42 code is a submodule in the repository. We download the source code and patch it, ready for Docker to build. Our patches remove the logout links, because the R Shiny app handles credentials and login/logout.
-
-```sh
-# Set up the Remark42 engine
-cd atlasview
-git submodule init
-git submodule update
-cd remark42/remark42
-git apply ../*.patch
-```
-
 ### Set up environment variables
 
 From the top of the atlasview repository (the one containing `docker-compose.yml`), we need to setup environment variables in `.env`. To run on the application on localhost, copy the example `.env` file:
@@ -157,7 +144,13 @@ which will produce an Excel file in the current working directory.
 
 ## AWS setup
 
-We've created an EC2 instance in the AWS ARC Playpen (currently named "tamuri-atlasview"), on which the containerised application is running. Installation is as above. The `.env` file is updated with the EC2 DNS name, and new Remark42 secret and admin passwords. Ports 80 and 443 are both open because they're needed for Caddy to automatically handle TLS certificates.
+We've created an AWS EC2 instance, on which
+the containerised application is running. Installation is as above. The `.env` file is updated with
+the EC2 DNS name, and new Remark42 secret and admin passwords. Ports 80 and 443 are both open
+because they're needed for Caddy to automatically handle TLS certificates.
+
+If you want to set up a new AWS EC2 instance, we recommend using at least a `t2.medium` instance
+with at least **16 GB** of storage.
 
 ### Continuous Deployment
 
@@ -172,20 +165,14 @@ gh release create <TAG_NAME>
 
 and following the interactive prompts.
 
-### Creating a self-hosted runner
+>Note that `<TAG_NAME>` should be a [semantic version](https://semver.org/) number, e.g. `v1.0.0`.
 
-The `tamuri-atlasview` EC2 instance already has a self-hosted GHA runner configured, which will be
-used to run the workflows in this repo. If necessary, you can create a new runner by going to the
-repo settings `Actions > Runners`, clicking on the "New self-hosted runner" button and following the
-instructions for the relevant operating system.
+The workflow will also update the `shiny-app` R package's version number, which is used by the Shiny
+app to display the version number in the footer. This is achieved through the `deployment/update-shiny-app-version.R` script, which is run as part of the workflow.
 
-If you want the runner to stay active, instead of running the `./run.sh` script in the last step,
-instead run
-
-```sh
-sudo ./svc.sh install
-sudo ./svc.sh start
-```
+To provision and configure the GHA runner, follow the
+[instructions in the `provisioning` README](./provisioning/README.md). This will automate most of
+the steps above on the remote machine where the application will be deployed.
 
 ### Backups
 

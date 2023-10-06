@@ -168,18 +168,12 @@ atlasview_ui <- function() {
 
 ## Display the current version and commit of the app
 display_version <- function() {
-  ## Get version from the latest git tag
-  tags <- gert::git_tag_list()
-  version <- tags$name[1]
-  commit <- gert::git_info()$commit
-  sha <- substr(commit, 1, 7)
-
-  ## Create link to commit sha on GitHub
-  gh_link <- glue::glue("https://github.com/UCL/atlasview/commit/{sha}")
-  html_link <- a(href = gh_link, sha)
-
+  version <- paste0("v", packageVersion("atlasview"))
+  
+  ## Create link to release on GitHub
+  gh_link <- glue::glue("https://github.com/UCL/atlasview/releases/tag/{version}")
+  
   ## Format info message with html tags
-  info_msg <- div(p(glue::glue("Atlasview {version} - commit"), html_link))
-
+  info_msg <- div(p(style = "margin:0;", "Atlasview", a(href = gh_link, version)))
   shiny.info::display(message = info_msg, position = "top right", type = "message")
 }
