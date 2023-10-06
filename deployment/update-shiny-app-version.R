@@ -4,7 +4,9 @@
 usethis::proj_activate("shiny-app")
 
 tags <- gert::git_tag_list()
-version <- sub("^v", "", tags$name[1])
+version <- sub("^v", "", tags$name[length(tags$name)])
+
+usethis::ui_info("Setting version to {version}")
 
 ## Update DESCRIPTION file
 desc <- desc::desc()

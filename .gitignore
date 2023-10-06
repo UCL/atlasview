@@ -3,5 +3,6 @@
 .RData
 .Ruserdata
 .env
+.env_ansible
 
 .vagrant/
