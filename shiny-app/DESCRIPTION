@@ -18,7 +18,6 @@ Imports:
     data.table,
     digest,
     dplyr,
-    gert,
     ggplot2,
     glue,
     jose,
