@@ -1,6 +1,6 @@
 Package: atlasview
 Title: View the Co-Occurring Disease Results from the Disease Atlas
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R:
   c(
     person("Asif", "Tamuri", , "a.tamuri@ucl.ac.uk", role = c("aut", "cre")),
