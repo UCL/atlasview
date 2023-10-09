@@ -6,3 +6,7 @@
 .env_ansible
 
 .vagrant/
+
+## R CMD check output
+atlasview_*.tar.gz
+*.Rcheck/

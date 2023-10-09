@@ -1,49 +1,37 @@
 Package: atlasview
-Title: What the Package Does (One Line, Title Case)
+Title: View the Co-Occurring Disease Results from the Disease Atlas
 Version: 0.0.0.9000
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Authors@R:
+  c(
+    person("Asif", "Tamuri", , "a.tamuri@ucl.ac.uk", role = c("aut", "cre")),
+    person("Milan", "Malfait", , "m.malfait@ucl.ac.uk", role = c("aut"))
+  )
+Description: The purpose of this app is to get the views of
+        clinicians on the co-occurring disease results in the Disease Atlas.
+License: file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports:
     circlize,
+    cookies,
     data.table,
     digest,
     dplyr,
-    ggiraph,
     ggplot2,
-    grid,
-    gridExtra,
-    gridExtra,
-    hablar,
-    Hmisc,
+    glue,
     jose,
-    magrittr,
+    lubridate,
     patchwork,
-    png,
-    RColorBrewer,
-    Rcpp,
     readr,
-    readr,
-    recogito,
-    rms,
-    scales,
+    rlang,
     shiny,
     shinybusy,
     shinydashboard,
     shinymanager,
     shinytitle,
     shinyjs,
+    shiny.info,
     stringr,
-    survival,
     svglite,
-    svgPanZoom,
-    tibble,
-    tidyr,
-    gert,
-    shiny.info
+    svgPanZoom
