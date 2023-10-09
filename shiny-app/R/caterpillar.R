@@ -127,10 +127,11 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
     colScale
 
   ### combine:
-  pl <- p1 + p3 + patchwork::plot_annotation(
-    plot_title_str,
-    theme = theme(plot.title = element_text(size = 20, hjust = 0.5))
-  )
+  pl <- patchwork::wrap_plots(p1, p3, nrow = 1) +
+    patchwork::plot_annotation(
+      plot_title_str,
+      theme = theme(plot.title = element_text(size = 20, hjust = 0.5))
+    )
 
   # output file name
   ffplot_output <- paste(
