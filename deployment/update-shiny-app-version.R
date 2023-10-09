@@ -1,6 +1,8 @@
 ## Set the version of the Shiny app to the latest git tag
 ## ======================================================
 
+.libPaths("/home/ubuntu/R/x86_64-pc-linux-gnu-library/4.3")
+
 atlasview_root <- file.path(Sys.getenv("HOME"), "atlasview")
 usethis::proj_activate(file.path(atlasview_root, "shiny-app"))
 
