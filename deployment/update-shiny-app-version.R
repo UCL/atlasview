@@ -3,8 +3,7 @@
 
 .libPaths(Sys.getenv("R_LIBS_USER"))
 
-atlasview_root <- file.path(Sys.getenv("HOME"), "atlasview")
-usethis::proj_activate(file.path(atlasview_root, "shiny-app"))
+usethis::proj_activate("shiny-app")
 
 ## Sync with remote repo
 gert::git_pull()
@@ -22,6 +21,6 @@ desc$write()
 usethis::ui_done("Bumped version of atlasview to {version}")
 
 usethis::ui_info("Commit and push changes")
-gert::git_add("shiny-app/DESCRIPTION")
-gert::git_commit("Bump atlasview version")
+status <- gert::git_add("shiny-app/DESCRIPTION")
+if (any(status$staged)) gert::git_commit("Bump atlasview version")
 gert::git_push()
