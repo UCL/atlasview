@@ -3,7 +3,8 @@
 
 .libPaths(Sys.getenv("R_LIBS_USER"))
 
-usethis::proj_activate("shiny-app")
+atlasview_root <- file.path(Sys.getenv("HOME"), "atlasview")
+usethis::proj_activate(file.path(atlasview_root, "shiny-app"))
 
 ## Sync with remote repo
 gert::git_pull()
