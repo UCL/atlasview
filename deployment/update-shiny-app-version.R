@@ -1,7 +1,8 @@
 ## Set the version of the Shiny app to the latest git tag
 ## ======================================================
 
-usethis::proj_activate("shiny-app")
+atlasview_root <- file.path(Sys.getenv("HOME"), "atlasview")
+usethis::proj_activate(file.path(atlasview_root, "shiny-app"))
 
 tags <- gert::git_tag_list()
 version <- sub("^v", "", tags$name[length(tags$name)])
