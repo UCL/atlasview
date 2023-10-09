@@ -22,5 +22,5 @@ desc$write()
 usethis::ui_done("Bumped version of atlasview to {version}")
 
 usethis::ui_info("Commit and push changes")
-gert::git_add("DESCRIPTION")
+gert::git_add("shiny-app/DESCRIPTION")
 gert::git_commit("Bump atlasview version")
