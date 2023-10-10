@@ -201,7 +201,6 @@ atlasview_server <-  function(input, output, session) {
       req(res_auth$user, input$select_specialty, input$select_index_disease)
       
       MM_res_spe_phe_selected <- MM_res_spe_phe_selected()
-      message(nrow(MM_res_spe_phe_selected))
       if (nrow(MM_res_spe_phe_selected) > 0) {
         caterpillar_prev_ratio_v5_view(
           MM_res_spe_phe_selected, atlasview_data$n_dis_spe,
