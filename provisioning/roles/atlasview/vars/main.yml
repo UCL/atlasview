@@ -15,3 +15,5 @@ setup_remark42: "setup-remark42.sh"
 
 atlasview_backup_script: "{{ remote.atlasview_main }}/deployment/do-backup.sh"
 atlasview_crontab_out: "{{ atlasview_root }}/crontab.out"
+
+atlasview_rotate_backups_config: "{{ atlasview_root }}/.rotate-backups.conf"
