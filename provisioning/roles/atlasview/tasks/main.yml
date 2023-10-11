@@ -34,3 +34,6 @@
 
 - name: Set up backups cron job
   ansible.builtin.include_tasks: do-backup-cron.yml
+
+- name: Set up backup rotation
+  ansible.builtin.include_tasks: rotate-backups.yml
