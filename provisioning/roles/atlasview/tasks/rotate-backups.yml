@@ -7,8 +7,6 @@
   ansible.builtin.template:
     src: rotate-backups.conf.j2
     dest: "{{ atlasview_rotate_backups_config }}"
-    owner: root
-    group: root
     mode: "0644"
 
 - name: Add rotate-backups cron job
@@ -19,5 +17,5 @@
     hour: "0"
     day: "*"
     job: "rotate-backups -c {{ atlasview_rotate_backups_config }} {{ remote.atlasview_backups }}"
-    user: root
+    user: "{{ ansible_user }}"
     state: present
