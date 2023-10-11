@@ -4,3 +4,4 @@
     minute: "0"
     hour: "*/6"
     job: "{{ atlasview_backup_script }} >> {{ atlasview_crontab_out }} 2>&1"
+    user: "{{ ansible_user }}"
