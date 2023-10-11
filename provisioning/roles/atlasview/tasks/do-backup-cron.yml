@@ -1,6 +1,7 @@
 - name: Create cron job
   ansible.builtin.cron:
     name: "atlasview-backup"
+    ## Run every 6 hours
     minute: "0"
     hour: "*/6"
     job: "{{ atlasview_backup_script }} >> {{ atlasview_crontab_out }} 2>&1"

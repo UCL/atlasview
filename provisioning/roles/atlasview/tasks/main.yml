@@ -32,5 +32,5 @@
     state: directory
     mode: "0755"
 
-- name: Set up cron jobs
-  ansible.builtin.include_tasks: cron-jobs.yml
+- name: Set up backups cron job
+  ansible.builtin.include_tasks: do-backup-cron.yml
