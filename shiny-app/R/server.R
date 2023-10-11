@@ -186,17 +186,21 @@ atlasview_server <-  function(input, output, session) {
 
   debouncedCaterpillarFilter <- debounce(caterpillarFilter, 1000)
 
+  MM_res_spe_phe_selected <- reactive({
+    req(res_auth$user, input$select_specialty, input$select_index_disease)
+    dplyr::filter(
+      atlasview_data$MM_res,
+      .data$specialty_code == input$select_specialty,
+      .data$phecode_index_dis == input$select_index_disease,
+      .data$specialty_cooccurring_dis %in% debouncedCaterpillarFilter()
+    )
+  })
+  
   output$outputCaterpillar <- renderPlot(
     {
       req(res_auth$user, input$select_specialty, input$select_index_disease)
-
-      MM_res_spe_phe_selected <- dplyr::filter(
-        atlasview_data$MM_res,
-        .data$specialty_code == input$select_specialty,
-        .data$phecode_index_dis == input$select_index_disease,
-        .data$specialty_cooccurring_dis %in% debouncedCaterpillarFilter()
-      )
-
+      
+      MM_res_spe_phe_selected <- MM_res_spe_phe_selected()
       if (nrow(MM_res_spe_phe_selected) > 0) {
         caterpillar_prev_ratio_v5_view(
           MM_res_spe_phe_selected, atlasview_data$n_dis_spe,
@@ -204,8 +208,10 @@ atlasview_server <-  function(input, output, session) {
         )
       }
     },
-    # TODO: make height dynamic, based on number of rows returned 
-    height = 900
+    height = function() {
+      n_rows <- nrow(MM_res_spe_phe_selected())
+      max(n_rows * 900/50, 500)  # use 900 pixels per 50 rows and 500 pixels minimum
+    }
   )
 
   # CIRCOS TAB ##############################################################
