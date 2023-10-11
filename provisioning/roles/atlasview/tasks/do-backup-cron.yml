@@ -1,4 +1,5 @@
 - name: Ensure pip is installed
+  become: true
   ansible.builtin.package:
     name: python3-pip
     state: present
@@ -7,8 +8,7 @@
   ansible.builtin.pip:
     name:
       - pandas
-      - json
-      - gzip
+      - openpyxl
     state: present
 
 - name: Create cron job
