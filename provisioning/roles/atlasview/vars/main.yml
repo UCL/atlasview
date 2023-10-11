@@ -1,5 +1,6 @@
 atlasview_root: "{{ ansible_env.HOME }}"
 atlasview_repo: "{{ github_account }}/{{ github_repo }}"
+atlasview_branch: "{{ github_branch }}"
 
 remote:
   atlasview_main: "{{ atlasview_root }}/atlasview"

@@ -1,3 +1,16 @@
+- name: Ensure pip is installed
+  become: true
+  ansible.builtin.package:
+    name: python3-pip
+    state: present
+
+- name: Ensure Python dependencies are installed
+  ansible.builtin.pip:
+    name:
+      - pandas
+      - openpyxl
+    state: present
+
 - name: Create cron job
   ansible.builtin.cron:
     name: "atlasview-backup"
