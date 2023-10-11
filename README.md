@@ -125,7 +125,7 @@ This directory contains data and configuration to run the application. The data 
 
 ### Backing up and exporting comments
 
-Remark42 will backup comments every 24 hours into `atlasview-data/remark/backup`. If you set the
+Remark42 will backup comments every 12 hours into `atlasview-data/remark/backup`. If you set the
 `REMARK42_ADMIN_PASSWD` environment variable, you can also backup by connecting to the Remark42
 container and running `backup --url=http://localhost:8080`:
 
@@ -190,3 +190,20 @@ mkdir -p atlasview-backups/comments
 ```
 
 Run `rclone config` to setup remote share as required. The [`do-backup.sh`](./deployment/do-backup.sh) script is scheduled to run every six hours (root cronjob).
+
+We also set up a CRON job during [provisioning](./provisioning/README.md) to rotate backup files every
+24 hours using the [`rotate-backups`](https://pypi.org/project/rotate-backups/) Python package.
+The [`.rotate-backups.conf`](./provisioning/roles/atlasview/templates/rotate-backups.conf.j2) file configures the rotation.
+By default, we keep 12-hourly backups for the last 48 hours, daily backups for the last 30 days, and weekly backups for the last 3 months.
+Monthly backups are kept forever:
+
+```ini
+[$HOME/atlasview-backups]
+hourly = 48
+daily = 30
+weekly = 12
+monthly = always
+```
+
+You can change these settings by modifying the `.rotate-backups.conf` file.
+
