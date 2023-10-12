@@ -146,19 +146,15 @@ atlasview_server <-  function(input, output, session) {
     }
   )
 
-  caterpillarFilter <- reactive({
-    input$filter
-  })
-
-  debouncedCaterpillarFilter <- debounce(caterpillarFilter, 1000)
+  caterpillarFilter <- debounce(reactive(input$filter), 1000)
 
   MM_res_spe_phe_selected <- reactive({
     req(res_auth$user, input$select_specialty, input$select_index_disease)
-    dplyr::filter(
+    get_cooccurring_diseases(
       atlasview_data$MM_res,
-      .data$specialty_code == input$select_specialty,
-      .data$phecode_index_dis == input$select_index_disease,
-      .data$specialty_cooccurring_dis %in% debouncedCaterpillarFilter()
+      index_disease = input$select_index_disease,
+      specialty = input$select_specialty,
+      specialty_filter = caterpillarFilter()
     )
   })
   

@@ -67,3 +67,35 @@ get_atlasview_data <- function() {
     index_diseases = index_diseases
   )
 }
+
+
+#' Get the co-occurring diseases
+#' 
+#' Return the co-occurring diseases for a given index disease from the full data set.
+#' Used to generate caterpillar and circos plots.
+#'
+#' @param all_diseases  data.frame containing the the full disease dataset, typically from
+#'   [`get_atlasview_data()$MM_res`]
+#' @param index_disease character, the code of the selected input disease
+#' @param specialty optional character, the specialty code on which to focus
+#' @param specialty_filter optional character vector, when provided, only co-occurring diseases from
+#'   within these specialties will be shown
+#'
+#' @return A subset of the input data for the co-occurring diseases.
+#' @keywords internal
+get_cooccurring_diseases <- function(all_diseases, index_disease,
+                                     specialty = NULL, specialty_filter = NULL) {
+  
+  out <- dplyr::filter(all_diseases, .data$phecode_index_dis == index_disease)
+  
+  if (!is.null(specialty)) {
+    out <- dplyr::filter(out, .data$specialty_code == specialty)
+  }
+  if (!is.null(specialty_filter)) {
+    out <- dplyr::filter(out, .data$specialty_cooccurring_dis %in% specialty_filter)
+  }
+  
+  # order cooccurring diseases by descending prevalence ratio
+  out[order(out$prev_ratio, decreasing = TRUE), ]
+}
+

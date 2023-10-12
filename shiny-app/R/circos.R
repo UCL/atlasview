@@ -5,16 +5,6 @@ cooccurring_diseases_per_specialty <- 5
 cooccurring_diseases_sector_bg_col <- "#ECECEC"
 sector_grid_lines_col <- "#BFBFBF"
     
-# ---- FUNCTIONS ----
-# get the data for a specific disease using the phecode
-get_cooccurring_diseases <- function(all_diseases, phecode_index_dis) {
-  selected_disease <- all_diseases[all_diseases$phecode_index_dis == phecode_index_dis, ]
-  # order cooccurring diseases by descending prevalence ratio
-  selected_disease <- selected_disease[order(selected_disease$prev_ratio, decreasing = T), ]
-  selected_disease
-}
-
-
 # plot figure for a given disease
 #' @importFrom graphics text
 #' @importFrom grDevices adjustcolor dev.off
