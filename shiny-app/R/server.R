@@ -56,17 +56,11 @@ atlasview_server <-  function(input, output, session) {
         stringr::str_detect(.data$code, res_auth$specialty_codes)
       )
 
-      # Set the selected specialty from URL, if it has been provided
-      selected <- NULL
-      if (!is.null(diseaseFromURL$specialty)) {
-        selected <- diseaseFromURL$specialty
-      }
-
       updateSelectizeInput(
         session = getDefaultReactiveDomain(),
         inputId = "select_specialty",
         choices = split(users_specialties$code, users_specialties$specialty),
-        selected = selected,
+        selected = diseaseFromURL$specialty,
         options = list(
           placeholder = "Please select a specialty",
           onInitialize = I('function() { this.setValue(""); }')
@@ -82,7 +76,6 @@ atlasview_server <-  function(input, output, session) {
       req(res_auth$user)
 
       # Set the selected disease from the URL, if it has been provided
-      selected  <- diseaseFromURL$disease
       choices <- get_index_diseases(atlasview_data$index_diseases, input$select_specialty)
       options <- list(placeholder = "")
       
@@ -98,7 +91,7 @@ atlasview_server <-  function(input, output, session) {
         session = getDefaultReactiveDomain(),
         inputId = "select_index_disease",
         choices = choices,
-        selected = selected,
+        selected = diseaseFromURL$disease,
         options = options
       )
     }
