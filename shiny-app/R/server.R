@@ -132,17 +132,13 @@ atlasview_server <-  function(input, output, session) {
     list(input$select_specialty, input$select_index_disease),
     {
       req(res_auth$user, input$select_specialty)
-      cooccurring_diseases <- dplyr::filter(
+      cooccurring_diseases <- get_cooccurring_diseases(
         atlasview_data$MM_res,
-        .data$specialty_code == input$select_specialty,
-        .data$phecode_index_dis == input$select_index_disease
+        index_disease = input$select_index_disease,
+        specialty = input$select_specialty
       )
-      cooccurring_diseases <- dplyr::select(cooccurring_diseases, .data$specialty_cooccurring_dis)
-      cooccurring_diseases <- dplyr::distinct(cooccurring_diseases)
-      cooccurring_diseases <- dplyr::arrange(cooccurring_diseases, .data$specialty_cooccurring_dis)
-      cooccurring_diseases <- dplyr::pull(cooccurring_diseases)
-
-      updateSelectInput(session, "filter", choices = cooccurring_diseases, selected = cooccurring_diseases)
+      filter_choices <- create_specialty_filter(cooccurring_diseases)
+      updateSelectInput(session, "filter", choices = filter_choices, selected = filter_choices)
     }
   )
 
