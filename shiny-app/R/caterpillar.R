@@ -19,19 +19,17 @@ caterpillar_plot <- function(caterpillar_data, median_counts, specialty_colours)
 
   # subset if there is long list
   if (nrow(caterpillar_data) > 50) {
-    caterpillar_data <- caterpillar_data[1:50, ]
-  } else {
-    caterpillar_data <- caterpillar_data[1:nrow(caterpillar_data), ]
+    caterpillar_data <- head(caterpillar_data, 50)
   }
 
   # index for plotting
-  caterpillar_data$id <- nrow(caterpillar_data):1
+  caterpillar_data$id <- seq(nrow(caterpillar_data), 1)
 
   # median_n
-  df_n_phe <- dplyr::filter(median_counts, .data$index_dis == phe)
-  median_n_dis <- df_n_phe$median_n_dis
-  median_n_spe <- df_n_phe$median_n_spe
-  n_cases_index_dis <- df_n_phe$n_indiv_index_dis_m_r
+  median_counts <- dplyr::filter(median_counts, .data$index_dis == phe)
+  median_n_dis <- median_counts$median_n_dis
+  median_n_spe <- median_counts$median_n_spe
+  n_cases_index_dis <- median_counts$n_indiv_index_dis_m_r
 
   # title
   phenotype_title <- stringr::str_wrap(phenotype, width = 80)
@@ -41,13 +39,6 @@ caterpillar_plot <- function(caterpillar_data, median_counts, specialty_colours)
     " , Median N Spec = ", median_n_spe,
     sep = ""
   )
-
-  # max y axis in prev_ratio
-  if (max(caterpillar_data$prev_ratio) < 100) {
-    max_limit <- 100
-  } else if (max(caterpillar_data$prev_ratio) >= 100) {
-    max_limit <- max(caterpillar_data$prev_ratio)
-  }
   
   # Initialize plotting variables
   # Avoids 'no visible binding for global variable' in R CMD check
