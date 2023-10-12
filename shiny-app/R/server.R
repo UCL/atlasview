@@ -116,18 +116,7 @@ atlasview_server <-  function(input, output, session) {
     list(input$select_specialty, input$select_index_disease),
     {
       req(res_auth$user)
-      title <- "AtlasViews"
-      if (input$select_specialty != "") {
-        which_specialty <- atlasview_data$specialties$code == input$select_specialty
-        title <- paste0(title, ": ", atlasview_data$specialties$specialty[which_specialty])
-
-        if (input$select_index_disease != "") {
-          which_disease_label <- atlasview_data$index_diseases$phecode_index_dis == input$select_index_disease
-          index_disease_label <- atlasview_data$index_diseases$phenotype_index_dis[which_disease_label]
-          title <- paste0(title, " \u2192 ", index_disease_label)
-        }
-      }
-      title
+      generate_pagetitle(atlasview_data, input$select_specialty, input$select_index_disease)
     }
   )
 
