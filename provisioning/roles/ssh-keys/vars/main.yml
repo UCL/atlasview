@@ -1,5 +1,6 @@
 home_dir: "{{ ansible_env.HOME }}"
-key_path: "{{ home_dir }}/.ssh/id_rsa.git"
+## Using a standard name for the ssh keys makes it easier to pick them up in R sessions later
+key_path: "{{ home_dir }}/.ssh/id_rsa"
 ssh_config_path: "{{ home_dir }}/.ssh/config"
 known_hosts_path: "{{ home_dir }}/.ssh/known_hosts"
 key_title: "atlasview-host-ssh"
