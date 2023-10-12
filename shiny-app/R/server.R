@@ -53,7 +53,7 @@ atlasview_server <-  function(input, output, session) {
       req(res_auth$user)
       users_specialties <- dplyr::filter(
         atlasview_data$specialties,
-        stringr::str_detect(code, res_auth$specialty_codes)
+        stringr::str_detect(.data$code, res_auth$specialty_codes)
       )
 
       # Set the selected specialty from URL, if it has been provided
@@ -81,32 +81,17 @@ atlasview_server <-  function(input, output, session) {
     {
       req(res_auth$user)
 
-      # get all index diseases for this specialty
-      specialty_index_diseases <- dplyr::filter(
-        atlasview_data$index_diseases,
-        .data$specialty_code == input$select_specialty
-      )
-      specialty_index_diseases <- dplyr::select(
-        specialty_index_diseases,
-        .data$phecode_index_dis, .data$phenotype_index_dis
-      )
-
-      selected <- NULL
-
+      # Set the selected disease from the URL, if it has been provided
+      selected  <- diseaseFromURL$disease
+      choices <- get_index_diseases(atlasview_data$index_diseases, input$select_specialty)
+      options <- list(placeholder = "")
+      
       # if any diseases found
-      if (nrow(specialty_index_diseases) > 0) {
-        # update the select box with diseases
-        choices <- split(specialty_index_diseases$phecode_index_dis, specialty_index_diseases$phenotype_index_dis)
-        options <- list(placeholder = "please select an index disease", oninitialize = I('function() { this.setvalue(""); }'))
-
-        # Set the selected disease from the URL, if it has been provided
-        if (!is.null(diseaseFromURL$disease)) {
-          selected  <- diseaseFromURL$disease
-        }
-      } else {
-        # no index diseases found for the specialty - empty the select box
-        choices <- list()
-        options <- list(placeholder = "")
+      if (length(choices)) {
+        options <- list(
+          placeholder = "please select an index disease",
+          oninitialize = I('function() { this.setvalue(""); }')
+        )
       }
 
       updateSelectizeInput(
