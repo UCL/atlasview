@@ -1,14 +1,5 @@
-
-
-#df_prev: df with prev and prev_ratio for one index_disease 
-#df_n: df_results median n diseases 
-#spe_index_dis: specialty of index disease 
 #' @importFrom rlang .data
-caterpillar_plot <- function(caterpillar_data,
-                             median_counts,
-                             index_disease_specialty,
-                             specialty_colours,
-                             blank_plot = FALSE) {
+caterpillar_plot <- function(caterpillar_data, median_counts, specialty_colours) {
   colScale <- scale_color_manual(values = specialty_colours)
 
   # params plots margins
@@ -43,17 +34,13 @@ caterpillar_plot <- function(caterpillar_data,
   n_cases_index_dis <- df_n_phe$n_indiv_index_dis_m_r
 
   # title
-  if (blank_plot == TRUE) {
-    plot_title_str <- ""
-  } else {
-    phenotype_title <- stringr::str_wrap(phenotype, width = 80)
-    plot_title_str <- paste("Index: ", phenotype_title, "\n",
-      "N = ", n_cases_index_dis,
-      ", Median N Dis = ", median_n_dis,
-      " , Median N Spec = ", median_n_spe,
-      sep = ""
-    )
-  }
+  phenotype_title <- stringr::str_wrap(phenotype, width = 80)
+  plot_title_str <- paste("Index: ", phenotype_title, "\n",
+    "N = ", n_cases_index_dis,
+    ", Median N Dis = ", median_n_dis,
+    " , Median N Spec = ", median_n_spe,
+    sep = ""
+  )
 
   # max y axis in prev_ratio
   if (max(caterpillar_data$prev_ratio) < 100) {
@@ -127,24 +114,10 @@ caterpillar_plot <- function(caterpillar_data,
     colScale
 
   ### combine:
-  pl <- patchwork::wrap_plots(p1, p3, nrow = 1) +
+  patchwork::wrap_plots(p1, p3, nrow = 1) +
     patchwork::plot_annotation(
       plot_title_str,
       theme = theme(plot.title = element_text(size = 20, hjust = 0.5))
     )
-
-  # output file name
-  ffplot_output <- paste(
-    "MMcaterpillar_",
-    gsub("/", "", index_disease_specialty), "_", phe, "_", gsub("/", "", phenotype), ".png",
-    sep = ""
-  )
-
-  # blank  - no title but keep phe in name - for reviews
-  if (blank_plot == TRUE) {
-    ffplot_output <- paste(ffplot_output, "_blank.png", sep = "")
-  }
-
-  return(pl)
 }
 
