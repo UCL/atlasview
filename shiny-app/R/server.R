@@ -160,9 +160,10 @@ atlasview_server <-  function(input, output, session) {
       
       cooccurring_diseases_data <- cooccurring_diseases_data()
       if (nrow(cooccurring_diseases_data) > 0) {
-        caterpillar_prev_ratio_v5_view(
-          cooccurring_diseases_data, atlasview_data$n_dis_spe,
-          spe_index_dis = input$specialty, atlasview_data$specialty_colours
+        caterpillar_plot(
+          cooccurring_diseases_data,
+          median_counts = atlasview_data$n_dis_spe,
+          specialty_colours =  atlasview_data$specialty_colours
         )
       }
     },

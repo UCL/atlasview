@@ -4,11 +4,11 @@
 #df_n: df_results median n diseases 
 #spe_index_dis: specialty of index disease 
 #' @importFrom rlang .data
-caterpillar_prev_ratio_v5_view <- function(df_prev,
-                                           df_n,
-                                           spe_index_dis,
-                                           specialty_colours,
-                                           blank_plot = FALSE) {
+caterpillar_plot <- function(caterpillar_data,
+                             median_counts,
+                             index_disease_specialty,
+                             specialty_colours,
+                             blank_plot = FALSE) {
   colScale <- scale_color_manual(values = specialty_colours)
 
   # params plots margins
@@ -17,27 +17,27 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
   b <- 0.1
   l <- 0.2
 
-  df_prev <- dplyr::arrange(df_prev, dplyr::desc(.data$prev_ratio))
+  caterpillar_data <- dplyr::arrange(caterpillar_data, dplyr::desc(.data$prev_ratio))
 
   # phenotype and phecode of index disease (after sorting)
-  phenotype <- df_prev$phenotype_index_dis[1]
-  phe <- df_prev$phecode_index_dis[1]
+  phenotype <- caterpillar_data$phenotype_index_dis[1]
+  phe <- caterpillar_data$phecode_index_dis[1]
 
   # not in plots
-  df_prev <- dplyr::filter(df_prev, .data$phecode_index_dis != .data$cooc_dis)
+  caterpillar_data <- dplyr::filter(caterpillar_data, .data$phecode_index_dis != .data$cooc_dis)
 
   # subset if there is long list
-  if (nrow(df_prev) > 50) {
-    df_prev <- df_prev[1:50, ]
+  if (nrow(caterpillar_data) > 50) {
+    caterpillar_data <- caterpillar_data[1:50, ]
   } else {
-    df_prev <- df_prev[1:nrow(df_prev), ]
+    caterpillar_data <- caterpillar_data[1:nrow(caterpillar_data), ]
   }
 
   # index for plotting
-  df_prev$id <- nrow(df_prev):1
+  caterpillar_data$id <- nrow(caterpillar_data):1
 
   # median_n
-  df_n_phe <- dplyr::filter(df_n, .data$index_dis == phe)
+  df_n_phe <- dplyr::filter(median_counts, .data$index_dis == phe)
   median_n_dis <- df_n_phe$median_n_dis
   median_n_spe <- df_n_phe$median_n_spe
   n_cases_index_dis <- df_n_phe$n_indiv_index_dis_m_r
@@ -56,10 +56,10 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
   }
 
   # max y axis in prev_ratio
-  if (max(df_prev$prev_ratio) < 100) {
+  if (max(caterpillar_data$prev_ratio) < 100) {
     max_limit <- 100
-  } else if (max(df_prev$prev_ratio) >= 100) {
-    max_limit <- max(df_prev$prev_ratio)
+  } else if (max(caterpillar_data$prev_ratio) >= 100) {
+    max_limit <- max(caterpillar_data$prev_ratio)
   }
   
   # Initialize plotting variables
@@ -69,7 +69,7 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
 
   # prevalence of co-occ disease in index disease
   p1 <- ggplot(
-    df_prev,
+    caterpillar_data,
     aes(
       y = prevalence,
       fill = as.factor(specialty_cooccurring_dis),
@@ -92,13 +92,13 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
       plot.title = element_text(size = 20, hjust = 1)
     ) +
     ylab("Prevalence (%)") +
-    scale_x_discrete(labels = stringr::str_trunc(df_prev$phenotype_cooccurring_dis[nrow(df_prev):1], 50)) +
+    scale_x_discrete(labels = stringr::str_trunc(caterpillar_data$phenotype_cooccurring_dis[nrow(caterpillar_data):1], 50)) +
     scale_fill_manual(values = specialty_colours) +
     theme(legend.position = "none")
 
   # prev ratio
   p3 <- ggplot(
-    df_prev,
+    caterpillar_data,
     aes(
       x = prev_ratio,
       xmin = ci_left_prev_ratio, xmax = ci_right_prev_ratio,
@@ -136,7 +136,7 @@ caterpillar_prev_ratio_v5_view <- function(df_prev,
   # output file name
   ffplot_output <- paste(
     "MMcaterpillar_",
-    gsub("/", "", spe_index_dis), "_", phe, "_", gsub("/", "", phenotype), ".png",
+    gsub("/", "", index_disease_specialty), "_", phe, "_", gsub("/", "", phenotype), ".png",
     sep = ""
   )
 
