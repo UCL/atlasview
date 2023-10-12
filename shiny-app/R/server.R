@@ -32,11 +32,10 @@ atlasview_server <-  function(input, output, session) {
   observeEvent(
     session$clientData$url_search,
     {
-      query <- parseQueryString(session$clientData$url_search)
-      req(query[['disease']])
-      split <- stringr::str_split(query[["disease"]], "\\$")[[1]]
-      diseaseFromURL$specialty <- split[1]
-      diseaseFromURL$disease <- split[2]
+      query <- parse_url(session$clientData$url_search)
+      req(query)
+      diseaseFromURL$specialty <- query$specialty
+      diseaseFromURL$disease <- query$disease
     }
   )
 
