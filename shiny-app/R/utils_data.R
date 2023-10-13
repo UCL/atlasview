@@ -1,34 +1,36 @@
 # DATA #########################################################################
 
-#' Get the path to data files
-#' @noRd
-get_data_root <- function() {
-  out <- Sys.getenv("ATLASVIEW_DATA_PATH") 
-  if (out == "") {
-    warning("ATLASVIEW_DATA_PATH variable not set, defaulting to `../deployment/atlasview-data`")
-    out <- file.path("../deployment/atlasview-data")
-  }
-  out
-}
-
 #' Get the full path to a AtlasView data file 
 #' @param filename name of a file
 #' @noRd
-get_data_filepath <- function(filename) {
-  paste(get_data_root(), "/", filename, sep = "")
+get_data_filepath <- function(filename, root = Sys.getenv("ATLASVIEW_DATA_PATH")) {
+  if (root == "") {
+    warning("ATLASVIEW_DATA_PATH variable not set, defaulting to `../deployment/atlasview-data/`")
+    root <- "../deployment/atlasview-data"
+  }
+  file.path(root, filename)
 }
 
 #' Load, process, and return data for specialties and diseases
 #' @importFrom stats setNames
 #' @importFrom rlang .data
 get_atlasview_data <- function() {
+  
+  data_root <- Sys.getenv("ATLASVIEW_DATA_PATH")
+  
+  if (data_root == "") {
+    warning("ATLASVIEW_DATA_PATH variable not set, defaulting to `atlasview_mock_data`")
+    data("atlasview_mock_data")
+    return(atlasview_mock_data)
+  }
+  
   specialties <- data.table::fread(
-    get_data_filepath("specialties.csv"),
+    get_data_filepath("specialties.csv", root = data_root),
     header = TRUE, colClasses = c("character", "character")
   )
   specialties <- dplyr::arrange(specialties, .data$code)
 
-  specialty_colours <- data.table::fread(get_data_filepath("lkp_spe_col.csv"),
+  specialty_colours <- data.table::fread(get_data_filepath("lkp_spe_col.csv", root = data_root),
     header = TRUE, colClasses = c("character", "character")
   )
 
@@ -37,7 +39,7 @@ get_atlasview_data <- function() {
 
   # read full MM res in vis format
   MM_res <- data.table::fread(
-    file = get_data_filepath("MM_for_circo_network_vis.csv"),
+    file = get_data_filepath("MM_for_circo_network_vis.csv", root = data_root),
     colClasses = list(character = c(1:8, 13), numeric = 9:12)
   )
 
@@ -47,7 +49,7 @@ get_atlasview_data <- function() {
   MM_res <- dplyr::rename(MM_res, "cooccurring_specialty_code" = "code")
 
   # N of diseases and specialties
-  n_dis_spe <- data.table::fread(file = get_data_filepath("MM_2_n.csv"))
+  n_dis_spe <- data.table::fread(file = get_data_filepath("MM_2_n.csv", root = data_root))
 
   # information about index and co-occurring diseases
   index_diseases <- dplyr::select(
