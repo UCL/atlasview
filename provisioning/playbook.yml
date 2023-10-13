@@ -9,7 +9,7 @@
       tags: docker
     ## Add ssh keys for access to private GitHub repositories
     - role: ssh-keys
-      tags: ssh-keys
+      tags: ssh-keys, atlasview
     ## Set up atlasview directories
     - role: atlasview
       tags: atlasview

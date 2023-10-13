@@ -1,0 +1,22 @@
+- name: Insall rotate-backups
+  become: true
+  ansible.builtin.pip:
+    name: rotate-backups
+    state: present
+
+- name: Add rotate-backups config file
+  ansible.builtin.template:
+    src: rotate-backups.conf.j2
+    dest: "{{ atlasview_rotate_backups_config }}"
+    mode: "0644"
+
+- name: Add rotate-backups cron job
+  ansible.builtin.cron:
+    name: rotate-backups
+    ## Run job at 00:00 every day
+    minute: "0"
+    hour: "0"
+    day: "*"
+    job: "/usr/local/bin/rotate-backups -c {{ atlasview_rotate_backups_config }} {{ remote.atlasview_backups }} >> {{ atlasview_crontab_out }} 2>&1"
+    user: "{{ ansible_user }}"
+    state: present
