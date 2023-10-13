@@ -1,4 +1,4 @@
-## code to prepare `atlasview_test` dataset goes here
+## code to prepare `atlasview_mock_data` dataset goes here
 library(dplyr)
 
 ## Load the real Atlasview data from its expected location
@@ -71,8 +71,8 @@ MM_2_n <- filter(MM_2_n, index_dis %in% MM_for_circos_network$phecode_index_dis)
 
 # Create new copy with randomised data --------------------------------------------------------
 
-atlasview_test <- local_data
-atlasview_test$MM_res <- MM_for_circos_network
-atlasview_test$n_dis_spe <- MM_2_n
+atlasview_mock_data <- local_data
+atlasview_mock_data$MM_res <- MM_for_circos_network
+atlasview_mock_data$n_dis_spe <- MM_2_n
 
-usethis::use_data(atlasview_test, overwrite = TRUE)
+usethis::use_data(atlasview_mock_data, overwrite = TRUE)
