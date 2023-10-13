@@ -44,11 +44,6 @@ caterpillar_plot <- function(caterpillar_data, median_counts, specialty_colours)
     sep = ""
   )
   
-  # Initialize plotting variables
-  # Avoids 'no visible binding for global variable' in R CMD check
-  prevalence <- specialty_cooccurring_dis <- id <- NULL
-  prev_ratio <- ci_left_prev_ratio <- ci_right_prev_ratio <- NULL
-
   # prevalence of co-occ disease in index disease
   p1 <- caterpillar_prevalence_plot(caterpillar_data) +
     theme_minimal() +
@@ -68,19 +63,7 @@ caterpillar_plot <- function(caterpillar_data, median_counts, specialty_colours)
     theme(legend.position = "none")
 
   # prev ratio
-  p3 <- ggplot(
-    caterpillar_data,
-    aes(
-      x = prev_ratio,
-      xmin = ci_left_prev_ratio, xmax = ci_right_prev_ratio,
-      col = as.factor(specialty_cooccurring_dis), y = as.factor(id)
-    )
-  ) +
-    geom_errorbarh(height = 0) +
-    geom_point(shape = 15, size = 2) +
-    geom_vline(xintercept = 1, linetype = "dashed", color = "black", linewidth = 0.75) +
-    scale_x_log10() +
-    labs(y = NULL) +
+  p3 <- caterpillar_prevalence_ratio_plot(caterpillar_data) +
     theme_minimal() +
     theme(
       legend.position = "none",
