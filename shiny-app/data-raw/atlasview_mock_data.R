@@ -50,6 +50,7 @@ MM_for_circos_network <- withr::with_seed(random_seed,
     n = 3
   )
 )
+MM_for_circos_network <- ungroup(MM_for_circos_network)
 
 
 # Randomise patient count data ----------------------------------------------------------------
