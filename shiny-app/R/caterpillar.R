@@ -46,16 +46,7 @@ caterpillar_plot <- function(caterpillar_data, median_counts, specialty_colours)
   prev_ratio <- ci_left_prev_ratio <- ci_right_prev_ratio <- NULL
 
   # prevalence of co-occ disease in index disease
-  p1 <- ggplot(
-    caterpillar_data,
-    aes(
-      y = prevalence,
-      fill = as.factor(specialty_cooccurring_dis),
-      x = as.factor(id)
-    )
-  ) +
-    geom_bar(stat = "identity", width = 0.5) +
-    coord_flip(ylim = c(0, 100)) +
+  p1 <- caterpillar_prevalence_plot(caterpillar_data) +
     theme_minimal() +
     theme(
       legend.position = c(.7, .5),
@@ -69,8 +60,6 @@ caterpillar_plot <- function(caterpillar_data, median_counts, specialty_colours)
       axis.title.x = element_text(size = 15),
       plot.title = element_text(size = 20, hjust = 1)
     ) +
-    ylab("Prevalence (%)") +
-    scale_x_discrete(labels = stringr::str_trunc(caterpillar_data$phenotype_cooccurring_dis[nrow(caterpillar_data):1], 50)) +
     scale_fill_manual(values = specialty_colours) +
     theme(legend.position = "none")
 
@@ -110,5 +99,19 @@ caterpillar_plot <- function(caterpillar_data, median_counts, specialty_colours)
       plot_title_str,
       theme = theme(plot.title = element_text(size = 20, hjust = 0.5))
     )
+}
+
+
+caterpillar_prevalence_plot <- function(caterpillar_data) {
+  # Initialize plotting variables
+  # Avoids 'no visible binding for global variable' in R CMD check
+  prevalence <- specialty_cooccurring_dis <- phenotype_cooccurring_dis <- NULL
+  
+  ggplot(caterpillar_data,
+    aes(x = phenotype_cooccurring_dis, y = prevalence, fill = specialty_cooccurring_dis)
+  ) +
+    geom_col(width = 0.5) +
+    coord_flip(ylim = c(0, 100)) +
+    labs(x = NULL, y = "Prevalence (%)", fill = NULL)
 }
 
