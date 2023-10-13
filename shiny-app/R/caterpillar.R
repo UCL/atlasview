@@ -22,9 +22,13 @@ caterpillar_plot <- function(caterpillar_data, median_counts, specialty_colours)
     caterpillar_data <- head(caterpillar_data, 50)
   }
 
-  # index for plotting
-  caterpillar_data$id <- seq(nrow(caterpillar_data), 1)
-
+  # convert phenotype_cooccurring_dis to factor and order levels according to prev_ratio for plotting
+  caterpillar_data$phenotype_cooccurring_dis <- as.factor(caterpillar_data$phenotype_cooccurring_dis)
+  caterpillar_data$phenotype_cooccurring_dis <- reorder(
+    caterpillar_data$phenotype_cooccurring_dis,
+    caterpillar_data$prev_ratio
+  )
+  
   # median_n
   median_counts <- dplyr::filter(median_counts, .data$index_dis == phe)
   median_n_dis <- median_counts$median_n_dis
