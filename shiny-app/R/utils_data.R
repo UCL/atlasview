@@ -77,7 +77,7 @@ get_atlasview_data <- function() {
 #' Used to generate caterpillar and circos plots.
 #'
 #' @param all_diseases  data.frame containing the the full disease dataset, typically from
-#'   [`get_atlasview_data()$MM_res`]
+#'   `get_atlasview_data()$MM_res`
 #' @param index_disease character, the code of the selected input disease
 #' @param specialty optional character, the specialty code on which to focus
 #' @param specialty_filter optional character vector, when provided, only co-occurring diseases from
