@@ -37,6 +37,7 @@ Imports:
     svgPanZoom
 Suggests: 
     testthat (>= 3.0.0),
+    vdiffr,
     withr
 Config/testthat/edition: 3
 Depends: 
