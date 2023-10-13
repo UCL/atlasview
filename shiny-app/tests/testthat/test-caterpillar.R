@@ -1,4 +1,6 @@
-test_data <- atlasview_mock_data
+suppressWarnings({
+  test_data <- get_atlasview_data()
+})
 test_MM_res <- test_data$MM_res
 
 withr::with_seed(20231013, {
@@ -31,4 +33,12 @@ test_that("caterpillar_prevalence_plot() produces consistent plot", {
 test_that("caterpillar_prevalence_ratio_plot() produces consistent plot", {
   p <- caterpillar_prevalence_ratio_plot(test_caterpillar_data)
   vdiffr::expect_doppelganger("caterpillar_prevalence_ratio", p)
+})
+
+test_that("caterpillar_plot() produces consistent plot", {
+  p <- caterpillar_plot(test_caterpillar_data,
+    median_counts = test_data$n_dis_spe,
+    specialty_colours = test_data$specialty_colours
+  )
+  vdiffr::expect_doppelganger("caterpillar_plot", p)
 })
