@@ -1,20 +1,10 @@
 #' @importFrom rlang .data
 caterpillar_plot <- function(caterpillar_data, median_counts, specialty_colours) {
-  colScale <- scale_color_manual(values = specialty_colours)
-
-  # params plots margins
-  t <- 1.5
-  r <- 1
-  b <- 0.1
-  l <- 0.2
-
-  caterpillar_data <- dplyr::arrange(caterpillar_data, dplyr::desc(.data$prev_ratio))
-
   # phenotype and phecode of index disease (after sorting)
   phenotype <- caterpillar_data$phenotype_index_dis[1]
   phe <- caterpillar_data$phecode_index_dis[1]
 
-  # not in plots
+  # remove non-coocurring diseases
   caterpillar_data <- dplyr::filter(caterpillar_data, .data$phecode_index_dis != .data$cooc_dis)
 
   # subset if there is long list
@@ -46,39 +36,14 @@ caterpillar_plot <- function(caterpillar_data, median_counts, specialty_colours)
   
   # prevalence of co-occ disease in index disease
   p1 <- caterpillar_prevalence_plot(caterpillar_data) +
-    theme_minimal() +
-    theme(
-      legend.position = c(.7, .5),
-      legend.title = element_blank(),
-      legend.text = element_text(size = 10),
-      axis.text.y = element_text(size = 15),
-      axis.title.y = element_blank(),
-      plot.margin = unit(c(t, r, b, l), "lines"),
-      axis.line.x = element_line(colour = "grey"),
-      axis.text.x = element_text(size = 15),
-      axis.title.x = element_text(size = 15),
-      plot.title = element_text(size = 20, hjust = 1)
-    ) +
     scale_fill_manual(values = specialty_colours) +
-    theme(legend.position = "none")
-
+    caterpillar_common_theme()
+    
   # prev ratio
   p3 <- caterpillar_prevalence_ratio_plot(caterpillar_data) +
-    theme_minimal() +
-    theme(
-      legend.position = "none",
-      legend.title = element_blank(),
-      legend.text = element_text(size = 10),
-      axis.text.y = element_blank(),
-      axis.text.x = element_text(size = 15),
-      axis.title.x = element_text(size = 15),
-      axis.title.y = element_blank(),
-      plot.margin = unit(c(t, 2, b, l), "lines"),
-      axis.line.x = element_line(colour = "grey"),
-      plot.title = element_text(size = 20, hjust = 1)
-    ) +
-    xlab("Prevalence ratio") +
-    colScale
+    scale_color_manual(values = specialty_colours) +
+    caterpillar_common_theme() +
+    theme(axis.text.y = element_blank())
 
   ### combine:
   patchwork::wrap_plots(p1, p3, nrow = 1) +
@@ -102,6 +67,7 @@ caterpillar_prevalence_plot <- function(caterpillar_data) {
     labs(x = NULL, y = "Prevalence (%)", fill = NULL)
 }
 
+
 caterpillar_prevalence_ratio_plot <- function(caterpillar_data) {
   # Initialize plotting variables
   # Avoids 'no visible binding for global variable' in R CMD check
@@ -115,3 +81,18 @@ caterpillar_prevalence_ratio_plot <- function(caterpillar_data) {
     labs(x = "Prevalence ratio", y = NULL, color = NULL)
 }
 
+
+caterpillar_common_theme <- function() {
+  theme_minimal() +
+    theme(
+      legend.position = "none",
+      legend.title = element_blank(),
+      legend.text = element_text(size = 10),
+      axis.text.y = element_text(size = 15),
+      axis.title.y = element_blank(),
+      axis.line.x = element_line(colour = "grey"),
+      axis.text.x = element_text(size = 15),
+      axis.title.x = element_text(size = 15),
+      plot.title = element_text(size = 20, hjust = 1)
+    )
+}
