@@ -35,18 +35,18 @@ caterpillar_plot <- function(caterpillar_data, median_counts, specialty_colours)
   )
   
   # prevalence of co-occ disease in index disease
-  p1 <- caterpillar_prevalence_plot(caterpillar_data) +
+  prev_plot <- caterpillar_prevalence_plot(caterpillar_data) +
     scale_fill_manual(values = specialty_colours) +
     caterpillar_common_theme()
     
   # prev ratio
-  p3 <- caterpillar_prevalence_ratio_plot(caterpillar_data) +
+  prev_ratio_plot <- caterpillar_prevalence_ratio_plot(caterpillar_data) +
     scale_color_manual(values = specialty_colours) +
     caterpillar_common_theme() +
     theme(axis.text.y = element_blank())
 
   ### combine:
-  patchwork::wrap_plots(p1, p3, nrow = 1) +
+  patchwork::wrap_plots(prev_plot, prev_ratio_plot, nrow = 1) +
     patchwork::plot_annotation(
       plot_title_str,
       theme = theme(plot.title = element_text(size = 20, hjust = 0.5))
