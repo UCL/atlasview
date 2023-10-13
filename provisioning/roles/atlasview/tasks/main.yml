@@ -20,12 +20,6 @@
     cmd: "{{ setup_remark42 }}"
     chdir: "{{ remote.atlasview_main }}"
 
-- name: Copy local .env file
-  ansible.builtin.copy:
-    src: "{{ local.atlasview_env }}"
-    dest: "{{ remote.atlasview_env }}"
-    mode: "0644"
-
 - name: Create atlasview-backups directory
   ansible.builtin.file:
     path: "{{ remote.atlasview_backups }}/comments"
