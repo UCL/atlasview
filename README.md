@@ -191,7 +191,7 @@ mkdir -p atlasview-backups/comments
 
 Run `rclone config` to setup remote share as required. The [`do-backup.sh`](./deployment/do-backup.sh) script is scheduled to run every six hours (root cronjob).
 
-We also set up a CRON job during [provisioning](./provisioning/README.md) to rotate backup files every
+We also set up a cron job during [provisioning](./provisioning/README.md) to rotate backup files every
 24 hours using the [`rotate-backups`](https://pypi.org/project/rotate-backups/) Python package.
 The [`.rotate-backups.conf`](./provisioning/roles/atlasview/templates/rotate-backups.conf.j2) file configures the rotation.
 By default, we keep 12-hourly backups for the last 48 hours, daily backups for the last 30 days, and weekly backups for the last 3 months.
