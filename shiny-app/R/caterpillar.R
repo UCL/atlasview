@@ -115,3 +115,16 @@ caterpillar_prevalence_plot <- function(caterpillar_data) {
     labs(x = NULL, y = "Prevalence (%)", fill = NULL)
 }
 
+caterpillar_prevalence_ratio_plot <- function(caterpillar_data) {
+  # Initialize plotting variables
+  # Avoids 'no visible binding for global variable' in R CMD check
+  prev_ratio <- specialty_cooccurring_dis <- phenotype_cooccurring_dis <- NULL
+  
+  ggplot(caterpillar_data,
+    aes(x = prev_ratio, y = phenotype_cooccurring_dis, col = specialty_cooccurring_dis)) +
+    geom_point(shape = 15, size = 2) +
+    geom_vline(xintercept = 1, linetype = "dashed", color = "black", linewidth = 0.75) +
+    scale_x_log10() +
+    labs(x = "Prevalence ratio", y = NULL, color = NULL)
+}
+
