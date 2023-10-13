@@ -144,7 +144,7 @@ atlasview_server <-  function(input, output, session) {
 
   caterpillarFilter <- debounce(reactive(input$filter), 1000)
 
-  cooccurring_diseases_data <- reactive({
+  caterpillar_data <- reactive({
     req(res_auth$user, input$select_specialty, input$select_index_disease)
     get_cooccurring_diseases(
       atlasview_data$MM_res,
@@ -158,17 +158,17 @@ atlasview_server <-  function(input, output, session) {
     {
       req(res_auth$user, input$select_specialty, input$select_index_disease)
       
-      cooccurring_diseases_data <- cooccurring_diseases_data()
-      if (nrow(cooccurring_diseases_data) > 0) {
+      caterpillar_data <- caterpillar_data()
+      if (nrow(caterpillar_data) > 0) {
         caterpillar_plot(
-          cooccurring_diseases_data,
+          caterpillar_data,
           median_counts = atlasview_data$n_dis_spe,
           specialty_colours =  atlasview_data$specialty_colours
         )
       }
     },
     height = function() {
-      n_rows <- nrow(cooccurring_diseases_data())
+      n_rows <- nrow(caterpillar_data())
       max(n_rows * 900/50, 500)  # use 900 pixels per 50 rows and 500 pixels minimum
     }
   )
