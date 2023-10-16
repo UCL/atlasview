@@ -12,7 +12,7 @@ echo "\n*** CURRENT VERSION: $(git describe --tags) ***\n"
 echo "Make sure Remark42 patches were applied..."
 cd remark42/remark42
 git apply --reverse --check ../*.patch  # fails if patches were not applied
-if ! $(git apply --check ../*.patch &> /dev/null); then
+if $(git apply --check ../*.patch &> /dev/null); then
   exit 1
 fi
 
