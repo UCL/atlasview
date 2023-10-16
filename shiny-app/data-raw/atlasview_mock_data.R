@@ -26,7 +26,9 @@ MM_for_circos_network$prev_ratio[MM_for_circos_network$prev_ratio < 0.3] <- 0.3 
 
 # Shuffle the co-occurring diseases
 shuffled_cooc <- select(MM_for_circos_network, cooc_dis, phenotype_cooccurring_dis, specialty_cooccurring_dis)
-shuffled_cooc <-  sample_frac(shuffled_cooc)
+withr::with_seed(random_seed, {
+  shuffled_cooc <-  slice_sample(shuffled_cooc, prop = 1)
+})
 
 # Replace the columns in the data set with shuffled versions
 MM_for_circos_network <- mutate(MM_for_circos_network,
