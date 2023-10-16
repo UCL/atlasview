@@ -13,7 +13,7 @@ echo "Make sure Remark42 patches were applied..."
 cd remark42/remark42
 git apply --reverse --check ../*.patch  # fails if patches were not applied
 if $(git apply --check ../*.patch &> /dev/null); then
-  exit 1
+  git apply ../*.patch
 fi
 
 git status                              # should show changes to auth-panel.tsx and profile.tsx
