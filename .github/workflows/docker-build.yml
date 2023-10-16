@@ -25,8 +25,7 @@ jobs:
 
     - name: Install R dependencies
       run: |
-        cd $HOME
-        Rscript -e 'install.packages(c("usethis", "desc", "gert"), lib = Sys.getenv("R_LIBS_USER"))'
+        Rscript -e 'install.packages(c("usethis", "desc", "gert"))'
 
     - name: Bump shiny-app package version
       run: |
@@ -36,5 +35,4 @@ jobs:
 
     - name: Deploy
       run: ./deployment/deploy.sh
-      env:
-        GITHUB_WORKSPACE: ${{ github.workspace }}
+
