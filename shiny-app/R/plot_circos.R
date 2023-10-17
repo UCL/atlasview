@@ -31,10 +31,6 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
   circos_long_names_track(cooccurring_diseases, cooccurring_diseases_per_specialty)
   circos_short_names_track(cooccurring_diseases, specialty_codes, cooccurring_diseases_per_specialty)
 
-  # track for prevalence ratio
-  # no native support for log scale - do it by hand
-
-  # plot track grid lines (aka circles)
   prevalence_ratio_breaks <- log(c(1, 5, 10, 50, 100, 500, 1000, 10000))
   circos_prev_ratio_track(
     cooccurring_diseases, specialty_codes,
@@ -44,37 +40,12 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
 
   # track for prevalence
   prevalence_breaks <- log(c(1, 5, 10, 50, 100))
-  circos.track(
-    ylim = c(log(100), log(1)), bg.col = NA, bg.border = NA, track.margin = c(0, 0),
-    panel.fun = function(x, y) {
-      # does this specialty sector have any co-occurring diseases?
-      matches <- cooccurring_diseases[cooccurring_diseases$cooccurring_specialty_code == CELL_META$sector.index, ]
-      if (nrow(matches) > 0) {
-        circos.rect(CELL_META$cell.xlim[1], CELL_META$cell.ylim[1],
-          CELL_META$cell.xlim[2], CELL_META$cell.ylim[2],
-          col = cooccurring_diseases_sector_bg_col, border = NA
-        )
-        for (r in prevalence_breaks) {
-          circos.segments(0, r, cooccurring_diseases_per_specialty, r, col = sector_grid_lines_col)
-        }
-        sectorcolor <- specialty_codes$color[specialty_codes$code == CELL_META$sector.index]
-        # make transparent
-        sectorcolor <- adjustcolor(sectorcolor, alpha.f = 0.2)
-        matches <- head(matches, cooccurring_diseases_per_specialty)
-        value <- log(matches$prevalence)
-        xstart <- 0
-        for (v in value) {
-          circos.rect(xstart, log(1), xstart + 1, v, col = sectorcolor, border = adjustcolor("black", alpha.f = 0.2))
-          xstart <- xstart + 1
-        }
-      } else {
-        for (r in prevalence_breaks) {
-          circos.segments(0, r, cooccurring_diseases_per_specialty, r, col = sector_grid_lines_col)
-        }
-      }
-    }
+  circos_prevalence_track(
+    cooccurring_diseases, specialty_codes,
+    prevalence_breaks, cooccurring_diseases_sector_bg_col,
+    cooccurring_diseases_per_specialty, sector_grid_lines_col
   )
-
+  
   circos.text(x = 2.5, y = prevalence_ratio_breaks, track.index = 3, sector.index = " ", labels = c("1", "5", "10", "50", "100", "500", "1000"), adj = c(0, 0.5), cex = 0.65)
   circos.text(x = 1, y = 3.5, "Standardised prevalence ratio", facing = "clockwise", track.index = 3, sector.index = " ", cex = 0.65)
 
@@ -193,6 +164,43 @@ circos_prev_ratio_track <- function(cooccurring_diseases, specialty_codes,
         }
       } else {
         for (r in head(prevalence_ratio_breaks, -1)) {
+          circos.segments(0, r, cooccurring_diseases_per_specialty, r, col = sector_grid_lines_col)
+        }
+      }
+    }
+  )
+}
+
+circos_prevalence_track <- function(cooccurring_diseases, specialty_codes,
+                                    prevalence_breaks,
+                                    cooccurring_diseases_sector_bg_col,
+                                    cooccurring_diseases_per_specialty,
+                                    sector_grid_lines_col) {
+  circos.track(
+    ylim = c(log(100), log(1)), bg.col = NA, bg.border = NA, track.margin = c(0, 0),
+    panel.fun = function(x, y) {
+      # does this specialty sector have any co-occurring diseases?
+      matches <- cooccurring_diseases[cooccurring_diseases$cooccurring_specialty_code == CELL_META$sector.index, ]
+      if (nrow(matches) > 0) {
+        circos.rect(CELL_META$cell.xlim[1], CELL_META$cell.ylim[1],
+          CELL_META$cell.xlim[2], CELL_META$cell.ylim[2],
+          col = cooccurring_diseases_sector_bg_col, border = NA
+        )
+        for (r in prevalence_breaks) {
+          circos.segments(0, r, cooccurring_diseases_per_specialty, r, col = sector_grid_lines_col)
+        }
+        sectorcolor <- specialty_codes$color[specialty_codes$code == CELL_META$sector.index]
+        # make transparent
+        sectorcolor <- adjustcolor(sectorcolor, alpha.f = 0.2)
+        matches <- head(matches, cooccurring_diseases_per_specialty)
+        value <- log(matches$prevalence)
+        xstart <- 0
+        for (v in value) {
+          circos.rect(xstart, log(1), xstart + 1, v, col = sectorcolor, border = adjustcolor("black", alpha.f = 0.2))
+          xstart <- xstart + 1
+        }
+      } else {
+        for (r in prevalence_breaks) {
           circos.segments(0, r, cooccurring_diseases_per_specialty, r, col = sector_grid_lines_col)
         }
       }
