@@ -92,6 +92,7 @@ circos_long_names_track <- function(cooccurring_diseases, cooccurring_diseases_p
   )
 }
 
+## Requires circos_long_names_track() to be called first
 circos_short_names_track <- function(cooccurring_diseases, specialty_codes, cooccurring_diseases_per_specialty) {
   circos.track(
     ylim = c(0, 0.1), track.height = 0.05, bg.border = NA, track.margin = c(.01, 0),
@@ -122,6 +123,7 @@ circos_short_names_track <- function(cooccurring_diseases, specialty_codes, cooc
   )
 }
 
+## Requires circos_short_names_track() to be called first
 circos_prev_ratio_track <- function(cooccurring_diseases, specialty_codes,
                                     prevalence_ratio_breaks,
                                     cooccurring_diseases_sector_bg_col,
@@ -185,6 +187,7 @@ circos_prev_ratio_track <- function(cooccurring_diseases, specialty_codes,
   )
 }
 
+## Requires circos_short_names_track() to be called first
 circos_prevalence_track <- function(cooccurring_diseases, specialty_codes,
                                     prevalence_breaks,
                                     cooccurring_diseases_sector_bg_col,
