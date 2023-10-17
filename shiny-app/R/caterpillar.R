@@ -14,7 +14,7 @@ caterpillar_plot <- function(caterpillar_data, median_counts, specialty_colours)
 
   # convert phenotype_cooccurring_dis to factor and order levels according to prev_ratio for plotting
   caterpillar_data$phenotype_cooccurring_dis <- as.factor(caterpillar_data$phenotype_cooccurring_dis)
-  caterpillar_data$phenotype_cooccurring_dis <- reorder(
+  caterpillar_data$phenotype_cooccurring_dis <- stats::reorder(
     caterpillar_data$phenotype_cooccurring_dis,
     caterpillar_data$prev_ratio
   )
