@@ -10,6 +10,6 @@ withr::with_seed(20231017, {
 
 
 test_that("circos_plot() produces consistent output", {
-  p <- circos_plot(test_data, select_index_disease, svg_filepath = NULL)
+  p <- function() circos_plot(test_data, select_index_disease, svg_filepath = NULL)
   vdiffr::expect_doppelganger("circos_plot", p)
 })
