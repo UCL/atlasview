@@ -23,7 +23,6 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
   cooccurring_diseases_sector_bg_col <- "#ECECEC"
   sector_grid_lines_col <- "#BFBFBF"
 
-
   circos.clear()
   circos.par(track.height = 0.25, start.degree = (90 - 4.5), gap.after = 0.2, cell.padding = c(0, 0))
   circos_initialize_sectors(specialty_codes, cooccurring_diseases_per_specialty)
@@ -38,7 +37,6 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
     cooccurring_diseases_per_specialty, sector_grid_lines_col
   )
 
-  # track for prevalence
   prevalence_breaks <- log(c(1, 5, 10, 50, 100))
   circos_prevalence_track(
     cooccurring_diseases, specialty_codes,
@@ -46,12 +44,6 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
     cooccurring_diseases_per_specialty, sector_grid_lines_col
   )
   
-  circos.text(x = 2.5, y = prevalence_ratio_breaks, track.index = 3, sector.index = " ", labels = c("1", "5", "10", "50", "100", "500", "1000"), adj = c(0, 0.5), cex = 0.65)
-  circos.text(x = 1, y = 3.5, "Standardised prevalence ratio", facing = "clockwise", track.index = 3, sector.index = " ", cex = 0.65)
-
-  circos.text(x = 2.5, y = prevalence_breaks, track.index = 4, sector.index = " ", labels = c("1", "5", "10", "50", "100"), adj = c(0, 0.5), cex = 0.65)
-  circos.text(x = 1, y = 2.25, "Prevalence (%)", facing = "reverse.clockwise", track.index = 4, sector.index = " ", cex = 0.65)
-
   # disease name in center of circle
   disease_name <- stringr::str_wrap(cooccurring_diseases$phenotype_index_dis[1], width = 20)
   disease_name <- paste0(disease_name, "\n", "(n=", patient_count, " patients)")
@@ -169,6 +161,19 @@ circos_prev_ratio_track <- function(cooccurring_diseases, specialty_codes,
       }
     }
   )
+  
+  ## Labels
+  circos.text(
+    x = 2.5, y = prevalence_ratio_breaks,
+    track.index = 3, sector.index = " ",
+    labels = c("1", "5", "10", "50", "100", "500", "1000"),
+    adj = c(0, 0.5), cex = 0.65
+  )
+  circos.text(
+    x = 1, y = 3.5,
+    "Standardised prevalence ratio", facing = "clockwise",
+    track.index = 3, sector.index = " ", cex = 0.65
+  )
 }
 
 circos_prevalence_track <- function(cooccurring_diseases, specialty_codes,
@@ -205,5 +210,18 @@ circos_prevalence_track <- function(cooccurring_diseases, specialty_codes,
         }
       }
     }
+  )
+  
+  ## Labels
+  circos.text(
+    x = 2.5, y = prevalence_breaks,
+    track.index = 4, sector.index = " ",
+    labels = c("1", "5", "10", "50", "100"),
+    adj = c(0, 0.5), cex = 0.65
+  )
+  circos.text(
+    x = 1, y = 2.25,
+    "Prevalence (%)", facing = "reverse.clockwise",
+    track.index = 4, sector.index = " ", cex = 0.65
   )
 }
