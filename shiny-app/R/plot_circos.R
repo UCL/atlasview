@@ -34,22 +34,7 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
   circos_initialize_sectors(specialty_codes, cooccurring_diseases_per_specialty)
 
   # track for the long-names of co-occurring disease
-  circos.track(
-    ylim = c(0, 1), bg.border = NA, track.height = .28, track.margin = c(.01, 0),
-    panel.fun = function(x, y) {
-      # does this specialty sector have any co-occurring diseases?
-      matches <- selected_disease[selected_disease$cooccurring_specialty_code == CELL_META$sector.index, ]
-      if (nrow(matches) > 0) {
-        matches <- head(matches, cooccurring_diseases_per_specialty)
-        circos.text(
-          x = (1:cooccurring_diseases_per_specialty - 0.5)[0:nrow(matches)],
-          y = 0,
-          labels = matches$phenotype_cooccurring_dis,
-          facing = "clockwise", niceFacing = T, cex = 0.65, adj = c(0, .5)
-        )
-      }
-    }
-  )
+  circos_long_names_track(cooccurring_diseases, cooccurring_diseases_per_specialty)
 
   # track for short-names of specialty for each sector
   circos.track(
@@ -190,3 +175,21 @@ circos_initialize_sectors <- function(specialty_codes, cooccurring_diseases_per_
   circos.initialize(spec_codes_merged_sectors$code, xlim = c(0, cooccurring_diseases_per_specialty))
 }
 
+circos_long_names_track <- function(cooccurring_diseases, cooccurring_diseases_per_specialty) {
+  circos.track(
+    ylim = c(0, 1), bg.border = NA, track.height = .28, track.margin = c(.01, 0),
+    panel.fun = function(x, y) {
+      # does this specialty sector have any co-occurring diseases?
+      matches <- cooccurring_diseases[cooccurring_diseases$cooccurring_specialty_code == CELL_META$sector.index, ]
+      if (nrow(matches) > 0) {
+        matches <- head(matches, cooccurring_diseases_per_specialty)
+        circos.text(
+          x = (seq_len(cooccurring_diseases_per_specialty) - 0.5)[seq(0, nrow(matches))],
+          y = 0,
+          labels = matches$phenotype_cooccurring_dis,
+          facing = "clockwise", niceFacing = TRUE, cex = 0.65, adj = c(0, .5)
+        )
+      }
+    }
+  )
+}
