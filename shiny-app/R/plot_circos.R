@@ -18,7 +18,7 @@ sector_grid_lines_col <- "#BFBFBF"
 #' @importFrom utils head
 circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = NULL) {
   specialty_codes <- atlasview_data$specialties
-  selected_disease <- get_cooccurring_diseases(atlasview_data$MM_res, selected_index_disease)
+  cooccurring_diseases <- get_cooccurring_diseases(atlasview_data$MM_res, selected_index_disease)
   patient_count <- get_patient_count(atlasview_data$n_dis_spe, selected_index_disease)
   
   if (!is.null(svg_filepath)) {
@@ -56,10 +56,10 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
     ylim = c(0, 0.1), track.height = 0.05, bg.border = NA, track.margin = c(.01, 0),
     panel.fun = function(x, y) {
       # if we have co-occurring diseases for this specialty
-      if (CELL_META$sector.index %in% selected_disease$cooccurring_specialty_code) {
+      if (CELL_META$sector.index %in% cooccurring_diseases$cooccurring_specialty_code) {
         textcolor <- "black"
 
-        matches <- selected_disease[selected_disease$cooccurring_specialty_code == CELL_META$sector.index, ]
+        matches <- cooccurring_diseases[cooccurring_diseases$cooccurring_specialty_code == CELL_META$sector.index, ]
         matches <- head(matches, cooccurring_diseases_per_specialty)
         for (i in 1:nrow(matches)) {
           circos.segments((1:nrow(matches)) - 0.5, -0.05, (1:nrow(matches)) - 0.5, 0.11)
@@ -90,7 +90,7 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
   circos.track(
     ylim = c(log(1), log(10000)), bg.col = NA, bg.border = NA, track.margin = c(0, 0),
     panel.fun = function(x, y) {
-      matches <- selected_disease[selected_disease$cooccurring_specialty_code == CELL_META$sector.index, ]
+      matches <- cooccurring_diseases[cooccurring_diseases$cooccurring_specialty_code == CELL_META$sector.index, ]
       if (nrow(matches) > 0) {
         circos.rect(CELL_META$cell.xlim[1], CELL_META$cell.ylim[1],
           CELL_META$cell.xlim[2], CELL_META$cell.ylim[2],
@@ -137,7 +137,7 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
     ylim = c(log(100), log(1)), bg.col = NA, bg.border = NA, track.margin = c(0, 0),
     panel.fun = function(x, y) {
       # does this specialty sector have any co-occurring diseases?
-      matches <- selected_disease[selected_disease$cooccurring_specialty_code == CELL_META$sector.index, ]
+      matches <- cooccurring_diseases[cooccurring_diseases$cooccurring_specialty_code == CELL_META$sector.index, ]
       if (nrow(matches) > 0) {
         circos.rect(CELL_META$cell.xlim[1], CELL_META$cell.ylim[1],
           CELL_META$cell.xlim[2], CELL_META$cell.ylim[2],
@@ -171,7 +171,7 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
   circos.text(x = 1, y = 2.25, "Prevalence (%)", facing = "reverse.clockwise", track.index = 4, sector.index = " ", cex = 0.65)
 
   # disease name in center of circle
-  disease_name <- stringr::str_wrap(selected_disease$phenotype_index_dis[1], width = 20)
+  disease_name <- stringr::str_wrap(cooccurring_diseases$phenotype_index_dis[1], width = 20)
   disease_name <- paste0(disease_name, "\n", "(n=", patient_count, " patients)")
   text(0, 0, disease_name)
 
