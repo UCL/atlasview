@@ -152,6 +152,7 @@ circos_prev_ratio_track <- function(cooccurring_diseases, specialty_codes,
             original_v <- v
             v <- log(1400)
           }
+          v <- abs(v)
           circos.rect(xstart, 0, xstart + 1, v, col = specialty_codes$color[specialty_codes$code == CELL_META$sector.index])
           circos.segments(xstart + 0.5, v, xstart + 0.5, log(10000), straight = TRUE, lwd = 1, lty = "dashed", col = sector_grid_lines_col)
           if (truncate) {
