@@ -21,19 +21,17 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
   selected_disease <- get_cooccurring_diseases(atlasview_data$MM_res, selected_index_disease)
   patient_count <- get_patient_count(atlasview_data$n_dis_spe, selected_index_disease)
   
-  # prepare the sectors
-  spec_codes_merged_sectors <- as.data.frame(specialty_codes)
-  spec_codes_merged_sectors$xlim1 <- 0
-  spec_codes_merged_sectors$xlim2 <- cooccurring_diseases_per_specialty
-  spec_codes_merged_sectors <- rbind(spec_codes_merged_sectors, c("_LABELS_", " ", " ", 0, 5))
-
   if (!is.null(svg_filepath)) {
     svglite::svglite(svg_filepath, width = 15, height = 15)
   }
+  
+  ## Globals
+  cooccurring_diseases_per_specialty <- 5
+
 
   circos.clear()
   circos.par(track.height = 0.25, start.degree = (90 - 4.5), gap.after = 0.2, cell.padding = c(0, 0))
-  circos.initialize(spec_codes_merged_sectors$code, xlim = c(0, cooccurring_diseases_per_specialty))
+  circos_initialize_sectors(specialty_codes, cooccurring_diseases_per_specialty)
 
   # track for the long-names of co-occurring disease
   circos.track(
@@ -181,3 +179,14 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
     dev.off()
   }
 }
+
+circos_initialize_sectors <- function(specialty_codes, cooccurring_diseases_per_specialty) {
+  # prepare the sectors
+  spec_codes_merged_sectors <- as.data.frame(specialty_codes)
+  spec_codes_merged_sectors$xlim1 <- 0
+  spec_codes_merged_sectors$xlim2 <- cooccurring_diseases_per_specialty
+  spec_codes_merged_sectors <- rbind(spec_codes_merged_sectors, c("_LABELS_", " ", " ", 0, 5))
+
+  circos.initialize(spec_codes_merged_sectors$code, xlim = c(0, cooccurring_diseases_per_specialty))
+}
+
