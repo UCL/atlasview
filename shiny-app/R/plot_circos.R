@@ -9,7 +9,11 @@ sector_grid_lines_col <- "#BFBFBF"
 #' @importFrom graphics text
 #' @importFrom grDevices adjustcolor dev.off
 #' @importFrom utils head
-circos_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_filepath = NULL) {
+circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = NULL) {
+  spec_codes_merged <- atlasview_data$specialties
+  selected_disease <- get_cooccurring_diseases(atlasview_data$MM_res, selected_index_disease)
+  patient_count <- get_patient_count(atlasview_data$n_dis_spe, selected_index_disease)
+  
   # prepare the sectors
   spec_codes_merged_sectors <- as.data.frame(spec_codes_merged)
   spec_codes_merged_sectors$xlim1 <- 0
