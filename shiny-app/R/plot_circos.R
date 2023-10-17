@@ -19,6 +19,14 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
     svglite::svglite(svg_filepath, width = 15, height = 15)
   }
   
+  ## Clear circos params and graphics device on exit
+  on.exit({
+    circos.clear()
+    if (!is.null(svg_filepath)) {
+      dev.off()
+    }
+  }, add = TRUE)
+  
   ## Globals
   cooccurring_diseases_per_specialty <- 5
   cooccurring_diseases_sector_bg_col <- "#ECECEC"
@@ -48,9 +56,6 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
   disease_name <- paste0(disease_name, "\n", "(n=", patient_count, " patients)")
   text(0, 0, disease_name)
 
-  if (!is.null(svg_filepath)) {
-    dev.off()
-  }
 }
 
 circos_initialize_sectors <- function(specialty_codes, cooccurring_diseases_per_specialty) {
