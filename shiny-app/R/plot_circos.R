@@ -130,7 +130,7 @@ circos_prev_ratio_track <- function(cooccurring_diseases, specialty_codes,
                                     cooccurring_diseases_per_specialty,
                                     sector_grid_lines_col) {
   circos.track(
-    ylim = c(log(1), log(10000)), bg.col = NA, bg.border = NA, track.margin = c(0, 0),
+    ylim = c(0, log(10000)), bg.col = NA, bg.border = NA, track.margin = c(0, 0),
     panel.fun = function(x, y) {
       matches <- cooccurring_diseases[cooccurring_diseases$cooccurring_specialty_code == CELL_META$sector.index, ]
       if (nrow(matches) > 0) {
@@ -152,7 +152,7 @@ circos_prev_ratio_track <- function(cooccurring_diseases, specialty_codes,
             original_v <- v
             v <- log(1400)
           }
-          circos.rect(xstart, log(1), xstart + 1, v, col = specialty_codes$color[specialty_codes$code == CELL_META$sector.index])
+          circos.rect(xstart, 0, xstart + 1, v, col = specialty_codes$color[specialty_codes$code == CELL_META$sector.index])
           circos.segments(xstart + 0.5, v, xstart + 0.5, log(10000), straight = TRUE, lwd = 1, lty = "dashed", col = sector_grid_lines_col)
           if (truncate) {
             circos.text(xstart + 0.5, v, "=", facing = "clockwise", niceFacing = TRUE) # can't plot unicode characters...?
@@ -194,7 +194,7 @@ circos_prevalence_track <- function(cooccurring_diseases, specialty_codes,
                                     cooccurring_diseases_per_specialty,
                                     sector_grid_lines_col) {
   circos.track(
-    ylim = c(log(100), log(1)), bg.col = NA, bg.border = NA, track.margin = c(0, 0),
+    ylim = c(log(100), 0), bg.col = NA, bg.border = NA, track.margin = c(0, 0),
     panel.fun = function(x, y) {
       # does this specialty sector have any co-occurring diseases?
       matches <- cooccurring_diseases[cooccurring_diseases$cooccurring_specialty_code == CELL_META$sector.index, ]
@@ -213,7 +213,7 @@ circos_prevalence_track <- function(cooccurring_diseases, specialty_codes,
         value <- log(matches$prevalence)
         xstart <- 0
         for (v in value) {
-          circos.rect(xstart, log(1), xstart + 1, v, col = sectorcolor, border = adjustcolor("black", alpha.f = 0.2))
+          circos.rect(xstart, 0, xstart + 1, v, col = sectorcolor, border = adjustcolor("black", alpha.f = 0.2))
           xstart <- xstart + 1
         }
       } else {
