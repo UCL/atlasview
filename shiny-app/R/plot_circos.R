@@ -5,7 +5,6 @@ cooccurring_diseases_per_specialty <- 5
 cooccurring_diseases_sector_bg_col <- "#ECECEC"
 sector_grid_lines_col <- "#BFBFBF"
     
-# plot figure for a given disease
 
 #' Make circos plot for a given index disease
 #' 
@@ -18,12 +17,12 @@ sector_grid_lines_col <- "#BFBFBF"
 #' @importFrom grDevices adjustcolor dev.off
 #' @importFrom utils head
 circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = NULL) {
-  spec_codes_merged <- atlasview_data$specialties
+  specialty_codes <- atlasview_data$specialties
   selected_disease <- get_cooccurring_diseases(atlasview_data$MM_res, selected_index_disease)
   patient_count <- get_patient_count(atlasview_data$n_dis_spe, selected_index_disease)
   
   # prepare the sectors
-  spec_codes_merged_sectors <- as.data.frame(spec_codes_merged)
+  spec_codes_merged_sectors <- as.data.frame(specialty_codes)
   spec_codes_merged_sectors$xlim1 <- 0
   spec_codes_merged_sectors$xlim2 <- cooccurring_diseases_per_specialty
   spec_codes_merged_sectors <- rbind(spec_codes_merged_sectors, c("_LABELS_", " ", " ", 0, 5))
@@ -72,7 +71,7 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
           get.cell.meta.data("cell.end.degree", sector.index = CELL_META$sector.index),
           rou1 = get.cell.meta.data("cell.top.radius", track.index = 2),
           rou2 = get.cell.meta.data("cell.bottom.radius", track.index = 2),
-          col = spec_codes_merged$color[spec_codes_merged$code == CELL_META$sector.index], border = NA
+          col = specialty_codes$color[specialty_codes$code == CELL_META$sector.index], border = NA
         )
       } else {
         # otherwise, no diseases for this specialty
@@ -113,7 +112,7 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
             original_v <- v
             v <- log(1400)
           }
-          circos.rect(xstart, log(1), xstart + 1, v, col = spec_codes_merged$color[spec_codes_merged$code == CELL_META$sector.index])
+          circos.rect(xstart, log(1), xstart + 1, v, col = specialty_codes$color[specialty_codes$code == CELL_META$sector.index])
           circos.segments(xstart + 0.5, v, xstart + 0.5, log(10000), straight = TRUE, lwd = 1, lty = "dashed", col = sector_grid_lines_col)
           if (truncate) {
             circos.text(xstart + 0.5, v, "=", facing = "clockwise", niceFacing = TRUE) # can't plot unicode characters...?
@@ -149,7 +148,7 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
         for (r in prevalence_breaks) {
           circos.segments(0, r, cooccurring_diseases_per_specialty, r, col = sector_grid_lines_col)
         }
-        sectorcolor <- spec_codes_merged$color[spec_codes_merged$code == CELL_META$sector.index]
+        sectorcolor <- specialty_codes$color[specialty_codes$code == CELL_META$sector.index]
         # make transparent
         sectorcolor <- adjustcolor(sectorcolor, alpha.f = 0.2)
         matches <- head(matches, cooccurring_diseases_per_specialty)
