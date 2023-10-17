@@ -1,3 +1,4 @@
+# FIXME: get rid of the `Note:`s from circos plot
 
 #' Make circos plot for a given index disease
 #' 
@@ -23,8 +24,6 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
   cooccurring_diseases_sector_bg_col <- "#ECECEC"
   sector_grid_lines_col <- "#BFBFBF"
 
-  circos.clear()
-  circos.par(track.height = 0.25, start.degree = (90 - 4.5), gap.after = 0.2, cell.padding = c(0, 0))
   circos_initialize_sectors(specialty_codes, cooccurring_diseases_per_specialty)
   
   circos_long_names_track(cooccurring_diseases, cooccurring_diseases_per_specialty)
@@ -55,6 +54,11 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
 }
 
 circos_initialize_sectors <- function(specialty_codes, cooccurring_diseases_per_specialty) {
+  
+  ## Reset circos parameters
+  circos.clear()
+  circos.par(track.height = 0.25, start.degree = (90 - 4.5), gap.after = 0.2, cell.padding = c(0, 0))
+  
   # prepare the sectors
   spec_codes_merged_sectors <- as.data.frame(specialty_codes)
   spec_codes_merged_sectors$xlim1 <- 0
