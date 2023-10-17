@@ -20,7 +20,6 @@ get_atlasview_data <- function() {
   
   if (data_root == "") {
     warning("ATLASVIEW_DATA_PATH variable not set, defaulting to `atlasview_mock_data`")
-    data("atlasview_mock_data")
     return(atlasview_mock_data)
   }
   
