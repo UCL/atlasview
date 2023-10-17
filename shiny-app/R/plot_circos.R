@@ -27,39 +27,9 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
   circos.clear()
   circos.par(track.height = 0.25, start.degree = (90 - 4.5), gap.after = 0.2, cell.padding = c(0, 0))
   circos_initialize_sectors(specialty_codes, cooccurring_diseases_per_specialty)
-
-  # track for the long-names of co-occurring disease
+  
   circos_long_names_track(cooccurring_diseases, cooccurring_diseases_per_specialty)
-
-  # track for short-names of specialty for each sector
-  circos.track(
-    ylim = c(0, 0.1), track.height = 0.05, bg.border = NA, track.margin = c(.01, 0),
-    panel.fun = function(x, y) {
-      # if we have co-occurring diseases for this specialty
-      if (CELL_META$sector.index %in% cooccurring_diseases$cooccurring_specialty_code) {
-        textcolor <- "black"
-
-        matches <- cooccurring_diseases[cooccurring_diseases$cooccurring_specialty_code == CELL_META$sector.index, ]
-        matches <- head(matches, cooccurring_diseases_per_specialty)
-        for (i in 1:nrow(matches)) {
-          circos.segments((1:nrow(matches)) - 0.5, -0.05, (1:nrow(matches)) - 0.5, 0.11)
-        }
-        draw.sector(
-          get.cell.meta.data("cell.start.degree", sector.index = CELL_META$sector.index),
-          get.cell.meta.data("cell.end.degree", sector.index = CELL_META$sector.index),
-          rou1 = get.cell.meta.data("cell.top.radius", track.index = 2),
-          rou2 = get.cell.meta.data("cell.bottom.radius", track.index = 2),
-          col = specialty_codes$color[specialty_codes$code == CELL_META$sector.index], border = NA
-        )
-      } else {
-        # otherwise, no diseases for this specialty
-        textcolor <- "darkgray"
-      }
-
-      circos.text(CELL_META$xcenter, 0.05, CELL_META$sector.index, cex = 0.8, col = textcolor)
-    }
-  )
-
+  circos_short_names_track(cooccurring_diseases, specialty_codes, cooccurring_diseases_per_specialty)
 
   # track for prevalence ratio
   # no native support for log scale - do it by hand
@@ -185,6 +155,36 @@ circos_long_names_track <- function(cooccurring_diseases, cooccurring_diseases_p
           facing = "clockwise", niceFacing = TRUE, cex = 0.65, adj = c(0, .5)
         )
       }
+    }
+  )
+}
+
+circos_short_names_track <- function(cooccurring_diseases, specialty_codes, cooccurring_diseases_per_specialty) {
+  circos.track(
+    ylim = c(0, 0.1), track.height = 0.05, bg.border = NA, track.margin = c(.01, 0),
+    panel.fun = function(x, y) {
+      # if we have co-occurring diseases for this specialty
+      if (CELL_META$sector.index %in% cooccurring_diseases$cooccurring_specialty_code) {
+        textcolor <- "black"
+
+        matches <- cooccurring_diseases[cooccurring_diseases$cooccurring_specialty_code == CELL_META$sector.index, ]
+        matches <- head(matches, cooccurring_diseases_per_specialty)
+        for (i in seq_len(nrow(matches))) {
+          circos.segments((seq_len(nrow(matches))) - 0.5, -0.05, (seq_len(nrow(matches))) - 0.5, 0.11)
+        }
+        draw.sector(
+          get.cell.meta.data("cell.start.degree", sector.index = CELL_META$sector.index),
+          get.cell.meta.data("cell.end.degree", sector.index = CELL_META$sector.index),
+          rou1 = get.cell.meta.data("cell.top.radius", track.index = 2),
+          rou2 = get.cell.meta.data("cell.bottom.radius", track.index = 2),
+          col = specialty_codes$color[specialty_codes$code == CELL_META$sector.index], border = NA
+        )
+      } else {
+        # otherwise, no diseases for this specialty
+        textcolor <- "darkgray"
+      }
+
+      circos.text(CELL_META$xcenter, 0.05, CELL_META$sector.index, cex = 0.8, col = textcolor)
     }
   )
 }
