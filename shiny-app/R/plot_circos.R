@@ -6,6 +6,14 @@ cooccurring_diseases_sector_bg_col <- "#ECECEC"
 sector_grid_lines_col <- "#BFBFBF"
     
 # plot figure for a given disease
+
+#' Make circos plot for a given index disease
+#' 
+#' @param atlasview_data list of atlasview data, typically from [`get_atlasview_data()`]
+#'
+#' @param selected_index_disease character string, the selected index disease as code
+#' @param svg_filepath optional filepath. If provided, the plot will be written to the path.
+#'
 #' @importFrom graphics text
 #' @importFrom grDevices adjustcolor dev.off
 #' @importFrom utils head
