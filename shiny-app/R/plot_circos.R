@@ -36,49 +36,10 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
 
   # plot track grid lines (aka circles)
   prevalence_ratio_breaks <- log(c(1, 5, 10, 50, 100, 500, 1000, 10000))
-
-  circos.track(
-    ylim = c(log(1), log(10000)), bg.col = NA, bg.border = NA, track.margin = c(0, 0),
-    panel.fun = function(x, y) {
-      matches <- cooccurring_diseases[cooccurring_diseases$cooccurring_specialty_code == CELL_META$sector.index, ]
-      if (nrow(matches) > 0) {
-        circos.rect(CELL_META$cell.xlim[1], CELL_META$cell.ylim[1],
-          CELL_META$cell.xlim[2], CELL_META$cell.ylim[2],
-          col = cooccurring_diseases_sector_bg_col, border = NA
-        )
-        for (r in head(prevalence_ratio_breaks, -1)) {
-          circos.segments(0, r, cooccurring_diseases_per_specialty, r, col = sector_grid_lines_col)
-        }
-        matches <- head(matches, cooccurring_diseases_per_specialty)
-        value <- log(matches$prev_ratio)
-        # circos.barplot doesn't plot on log-scale. draw rectangles instead
-        xstart <- 0
-        for (v in value) {
-          truncate <- FALSE
-          if (v > log(1000)) {
-            truncate <- TRUE
-            original_v <- v
-            v <- log(1400)
-          }
-          circos.rect(xstart, log(1), xstart + 1, v, col = specialty_codes$color[specialty_codes$code == CELL_META$sector.index])
-          circos.segments(xstart + 0.5, v, xstart + 0.5, log(10000), straight = TRUE, lwd = 1, lty = "dashed", col = sector_grid_lines_col)
-          if (truncate) {
-            circos.text(xstart + 0.5, v, "=", facing = "clockwise", niceFacing = TRUE) # can't plot unicode characters...?
-          }
-          if (truncate) {
-            circos.text(xstart + 0.5, v + 0.3, round(exp(original_v), 1), facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5), cex = 0.5)
-          } else {
-            circos.text(xstart + 0.5, v + 0.2, round(exp(v), 2), facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5), cex = 0.5)
-          }
-
-          xstart <- xstart + 1
-        }
-      } else {
-        for (r in head(prevalence_ratio_breaks, -1)) {
-          circos.segments(0, r, cooccurring_diseases_per_specialty, r, col = sector_grid_lines_col)
-        }
-      }
-    }
+  circos_prev_ratio_track(
+    cooccurring_diseases, specialty_codes,
+    prevalence_ratio_breaks, cooccurring_diseases_sector_bg_col,
+    cooccurring_diseases_per_specialty, sector_grid_lines_col
   )
 
   # track for prevalence
@@ -185,6 +146,56 @@ circos_short_names_track <- function(cooccurring_diseases, specialty_codes, cooc
       }
 
       circos.text(CELL_META$xcenter, 0.05, CELL_META$sector.index, cex = 0.8, col = textcolor)
+    }
+  )
+}
+
+circos_prev_ratio_track <- function(cooccurring_diseases, specialty_codes,
+                                    prevalence_ratio_breaks,
+                                    cooccurring_diseases_sector_bg_col,
+                                    cooccurring_diseases_per_specialty,
+                                    sector_grid_lines_col) {
+  circos.track(
+    ylim = c(log(1), log(10000)), bg.col = NA, bg.border = NA, track.margin = c(0, 0),
+    panel.fun = function(x, y) {
+      matches <- cooccurring_diseases[cooccurring_diseases$cooccurring_specialty_code == CELL_META$sector.index, ]
+      if (nrow(matches) > 0) {
+        circos.rect(CELL_META$cell.xlim[1], CELL_META$cell.ylim[1],
+          CELL_META$cell.xlim[2], CELL_META$cell.ylim[2],
+          col = cooccurring_diseases_sector_bg_col, border = NA
+        )
+        for (r in head(prevalence_ratio_breaks, -1)) {
+          circos.segments(0, r, cooccurring_diseases_per_specialty, r, col = sector_grid_lines_col)
+        }
+        matches <- head(matches, cooccurring_diseases_per_specialty)
+        value <- log(matches$prev_ratio)
+        # circos.barplot doesn't plot on log-scale. draw rectangles instead
+        xstart <- 0
+        for (v in value) {
+          truncate <- FALSE
+          if (v > log(1000)) {
+            truncate <- TRUE
+            original_v <- v
+            v <- log(1400)
+          }
+          circos.rect(xstart, log(1), xstart + 1, v, col = specialty_codes$color[specialty_codes$code == CELL_META$sector.index])
+          circos.segments(xstart + 0.5, v, xstart + 0.5, log(10000), straight = TRUE, lwd = 1, lty = "dashed", col = sector_grid_lines_col)
+          if (truncate) {
+            circos.text(xstart + 0.5, v, "=", facing = "clockwise", niceFacing = TRUE) # can't plot unicode characters...?
+          }
+          if (truncate) {
+            circos.text(xstart + 0.5, v + 0.3, round(exp(original_v), 1), facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5), cex = 0.5)
+          } else {
+            circos.text(xstart + 0.5, v + 0.2, round(exp(v), 2), facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5), cex = 0.5)
+          }
+
+          xstart <- xstart + 1
+        }
+      } else {
+        for (r in head(prevalence_ratio_breaks, -1)) {
+          circos.segments(0, r, cooccurring_diseases_per_specialty, r, col = sector_grid_lines_col)
+        }
+      }
     }
   )
 }
