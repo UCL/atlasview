@@ -192,7 +192,7 @@ atlasview_server <-  function(input, output, session) {
       selected_index_disease <- atlasview_data$n_dis_spe$index_dis == input$select_index_disease
       patient_count <- atlasview_data$n_dis_spe$n_indiv_index_dis_m_r[selected_index_disease]
       cooccurring <- get_cooccurring_diseases(atlasview_data$MM_res, input$select_index_disease)
-      make_circos_plot(atlasview_data$specialties,
+      circos_plot(atlasview_data$specialties,
         cooccurring, patient_count,
         svg_filepath = plot_filename
       )

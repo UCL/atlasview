@@ -9,7 +9,7 @@ sector_grid_lines_col <- "#BFBFBF"
 #' @importFrom graphics text
 #' @importFrom grDevices adjustcolor dev.off
 #' @importFrom utils head
-make_circos_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_filepath = NULL) {
+circos_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_filepath = NULL) {
   # prepare the sectors
   spec_codes_merged_sectors <- as.data.frame(spec_codes_merged)
   spec_codes_merged_sectors$xlim1 <- 0
