@@ -9,21 +9,21 @@ sector_grid_lines_col <- "#BFBFBF"
 #' @importFrom graphics text
 #' @importFrom grDevices adjustcolor dev.off
 #' @importFrom utils head
-make_circos_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_filepath=NULL) {
+make_circos_plot <- function(spec_codes_merged, selected_disease, patient_count, svg_filepath = NULL) {
   # prepare the sectors
   spec_codes_merged_sectors <- as.data.frame(spec_codes_merged)
   spec_codes_merged_sectors$xlim1 <- 0
   spec_codes_merged_sectors$xlim2 <- cooccurring_diseases_per_specialty
-  spec_codes_merged_sectors <- rbind(spec_codes_merged_sectors, c('_LABELS_', ' ', ' ', 0, 5))
-  
+  spec_codes_merged_sectors <- rbind(spec_codes_merged_sectors, c("_LABELS_", " ", " ", 0, 5))
+
   if (!is.null(svg_filepath)) {
     svglite::svglite(svg_filepath, width = 15, height = 15)
   }
-  
+
   circos.clear()
   circos.par(track.height = 0.25, start.degree = (90 - 4.5), gap.after = 0.2, cell.padding = c(0, 0))
   circos.initialize(spec_codes_merged_sectors$code, xlim = c(0, cooccurring_diseases_per_specialty))
-  
+
   # track for the long-names of co-occurring disease
   circos.track(
     ylim = c(0, 1), bg.border = NA, track.height = .28, track.margin = c(.01, 0),
@@ -41,7 +41,7 @@ make_circos_plot <- function(spec_codes_merged, selected_disease, patient_count,
       }
     }
   )
-  
+
   # track for short-names of specialty for each sector
   circos.track(
     ylim = c(0, 0.1), track.height = 0.05, bg.border = NA, track.margin = c(.01, 0),
@@ -70,14 +70,14 @@ make_circos_plot <- function(spec_codes_merged, selected_disease, patient_count,
       circos.text(CELL_META$xcenter, 0.05, CELL_META$sector.index, cex = 0.8, col = textcolor)
     }
   )
-  
-  
+
+
   # track for prevalence ratio
   # no native support for log scale - do it by hand
-  
+
   # plot track grid lines (aka circles)
-  prevalence_ratio_breaks = log(c(1, 5, 10, 50, 100, 500, 1000, 10000))
-  
+  prevalence_ratio_breaks <- log(c(1, 5, 10, 50, 100, 500, 1000, 10000))
+
   circos.track(
     ylim = c(log(1), log(10000)), bg.col = NA, bg.border = NA, track.margin = c(0, 0),
     panel.fun = function(x, y) {
@@ -121,7 +121,7 @@ make_circos_plot <- function(spec_codes_merged, selected_disease, patient_count,
       }
     }
   )
-  
+
   # track for prevalence
   prevalence_breaks <- log(c(1, 5, 10, 50, 100))
   circos.track(
@@ -154,7 +154,7 @@ make_circos_plot <- function(spec_codes_merged, selected_disease, patient_count,
       }
     }
   )
-  
+
   circos.text(x = 2.5, y = prevalence_ratio_breaks, track.index = 3, sector.index = " ", labels = c("1", "5", "10", "50", "100", "500", "1000"), adj = c(0, 0.5), cex = 0.65)
   circos.text(x = 1, y = 3.5, "Standardised prevalence ratio", facing = "clockwise", track.index = 3, sector.index = " ", cex = 0.65)
 
@@ -164,10 +164,9 @@ make_circos_plot <- function(spec_codes_merged, selected_disease, patient_count,
   # disease name in center of circle
   disease_name <- stringr::str_wrap(selected_disease$phenotype_index_dis[1], width = 20)
   disease_name <- paste0(disease_name, "\n", "(n=", patient_count, " patients)")
-  text(0,0, disease_name)
-  
+  text(0, 0, disease_name)
+
   if (!is.null(svg_filepath)) {
     dev.off()
   }
-
-} 
+}
