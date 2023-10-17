@@ -1,10 +1,3 @@
-# ---- GLOBALS ----
-
-cooccurring_diseases_per_specialty <- 5
-
-cooccurring_diseases_sector_bg_col <- "#ECECEC"
-sector_grid_lines_col <- "#BFBFBF"
-    
 
 #' Make circos plot for a given index disease
 #' 
@@ -27,6 +20,8 @@ circos_plot <- function(atlasview_data, selected_index_disease, svg_filepath = N
   
   ## Globals
   cooccurring_diseases_per_specialty <- 5
+  cooccurring_diseases_sector_bg_col <- "#ECECEC"
+  sector_grid_lines_col <- "#BFBFBF"
 
 
   circos.clear()
