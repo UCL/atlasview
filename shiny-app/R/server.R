@@ -189,11 +189,13 @@ atlasview_server <-  function(input, output, session) {
     
     # if we haven't a saved copy of the plot
     if (!file.exists(plot_filename)) {
-      selected_index_disease <- atlasview_data$n_dis_spe$index_dis == input$select_index_disease
-      patient_count <- atlasview_data$n_dis_spe$n_indiv_index_dis_m_r[selected_index_disease]
+      index_disease_patient_count <- get_patient_counts(all_patient_counts, input$select_index_disease)
+      
+      # FIXME: change to `circos_data`?
       cooccurring <- get_cooccurring_diseases(atlasview_data$MM_res, input$select_index_disease)
+      
       circos_plot(atlasview_data$specialties,
-        cooccurring, patient_count,
+        cooccurring, index_disease_patient_count,
         svg_filepath = plot_filename
       )
     }
