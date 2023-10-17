@@ -189,7 +189,7 @@ atlasview_server <-  function(input, output, session) {
     
     # if we haven't a saved copy of the plot
     if (!file.exists(plot_filename)) {
-      index_disease_patient_count <- get_patient_counts(all_patient_counts, input$select_index_disease)
+      index_disease_patient_count <- get_patient_count(all_patient_counts, input$select_index_disease)
       
       # FIXME: change to `circos_data`?
       cooccurring <- get_cooccurring_diseases(atlasview_data$MM_res, input$select_index_disease)
