@@ -194,6 +194,9 @@ circos_prevalence_track <- function(cooccurring_diseases, specialty_codes,
                                     cooccurring_diseases_sector_bg_col,
                                     cooccurring_diseases_per_specialty,
                                     sector_grid_lines_col) {
+  ## Avoid warning messages about points outside of plotting region
+  circos.par(points.overflow.warning = FALSE)
+  
   circos.track(
     ylim = c(log(100), 0), bg.col = NA, bg.border = NA, track.margin = c(0, 0),
     panel.fun = function(x, y) {
