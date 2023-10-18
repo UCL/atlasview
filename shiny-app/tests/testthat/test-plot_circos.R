@@ -21,9 +21,10 @@ test_that("circos_plot() resets circos params on exit", {
   expect_identical(new_params, old_params) 
 })
 
-test_that("circos_plot() produces consistent output with svg_filepath", {
-  # p <- function() circos_plot(test_data, select_index_disease, svg_filepath = "test.svg")
-  # vdiffr::expect_doppelganger("circos_plot", p)
+test_that("circos_plot() produces SVG file when `svg_filepath` defined", {
+  tmp_file <- withr::local_tempfile(fileext = ".svg")
+  circos_plot(test_data, select_index_disease, svg_filepath = tmp_file)
+  expect_true(file.exists(tmp_file))
 })
 
 test_that("circos_plot() does not produce warning messages", {
