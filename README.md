@@ -1,5 +1,9 @@
 # AtlasView
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/UCL/atlasview/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/UCL/atlasview/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 A website to view and comment on Disease Atlas results.
 
 ## Architecture
