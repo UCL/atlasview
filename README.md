@@ -1,5 +1,7 @@
 # AtlasView
 
+[![Deployment](https://github.com/UCL/atlasview/actions/workflows/docker-build.yml/badge.svg)](https://github.com/UCL/atlasview/actions/workflows/docker-build.yml)
+
 A website to view and comment on Disease Atlas results.
 
 ## Architecture
