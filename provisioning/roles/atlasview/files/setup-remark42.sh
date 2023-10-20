@@ -7,7 +7,4 @@ git submodule update
 cd remark42/remark42
 
 echo "Applying patches..."
-## Only apply patches if not already applied
-if ! $(git apply --check --reverse ../*.patch &> /dev/null); then
-    git apply ../*.patch
-fi
+git apply ../*.patch

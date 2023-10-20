@@ -20,17 +20,14 @@
     cmd: "{{ setup_remark42 }}"
     chdir: "{{ remote.atlasview_main }}"
 
-- name: Copy local .env file
-  ansible.builtin.copy:
-    src: "{{ local.atlasview_env }}"
-    dest: "{{ remote.atlasview_env }}"
-    mode: "0644"
-
 - name: Create atlasview-backups directory
   ansible.builtin.file:
     path: "{{ remote.atlasview_backups }}/comments"
     state: directory
     mode: "0755"
 
-- name: Set up cron jobs
-  ansible.builtin.include_tasks: cron-jobs.yml
+- name: Set up backups cron job
+  ansible.builtin.include_tasks: do-backup-cron.yml
+
+- name: Set up backup rotation
+  ansible.builtin.include_tasks: rotate-backups.yml
