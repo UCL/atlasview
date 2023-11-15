@@ -178,23 +178,12 @@ the steps above on the remote machine where the application will be deployed.
 
 ### Backups
 
-Set up the environment for backups and copying over to OneDrive share
+During [provisioning](./provisioning/README.md), we set up a cron job to run periodic backups.
+These backups are stored in `~/atlasview-backups/` on the remote, with the Excel files stored in 
+the `comments/` subdirectory. The `deployment/do-backup.sh` script handles generation of the backups.
+The CRON job is configured to run every 6 hours.
 
-```sh
-sudo apt update
-sudo apt install python3-pip
-sudo pip install pandas openpyxl  # we need these installed system-wide
-
-sudo apt install rclone zip
-
-# created a backup area, same level as atlasview folder
-mkdir -p atlasview-backups/comments
-```
-
-Run `rclone config` to setup remote share as required. The [`do-backup.sh`](./deployment/do-backup.sh) script is scheduled to run every six hours (root cronjob).
-
-We also set up a cron job during [provisioning](./provisioning/README.md) to rotate backup files every
-24 hours using the [`rotate-backups`](https://pypi.org/project/rotate-backups/) Python package.
+Another CRON job is set up to rotate backups every 24 hours using the [`rotate-backups`](https://pypi.org/project/rotate-backups/) Python package.
 The [`.rotate-backups.conf`](./provisioning/roles/atlasview/templates/rotate-backups.conf.j2) file configures the rotation.
 By default, we keep 12-hourly backups for the last 48 hours, daily backups for the last 30 days, and weekly backups for the last 3 months.
 Monthly backups are kept forever:
@@ -208,4 +197,5 @@ monthly = always
 ```
 
 You can change these settings by modifying the `.rotate-backups.conf` file.
+To modify the CRON schedules, run `crontab -e` on the remote and adapt as required.
 
