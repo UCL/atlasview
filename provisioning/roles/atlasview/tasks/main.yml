@@ -26,6 +26,11 @@
     state: directory
     mode: "0755"
 
+- name: Set up rclone syncing
+  ansible.builtin.script:
+    cmd: "{{ setup_rclone }}"
+    chdir: "{{ atlasview_root }}"
+
 - name: Set up backups cron job
   ansible.builtin.include_tasks: do-backup-cron.yml
 
