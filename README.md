@@ -199,3 +199,6 @@ monthly = always
 You can change these settings by modifying the `.rotate-backups.conf` file.
 To modify the CRON schedules, run `crontab -e` on the remote and adapt as required.
 
+In addition, we set up [syncing with `rclone`](./provisioning/README.md) to store the backup files in the
+[DiseaseAtlas SharePoint](https://liveuclac.sharepoint.com/:u:/r/sites/ARCDiseaseAtlas/SitePages/Home.aspx?csf=1&web=1&e=14D6QT).
+

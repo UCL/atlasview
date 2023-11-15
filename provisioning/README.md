@@ -9,8 +9,11 @@ The `playbook.yml` Ansible playbook
 3. Sets up the necessary directory structure for `atlasview`
 4. Installs a [self-hosted GitHub Actions runner](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners)
     to run the [docker-build workflow](../.github/workflows/docker-build.yml)
+5. Configures [rclone](https://rclone.org) and sets up [automated syncing with SharePoint](../README.md#backups)
 
-## Set GitHub access token
+## Set access tokens
+
+### GitHub access token
 
 Adding the SSH keys and setting up the self-hosted GHA runner requires a GitHub personal access
 token with at least the following scopes:
@@ -35,6 +38,28 @@ export GITHUB_PAT=ghp_*********************
 ```
 
 The `.env_ansible` file is ignored by git, so it won't be committed to the repo.
+
+
+### SharePoint access token for rclone
+
+To sync the backup files with SharePoint, `rclone` requires the `RCLONE_ONEDRIVE_TOKEN` to be set.
+This can be set in the `.env_ansible` file as well, which will be sourced by the `provision.sh` script.
+
+To get the token, run `rclone authorize "onedrive"` locally and copy _the complete **JSON blob**_ into
+your `.env_ansible` file.
+
+I.e., the entry should look like this:
+
+```sh
+export RCLONE_ONEDRIVE_TOKEN={"access_token":"...",...,"expiry":"..."}
+```
+
+Alternatively, just like for the GitHub PAT above, you could use the [pass](https://www.passwordstore.org/)
+command line utilty to safely store the token on your local machine and access it by setting
+
+```sh
+export RCLONE_ONEDRIVE_TOKEN=$(pass /path/to/onedrive_token)
+```
 
 ## Set up the `atlasview-data` directory and `.env` file
 
