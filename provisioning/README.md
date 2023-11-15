@@ -39,6 +39,22 @@ export GITHUB_PAT=ghp_*********************
 
 The `.env_ansible` file is ignored by git, so it won't be committed to the repo.
 
+Alternatively, you could use the [pass](https://www.passwordstore.org/) command line utility to store 
+your PAT locally. After installing and configurin `pass`, add a new entry with
+
+```sh
+pass insert /api/tokens/github
+#> Copy PAT into the prompt
+```
+
+which will create an encrypted entry of your PAT.
+You can then call `pass` in the `.env_ansible` file:
+
+```sh
+export GITHUB_PAT=$(pass /api/tokens/github)
+```
+
+This way, you avoid having to store an unprotected copy of your access token!
 
 ### SharePoint access token for rclone
 
@@ -58,7 +74,7 @@ Alternatively, just like for the GitHub PAT above, you could use the [pass](http
 command line utilty to safely store the token on your local machine and access it by setting
 
 ```sh
-export RCLONE_ONEDRIVE_TOKEN=$(pass /path/to/onedrive_token)
+export RCLONE_ONEDRIVE_TOKEN=$(pass /api/tokens/rclone/onedrive_token)
 ```
 
 ## Set up the `atlasview-data` directory and `.env` file
