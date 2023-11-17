@@ -17,4 +17,4 @@ sudo zip -r atlasview-data-$(date -d "today" +"%Y%m%d%H%M").zip atlasview-data/c
 mv atlasview-data-*.zip atlasview-backups
 
 # sync the backup directory with remote share
-rclone sync atlasview-backups/ sharepoint_disease_atlas:DiseaseAtlas/atlasview-backups/ --ignore-size --ignore-checksum
+rclone sync atlasview-backups/ sharepoint_disease_atlas:DiseaseAtlas/atlasview-backups/ --ignore-size --ignore-checksum --ignore-existing
