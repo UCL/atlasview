@@ -8,7 +8,8 @@ docker exec atlasview-remark-1 backup
 # run script to convert backup of comments into an excel file
 # use the latest created backup file, whatever the name
 echo "Converting comments backup to Excel file"
-${HOME}/atlasview/remark42/backup2excel.py "$(ls -dAt ${HOME}/atlasview-data/remark/backup/* | head -n1)"
+BKUP_FILE=$(sudo sh -c 'ls -dAt /home/ubuntu/atlasview-data/remark/backup/* | head -n 1')
+sudo ${HOME}/atlasview/remark42/backup2excel.py "${BKUP_FILE}"
 
 # create a timestamped backup of atlasview-data except caches and data files etc
 cd ${HOME}
@@ -16,4 +17,4 @@ sudo zip -r atlasview-data-$(date -d "today" +"%Y%m%d%H%M").zip atlasview-data/c
 mv atlasview-data-*.zip atlasview-backups
 
 # sync the backup directory with remote share
-rclone sync atlasview-backups/ sharepoint_disease_atlas:DiseaseAtlas/atlasview-backups/ --ignore-size --ignore-checksum
+rclone sync atlasview-backups/ sharepoint_disease_atlas:DiseaseAtlas/atlasview-backups/ --ignore-size --ignore-checksum --ignore-existing
