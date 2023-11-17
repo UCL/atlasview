@@ -4,6 +4,7 @@
     dest: "{{ remote.atlasview_main }}"
     version: "{{ atlasview_branch }}"
     force: true
+    track_submodules: true
 
 - name: Copy local atlasview-data files
   ansible.builtin.copy:
