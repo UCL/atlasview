@@ -13,9 +13,6 @@
     ## Set up atlasview directories
     - role: atlasview
       tags: atlasview
-    ## TODO: set up rclone
-    # - role rclone
-    #   tags: rclone
     ## Set up GitHub Actions runner
     - role: gha-runner
       become: true
