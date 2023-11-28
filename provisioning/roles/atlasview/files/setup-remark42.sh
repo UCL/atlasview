@@ -7,4 +7,7 @@ git submodule update
 cd remark42/remark42
 
 echo "Applying patches..."
-git apply ../*.patch
+## Check if patches were already applied or not
+if $(git apply --check ../*.patch &> /dev/null); then
+  git apply ../*.patch
+fi

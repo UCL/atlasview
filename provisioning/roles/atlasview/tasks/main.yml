@@ -4,12 +4,14 @@
     dest: "{{ remote.atlasview_main }}"
     version: "{{ atlasview_branch }}"
     force: true
+    track_submodules: true
 
 - name: Copy local atlasview-data files
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ remote.atlasview_data }}/"
     mode: "0644"
+    force: false # Only copy files when they don't existn on the remote
   ## Only copy over the CSV files from the local machine
   ## `atlasview-data` also contains config files for caddy and remark,
   ## which should not be copied over!
