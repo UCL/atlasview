@@ -8,8 +8,13 @@ docker exec atlasview-remark-1 backup
 # run script to convert backup of comments into an excel file
 # use the latest created backup file, whatever the name
 echo "Converting comments backup to Excel file"
-BKUP_FILE=$(sudo sh -c 'ls -dAt /home/ubuntu/atlasview-data/remark/backup/* | head -n 1')
-sudo ${HOME}/atlasview/remark42/backup2excel.py "${BKUP_FILE}"
+
+## Remark backup dir is root-owned, need to give user access
+REMARK_BKUP_DIR="${HOME}/atlasview-data/remark/backup"
+sudo chmod -R a+rX ${REMARK_BKUP_DIR}
+
+BKUP_FILE=$(ls -dAt ${REMARK_BKUP_DIR}/* | head -n 1)
+${HOME}/atlasview/remark42/backup2excel.py "${BKUP_FILE}"
 
 # create a timestamped backup of atlasview-data except caches and data files etc
 cd ${HOME}
