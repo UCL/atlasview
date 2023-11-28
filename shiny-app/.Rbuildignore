@@ -4,3 +4,5 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^Dockerfile$
+^data-raw$
+^dev$

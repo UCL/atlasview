@@ -1,0 +1,98 @@
+#' @importFrom rlang .data
+caterpillar_plot <- function(caterpillar_data, median_counts, specialty_colours) {
+  # phenotype and phecode of index disease (after sorting)
+  phenotype <- caterpillar_data$phenotype_index_dis[1]
+  phe <- caterpillar_data$phecode_index_dis[1]
+
+  # remove non-coocurring diseases
+  caterpillar_data <- dplyr::filter(caterpillar_data, .data$phecode_index_dis != .data$cooc_dis)
+
+  # subset if there is long list
+  if (nrow(caterpillar_data) > 50) {
+    caterpillar_data <- head(caterpillar_data, 50)
+  }
+
+  # convert phenotype_cooccurring_dis to factor and order levels according to prev_ratio for plotting
+  caterpillar_data$phenotype_cooccurring_dis <- as.factor(caterpillar_data$phenotype_cooccurring_dis)
+  caterpillar_data$phenotype_cooccurring_dis <- stats::reorder(
+    caterpillar_data$phenotype_cooccurring_dis,
+    caterpillar_data$prev_ratio
+  )
+  
+  # median_n
+  median_counts <- dplyr::filter(median_counts, .data$index_dis == phe)
+  median_n_dis <- median_counts$median_n_dis
+  median_n_spe <- median_counts$median_n_spe
+  n_cases_index_dis <- median_counts$n_indiv_index_dis_m_r
+
+  # title
+  phenotype_title <- stringr::str_wrap(phenotype, width = 80)
+  plot_title_str <- paste("Index: ", phenotype_title, "\n",
+    "N = ", n_cases_index_dis,
+    ", Median N Dis = ", median_n_dis,
+    " , Median N Spec = ", median_n_spe,
+    sep = ""
+  )
+  
+  # prevalence of co-occ disease in index disease
+  prev_plot <- caterpillar_prevalence_plot(caterpillar_data) +
+    scale_fill_manual(values = specialty_colours) +
+    caterpillar_common_theme()
+    
+  # prev ratio
+  prev_ratio_plot <- caterpillar_prevalence_ratio_plot(caterpillar_data) +
+    scale_color_manual(values = specialty_colours) +
+    caterpillar_common_theme() +
+    theme(axis.text.y = element_blank())
+
+  ### combine:
+  patchwork::wrap_plots(prev_plot, prev_ratio_plot, nrow = 1) +
+    patchwork::plot_annotation(
+      plot_title_str,
+      theme = theme(plot.title = element_text(size = 20, hjust = 0.5))
+    )
+}
+
+
+caterpillar_prevalence_plot <- function(caterpillar_data) {
+  # Initialize plotting variables
+  # Avoids 'no visible binding for global variable' in R CMD check
+  prevalence <- specialty_cooccurring_dis <- phenotype_cooccurring_dis <- NULL
+  
+  ggplot(caterpillar_data,
+    aes(x = phenotype_cooccurring_dis, y = prevalence, fill = specialty_cooccurring_dis)
+  ) +
+    geom_col(width = 0.5) +
+    coord_flip(ylim = c(0, 100)) +
+    labs(x = NULL, y = "Prevalence (%)", fill = NULL)
+}
+
+
+caterpillar_prevalence_ratio_plot <- function(caterpillar_data) {
+  # Initialize plotting variables
+  # Avoids 'no visible binding for global variable' in R CMD check
+  prev_ratio <- specialty_cooccurring_dis <- phenotype_cooccurring_dis <- NULL
+  
+  ggplot(caterpillar_data,
+    aes(x = prev_ratio, y = phenotype_cooccurring_dis, col = specialty_cooccurring_dis)) +
+    geom_point(shape = 15, size = 2) +
+    geom_vline(xintercept = 1, linetype = "dashed", color = "black", linewidth = 0.75) +
+    scale_x_log10() +
+    labs(x = "Prevalence ratio", y = NULL, color = NULL)
+}
+
+
+caterpillar_common_theme <- function() {
+  theme_minimal() +
+    theme(
+      legend.position = "none",
+      legend.title = element_blank(),
+      legend.text = element_text(size = 10),
+      axis.text.y = element_text(size = 15),
+      axis.title.y = element_blank(),
+      axis.line.x = element_line(colour = "grey"),
+      axis.text.x = element_text(size = 15),
+      axis.title.x = element_text(size = 15),
+      plot.title = element_text(size = 20, hjust = 1)
+    )
+}

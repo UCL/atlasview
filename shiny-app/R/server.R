@@ -32,11 +32,10 @@ atlasview_server <-  function(input, output, session) {
   observeEvent(
     session$clientData$url_search,
     {
-      query <- parseQueryString(session$clientData$url_search)
-      req(query[['disease']])
-      split <- stringr::str_split(query[["disease"]], "\\$")[[1]]
-      diseaseFromURL$specialty <- split[1]
-      diseaseFromURL$disease <- split[2]
+      query <- parse_url(session$clientData$url_search)
+      req(query)
+      diseaseFromURL$specialty <- query$specialty
+      diseaseFromURL$disease <- query$disease
     }
   )
 
@@ -54,20 +53,14 @@ atlasview_server <-  function(input, output, session) {
       req(res_auth$user)
       users_specialties <- dplyr::filter(
         atlasview_data$specialties,
-        stringr::str_detect(code, res_auth$specialty_codes)
+        stringr::str_detect(.data$code, res_auth$specialty_codes)
       )
-
-      # Set the selected specialty from URL, if it has been provided
-      selected <- NULL
-      if (!is.null(diseaseFromURL$specialty)) {
-        selected <- diseaseFromURL$specialty
-      }
 
       updateSelectizeInput(
         session = getDefaultReactiveDomain(),
         inputId = "select_specialty",
         choices = split(users_specialties$code, users_specialties$specialty),
-        selected = selected,
+        selected = diseaseFromURL$specialty,
         options = list(
           placeholder = "Please select a specialty",
           onInitialize = I('function() { this.setValue(""); }')
@@ -82,39 +75,23 @@ atlasview_server <-  function(input, output, session) {
     {
       req(res_auth$user)
 
-      # get all index diseases for this specialty
-      specialty_index_diseases <- dplyr::filter(
-        atlasview_data$index_diseases,
-        .data$specialty_code == input$select_specialty
-      )
-      specialty_index_diseases <- dplyr::select(
-        specialty_index_diseases,
-        .data$phecode_index_dis, .data$phenotype_index_dis
-      )
-
-      selected <- NULL
-
+      # Set the selected disease from the URL, if it has been provided
+      choices <- get_index_diseases(atlasview_data$index_diseases, input$select_specialty)
+      options <- list(placeholder = "")
+      
       # if any diseases found
-      if (nrow(specialty_index_diseases) > 0) {
-        # update the select box with diseases
-        choices <- split(specialty_index_diseases$phecode_index_dis, specialty_index_diseases$phenotype_index_dis)
-        options <- list(placeholder = "please select an index disease", oninitialize = I('function() { this.setvalue(""); }'))
-
-        # Set the selected disease from the URL, if it has been provided
-        if (!is.null(diseaseFromURL$disease)) {
-          selected  <- diseaseFromURL$disease
-        }
-      } else {
-        # no index diseases found for the specialty - empty the select box
-        choices <- list()
-        options <- list(placeholder = "")
+      if (length(choices)) {
+        options <- list(
+          placeholder = "please select an index disease",
+          oninitialize = I('function() { this.setvalue(""); }')
+        )
       }
 
       updateSelectizeInput(
         session = getDefaultReactiveDomain(),
         inputId = "select_index_disease",
         choices = choices,
-        selected = selected,
+        selected = diseaseFromURL$disease,
         options = options
       )
     }
@@ -132,18 +109,7 @@ atlasview_server <-  function(input, output, session) {
     list(input$select_specialty, input$select_index_disease),
     {
       req(res_auth$user)
-      title <- "AtlasViews"
-      if (input$select_specialty != "") {
-        which_specialty <- atlasview_data$specialties$code == input$select_specialty
-        title <- paste0(title, ": ", atlasview_data$specialties$specialty[which_specialty])
-
-        if (input$select_index_disease != "") {
-          which_disease_label <- atlasview_data$index_diseases$phecode_index_dis == input$select_index_disease
-          index_disease_label <- atlasview_data$index_diseases$phenotype_index_dis[which_disease_label]
-          title <- paste0(title, " \u2192 ", index_disease_label)
-        }
-      }
-      title
+      generate_pagetitle(atlasview_data, input$select_specialty, input$select_index_disease)
     }
   )
 
@@ -166,33 +132,25 @@ atlasview_server <-  function(input, output, session) {
     list(input$select_specialty, input$select_index_disease),
     {
       req(res_auth$user, input$select_specialty)
-      cooccurring_diseases <- dplyr::filter(
+      cooccurring_diseases <- get_cooccurring_diseases(
         atlasview_data$MM_res,
-        .data$specialty_code == input$select_specialty,
-        .data$phecode_index_dis == input$select_index_disease
+        index_disease = input$select_index_disease,
+        specialty = input$select_specialty
       )
-      cooccurring_diseases <- dplyr::select(cooccurring_diseases, .data$specialty_cooccurring_dis)
-      cooccurring_diseases <- dplyr::distinct(cooccurring_diseases)
-      cooccurring_diseases <- dplyr::arrange(cooccurring_diseases, .data$specialty_cooccurring_dis)
-      cooccurring_diseases <- dplyr::pull(cooccurring_diseases)
-
-      updateSelectInput(session, "filter", choices = cooccurring_diseases, selected = cooccurring_diseases)
+      filter_choices <- create_specialty_filter(cooccurring_diseases)
+      updateSelectInput(session, "filter", choices = filter_choices, selected = filter_choices)
     }
   )
 
-  caterpillarFilter <- reactive({
-    input$filter
-  })
+  caterpillarFilter <- debounce(reactive(input$filter), 1000)
 
-  debouncedCaterpillarFilter <- debounce(caterpillarFilter, 1000)
-
-  MM_res_spe_phe_selected <- reactive({
+  caterpillar_data <- reactive({
     req(res_auth$user, input$select_specialty, input$select_index_disease)
-    dplyr::filter(
+    get_cooccurring_diseases(
       atlasview_data$MM_res,
-      .data$specialty_code == input$select_specialty,
-      .data$phecode_index_dis == input$select_index_disease,
-      .data$specialty_cooccurring_dis %in% debouncedCaterpillarFilter()
+      index_disease = input$select_index_disease,
+      specialty = input$select_specialty,
+      specialty_filter = caterpillarFilter()
     )
   })
   
@@ -200,16 +158,17 @@ atlasview_server <-  function(input, output, session) {
     {
       req(res_auth$user, input$select_specialty, input$select_index_disease)
       
-      MM_res_spe_phe_selected <- MM_res_spe_phe_selected()
-      if (nrow(MM_res_spe_phe_selected) > 0) {
-        caterpillar_prev_ratio_v5_view(
-          MM_res_spe_phe_selected, atlasview_data$n_dis_spe,
-          spe_index_dis = input$specialty, atlasview_data$specialty_colours
+      caterpillar_data <- caterpillar_data()
+      if (nrow(caterpillar_data) > 0) {
+        caterpillar_plot(
+          caterpillar_data,
+          median_counts = atlasview_data$n_dis_spe,
+          specialty_colours =  atlasview_data$specialty_colours
         )
       }
     },
     height = function() {
-      n_rows <- nrow(MM_res_spe_phe_selected())
+      n_rows <- nrow(caterpillar_data())
       max(n_rows * 900/50, 500)  # use 900 pixels per 50 rows and 500 pixels minimum
     }
   )
@@ -230,14 +189,9 @@ atlasview_server <-  function(input, output, session) {
     
     # if we haven't a saved copy of the plot
     if (!file.exists(plot_filename)) {
-      selected_index_disease <- atlasview_data$n_dis_spe$index_dis == input$select_index_disease
-      patient_count <- atlasview_data$n_dis_spe$n_indiv_index_dis_m_r[selected_index_disease]
-      cooccurring <- get_cooccurring_diseases(atlasview_data$MM_res, input$select_index_disease)
-      make_circos_plot(atlasview_data$specialties,
-        cooccurring, patient_count,
-        svg_filepath = plot_filename
-      )
+      circos_plot(atlasview_data, input$select_index_disease, svg_filepath = plot_filename)
     }
+    
     plot <- readr::read_file(plot_filename)
     svgPanZoom::svgPanZoom(plot, zoomScaleSensitivity = 0.2)
   })

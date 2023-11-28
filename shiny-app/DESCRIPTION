@@ -35,3 +35,11 @@ Imports:
     stringr,
     svglite,
     svgPanZoom
+Suggests: 
+    testthat (>= 3.0.0),
+    vdiffr,
+    withr
+Config/testthat/edition: 3
+Depends: 
+    R (>= 2.10)
+LazyData: true
