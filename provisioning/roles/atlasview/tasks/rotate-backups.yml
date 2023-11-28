@@ -17,6 +17,9 @@
     minute: "0"
     hour: "0"
     day: "*"
-    job: "/usr/local/bin/rotate-backups -c {{ atlasview_rotate_backups_config }} {{ remote.atlasview_backups }} >> {{ atlasview_crontab_out }} 2>&1"
+    job: >
+      /usr/local/bin/rotate-backups -c {{ atlasview_rotate_backups_config }}
+      {{ remote.atlasview_backups }} {{ remote.atlasview_backups }}/comments
+      >> {{ atlasview_crontab_out }} 2>&1
     user: "{{ ansible_user }}"
     state: present
