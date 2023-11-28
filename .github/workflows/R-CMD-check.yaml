@@ -37,18 +37,16 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
+      - name: Make sure `pak` is installed in renv
+        run: renv::install("pak")
+        shell: Rscript {0}
+        working-directory: ./shiny-app
+
       - name: Install system dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           cache-version: 1
           working-directory: ./shiny-app
-
-      - name: Make sure `pak` is installed in renv
-        run: |
-          renv::restore()
-          renv::install("pak")
-        shell: Rscript {0}
-        working-directory: ./shiny-app
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
